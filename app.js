@@ -1065,6 +1065,249 @@ function InstallBanner({ onDismiss, onInstall }) {
   );
 }
 
+
+// ─── PIXEL ROOM COMPONENT ─────────────────────────────────────────────────────
+function PixelRoom({ mood, loading, lastMsg }) {
+  const [blinking, setBlinking] = useState(false);
+  const [speaking, setSpeaking] = useState(false);
+  const [particles, setParticles] = useState([]);
+  const [time, setTime] = useState(new Date());
+
+  // Blink randomly
+  useEffect(() => {
+    const blink = () => {
+      setBlinking(true);
+      setTimeout(() => setBlinking(false), 150);
+      setTimeout(blink, 2000 + Math.random() * 4000);
+    };
+    const t = setTimeout(blink, 1500);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Speaking animation when loading
+  useEffect(() => { setSpeaking(loading); }, [loading]);
+
+  // Particles when mood is excited
+  useEffect(() => {
+    if (mood === 'excited') {
+      const ps = Array.from({length: 8}, (_, i) => ({
+        id: i, x: 40 + Math.random()*20, y: 30 + Math.random()*20,
+        vx: (Math.random()-0.5)*3, vy: -1-Math.random()*2,
+        life: 1, char: ['⭐','✨','🎮','⚡','💫'][Math.floor(Math.random()*5)]
+      }));
+      setParticles(ps);
+      setTimeout(() => setParticles([]), 1800);
+    }
+  }, [mood]);
+
+  // Clock
+  useEffect(() => {
+    const t = setInterval(() => setTime(new Date()), 60000);
+    return () => clearInterval(t);
+  }, []);
+
+  const hour = time.getHours();
+  const isNight = hour >= 20 || hour < 7;
+  const isEvening = hour >= 17 && hour < 20;
+
+  // Mood → face expression
+  const faces = {
+    idle:     { eyes: '◉ ◉', mouth: '▾', color: '#7c6aff' },
+    thinking: { eyes: '◌ ◌', mouth: '—', color: '#f4c430' },
+    excited:  { eyes: '★ ★', mouth: '▲', color: '#00d4aa' },
+    happy:    { eyes: '^ ^', mouth: '▲', color: '#00d4aa'  },
+    searching:{ eyes: '⊙ ⊙', mouth: '○', color: '#7c6aff' },
+  };
+  const face = faces[mood] || faces.idle;
+
+  return (
+    <div className={`pixel-room ${isNight ? 'night' : isEvening ? 'evening' : 'day'}`}>
+
+      {/* ── BACKGROUND LAYERS ── */}
+      <div className="room-bg">
+        {/* Sky / ceiling */}
+        <div className="room-ceiling">
+          {isNight && (
+            <>
+              <div className="star s1">★</div>
+              <div className="star s2">✦</div>
+              <div className="star s3">★</div>
+              <div className="star s4">✦</div>
+              <div className="moon">🌙</div>
+            </>
+          )}
+          {!isNight && (
+            <div className="sun">{isEvening ? '🌅' : '☀️'}</div>
+          )}
+        </div>
+
+        {/* Walls */}
+        <div className="room-wall">
+          {/* Posters on wall */}
+          <div className="wall-poster p1">
+            <div className="poster-inner">🎮</div>
+            <div className="poster-label">GAME</div>
+          </div>
+          <div className="wall-poster p2">
+            <div className="poster-inner">👾</div>
+            <div className="poster-label">RETRO</div>
+          </div>
+          {/* Shelf with collectibles */}
+          <div className="wall-shelf">
+            <div className="shelf-item">🏆</div>
+            <div className="shelf-item anim-float2">🎲</div>
+            <div className="shelf-item">📀</div>
+            <div className="shelf-item anim-float3">🕹</div>
+            <div className="shelf-item">⚡</div>
+          </div>
+        </div>
+
+        {/* Floor */}
+        <div className="room-floor">
+          {/* TV / Monitor */}
+          <div className="room-tv">
+            <div className="tv-screen">
+              {loading
+                ? <div className="tv-loading">LOADING<span className="tv-dots">...</span></div>
+                : <div className="tv-idle">
+                    <div className="tv-pixel-art">
+                      {['🟦','🟪','🟦','🟪','🟦'].map((c,i) => <span key={i}>{c}</span>)}
+                    </div>
+                    <div className="tv-label">GAMEPAL v2.0</div>
+                  </div>
+              }
+            </div>
+            <div className="tv-stand"></div>
+          </div>
+
+          {/* Plant */}
+          <div className="room-plant anim-sway">🪴</div>
+
+          {/* Console on floor */}
+          <div className="room-console">🎮</div>
+        </div>
+
+        {/* Ambient particles */}
+        {isNight && <div className="room-ambient-dark"></div>}
+
+        {/* Desk lamp glow */}
+        <div className="lamp-glow" style={{ opacity: isNight ? 0.6 : 0.2 }}></div>
+      </div>
+
+      {/* ── PIXEL CHARACTER ── */}
+      <div className={`pixel-char ${mood === 'excited' ? 'char-bounce' : ''} ${speaking ? 'char-talking' : ''}`}>
+
+        {/* Speech bubble */}
+        {speaking && (
+          <div className="pixel-speech-bubble">
+            <div className="speech-dots">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+        )}
+        {mood === 'excited' && !speaking && (
+          <div className="pixel-speech-bubble excited-bubble">
+            BEEP BOOP! ⚡
+          </div>
+        )}
+
+        {/* Particle effects */}
+        {particles.map(p => (
+          <div key={p.id} className="pixel-particle" style={{
+            left: p.x + '%', top: p.y + '%',
+            animation: `particleFly 1.8s ease-out forwards`,
+            animationDelay: p.id * 0.1 + 's',
+          }}>{p.char}</div>
+        ))}
+
+        {/* Robot body — built with CSS */}
+        <div className="robot-wrap">
+          {/* Antenna */}
+          <div className="robot-antenna">
+            <div className="antenna-ball" style={{ background: face.color }}></div>
+            <div className="antenna-stem"></div>
+          </div>
+
+          {/* Head */}
+          <div className="robot-head" style={{ borderColor: face.color }}>
+            {/* Screen face */}
+            <div className="robot-face">
+              {/* Eyes */}
+              <div className="robot-eyes">
+                <div className={`robot-eye ${blinking ? 'blink' : ''}`} style={{ background: face.color }}>
+                  <div className="eye-pupil"></div>
+                  {mood === 'thinking' && <div className="eye-spin"></div>}
+                </div>
+                <div className={`robot-eye ${blinking ? 'blink' : ''}`} style={{ background: face.color }}>
+                  <div className="eye-pupil"></div>
+                  {mood === 'thinking' && <div className="eye-spin"></div>}
+                </div>
+              </div>
+              {/* Mouth */}
+              <div className={`robot-mouth ${speaking ? 'mouth-talk' : ''}`} style={{ borderColor: face.color }}>
+                {mood === 'excited' && <div className="mouth-excited"></div>}
+                {mood === 'searching' && <div className="mouth-o"></div>}
+              </div>
+              {/* Scan line effect */}
+              <div className="face-scanline"></div>
+            </div>
+            {/* Head details */}
+            <div className="head-bolt left-bolt" style={{ background: face.color }}></div>
+            <div className="head-bolt right-bolt" style={{ background: face.color }}></div>
+          </div>
+
+          {/* Body */}
+          <div className="robot-body">
+            <div className="body-chest">
+              {/* Chest screen */}
+              <div className="chest-screen">
+                <div className="chest-bars">
+                  {[0.4,0.7,1,0.6,0.8,0.5].map((h,i) => (
+                    <div key={i} className="chest-bar" style={{
+                      height: (h*100)+'%',
+                      background: face.color,
+                      animationDelay: i*0.12+'s'
+                    }}></div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            {/* Arms */}
+            <div className={`robot-arm left-arm ${speaking ? 'arm-wave' : ''}`}>
+              <div className="arm-hand" style={{ background: face.color }}>✦</div>
+            </div>
+            <div className={`robot-arm right-arm ${mood === 'excited' ? 'arm-raise' : ''}`}>
+              <div className="arm-hand" style={{ background: face.color }}>✦</div>
+            </div>
+          </div>
+
+          {/* Legs */}
+          <div className="robot-legs">
+            <div className="robot-leg left-leg"></div>
+            <div className="robot-leg right-leg"></div>
+          </div>
+
+          {/* Shadow */}
+          <div className="robot-shadow"></div>
+        </div>
+      </div>
+
+      {/* ── MOOD LABEL ── */}
+      <div className="pixel-mood-bar">
+        <span className="mood-dot" style={{ background: face.color }}></span>
+        <span className="mood-text">
+          {mood === 'idle' && 'PIXEL está esperando você...'}
+          {mood === 'thinking' && 'PIXEL está pensando...'}
+          {mood === 'excited' && 'PIXEL está animado!'}
+          {mood === 'happy' && 'PIXEL está feliz!'}
+          {mood === 'searching' && 'PIXEL está buscando...'}
+        </span>
+        <span className="room-time">{time.getHours().toString().padStart(2,'0')}:{time.getMinutes().toString().padStart(2,'0')}</span>
+      </div>
+    </div>
+  );
+}
+
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
 function App() {
   const [user,     setUser]     = useState(() => load(USER_KEY,     null));
@@ -1077,6 +1320,7 @@ function App() {
   const [installPrompt,     setInstallPrompt]     = useState(null);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [apiError, setApiError] = useState('');
+  const [pixelMood, setPixelMood] = useState('idle');
   const bottomRef = useRef(null);
   const inputRef  = useRef(null);
 
@@ -1120,6 +1364,7 @@ function App() {
     const text = input.trim();
     if (!text || loading) return;
     setInput(''); setApiError('');
+    setPixelMood('thinking');
     const userMsg = { role: 'user', content: text, ts: Date.now() };
     const newMessages = [...messages, userMsg];
     setMessages(newMessages);
@@ -1196,6 +1441,7 @@ function App() {
       let addedGame = null;
 
       if (action.action === 'search' && action.params) {
+        setPixelMood('searching');
         try { games = await searchGames(action.params, settings.rawgKey); } catch {}
       }
 
@@ -1222,6 +1468,12 @@ function App() {
       }
 
       const statusLabel = { backlog: '📋 Backlog', playing: '🎮 Jogando', finished: '✅ Finalizado' };
+      // Set mood based on action
+      if (addedGame) setPixelMood('excited');
+      else if (games.length > 0) setPixelMood('happy');
+      else setPixelMood('happy');
+      setTimeout(() => setPixelMood('idle'), 4000);
+
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: action.message || raw,
@@ -1313,6 +1565,9 @@ function App() {
 
         {view === 'chat' && (
           <div className="chat-area">
+            {/* PIXEL ROOM — interactive scene */}
+            <PixelRoom mood={pixelMood} loading={loading} lastMsg={messages[messages.length-1]?.content || ''} />
+
             <div className="chat-header">
               <div className="chat-header-left">
                 <div className="pixel-avatar-wrap">
@@ -1835,6 +2090,269 @@ a{color:var(--accent2)}button{font-family:var(--fb)}
 
 /* Suggestion buttons — enhanced */
 .suggestion{border-left:2px solid rgba(124,106,255,.3) !important;text-align:left !important}
+
+/* ════════════════════════════════════════════════════════════════
+   PIXEL ROOM — full scene
+   ════════════════════════════════════════════════════════════════ */
+
+.pixel-room {
+  position: relative; width: 100%; height: 220px; overflow: hidden;
+  flex-shrink: 0; border-bottom: 2px solid var(--border);
+  font-family: var(--fb);
+}
+
+/* ── TIME-BASED BACKGROUNDS ── */
+.pixel-room.day    { background: linear-gradient(180deg, #1a1a3e 0%, #2a1a5e 40%, #0d1a2a 100%); }
+.pixel-room.evening{ background: linear-gradient(180deg, #2a1010 0%, #3a1a20 40%, #0d0d1a 100%); }
+.pixel-room.night  { background: linear-gradient(180deg, #050510 0%, #0a0a20 40%, #060612 100%); }
+
+/* ── ROOM LAYERS ── */
+.room-bg { position: absolute; inset: 0; }
+
+/* Ceiling */
+.room-ceiling {
+  position: absolute; top: 0; left: 0; right: 0; height: 50px;
+  background: rgba(0,0,0,.2);
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.sun  { position: absolute; top: 8px; right: 24px; font-size: 20px; animation: sunGlow 4s ease-in-out infinite; }
+.moon { position: absolute; top: 8px; right: 24px; font-size: 18px; animation: moonFloat 6s ease-in-out infinite; }
+@keyframes sunGlow  { 0%,100%{filter:brightness(1)} 50%{filter:brightness(1.3)} }
+@keyframes moonFloat{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+
+/* Stars */
+.star { position: absolute; color: #ffffaa; animation: starTwinkle 2s ease-in-out infinite; }
+.s1 { top: 10px; left: 15%; font-size: 10px; }
+.s2 { top: 20px; left: 35%; font-size: 8px;  animation-delay: .5s; }
+.s3 { top: 8px;  left: 60%; font-size: 12px; animation-delay: 1s; }
+.s4 { top: 18px; left: 80%; font-size: 8px;  animation-delay: 1.5s; }
+@keyframes starTwinkle { 0%,100%{opacity:.3} 50%{opacity:1} }
+
+/* Wall */
+.room-wall {
+  position: absolute; top: 50px; left: 0; right: 0; height: 100px;
+  background: linear-gradient(180deg, rgba(30,20,60,.6) 0%, rgba(20,15,40,.8) 100%);
+}
+
+/* Wall posters */
+.wall-poster {
+  position: absolute; top: 12px; width: 38px; height: 46px;
+  background: var(--surface3); border: 2px solid rgba(255,255,255,.1);
+  border-radius: 4px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 2px;
+}
+.p1 { left: 12px; }
+.p2 { left: 62px; transform: rotate(-2deg); }
+.poster-inner { font-size: 18px; }
+.poster-label { font-size: 7px; color: var(--text3); font-weight: 700; letter-spacing: .05em; }
+
+/* Shelf */
+.wall-shelf {
+  position: absolute; top: 14px; right: 10px;
+  display: flex; align-items: flex-end; gap: 6px;
+  background: rgba(255,255,255,.06); padding: 4px 8px 2px;
+  border-radius: 4px; border-bottom: 3px solid rgba(255,255,255,.1);
+}
+.shelf-item { font-size: 16px; }
+.anim-float2 { animation: shelfFloat 3s ease-in-out infinite .5s; }
+.anim-float3 { animation: shelfFloat 3s ease-in-out infinite 1s; }
+@keyframes shelfFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+
+/* Floor */
+.room-floor {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 90px;
+  background: linear-gradient(180deg, rgba(15,10,30,.9) 0%, rgba(8,6,18,1) 100%);
+  border-top: 2px solid rgba(255,255,255,.06);
+}
+
+/* TV */
+.room-tv {
+  position: absolute; right: 12px; bottom: 20px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.tv-screen {
+  width: 80px; height: 52px; background: #050515;
+  border: 3px solid #333; border-radius: 6px; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 12px rgba(124,106,255,.4), inset 0 0 10px rgba(0,0,0,.5);
+}
+.tv-loading { font-size: 7px; color: var(--accent2); font-weight: 700; letter-spacing: .1em; text-align: center; }
+.tv-dots { animation: dotCycle 1s steps(4) infinite; }
+@keyframes dotCycle { 0%{content:'.'} 33%{content:'..'} 66%{content:'...'} 100%{content:''} }
+.tv-idle { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.tv-pixel-art { display: flex; gap: 1px; font-size: 8px; }
+.tv-label { font-size: 6px; color: var(--accent); font-weight: 700; letter-spacing: .15em; }
+.tv-stand { width: 20px; height: 6px; background: #2a2a3a; border-radius: 0 0 4px 4px; }
+
+/* Plant */
+.room-plant {
+  position: absolute; left: 14px; bottom: 14px; font-size: 28px;
+  transform-origin: bottom center;
+}
+.anim-sway { animation: plantSway 4s ease-in-out infinite; }
+@keyframes plantSway { 0%,100%{transform:rotate(-2deg)} 50%{transform:rotate(2deg)} }
+
+/* Console */
+.room-console {
+  position: absolute; left: 52px; bottom: 18px; font-size: 18px;
+  animation: consolePulse 3s ease-in-out infinite;
+}
+@keyframes consolePulse { 0%,100%{filter:brightness(1)} 50%{filter:brightness(1.4)} }
+
+/* Lamp glow */
+.lamp-glow {
+  position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 120px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(124,106,255,.3) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Ambient dark overlay */
+.room-ambient-dark {
+  position: absolute; inset: 0;
+  background: rgba(0,0,10,.3); pointer-events: none;
+}
+
+/* ── PIXEL CHARACTER ── */
+.pixel-char {
+  position: absolute; left: 50%; bottom: 18px;
+  transform: translateX(-50%);
+  width: 80px; display: flex; flex-direction: column; align-items: center;
+  z-index: 10;
+}
+.char-bounce { animation: charBounce .4s ease-in-out 3; }
+@keyframes charBounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(-10px)} }
+.char-talking { animation: charTalk .3s ease-in-out infinite; }
+@keyframes charTalk { 0%,100%{transform:translateX(-50%) scaleY(1)} 50%{transform:translateX(-50%) scaleY(1.02)} }
+
+/* Speech bubble */
+.pixel-speech-bubble {
+  position: absolute; top: -32px; left: 50%; transform: translateX(-50%);
+  background: var(--surface); border: 2px solid var(--accent);
+  border-radius: 10px; padding: 5px 10px; white-space: nowrap;
+  font-size: 11px; color: var(--text);
+  animation: bubblePop .2s ease-out;
+}
+.pixel-speech-bubble::after {
+  content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
+  border: 4px solid transparent; border-top-color: var(--accent);
+}
+.excited-bubble {
+  border-color: var(--accent2); color: var(--accent2);
+  animation: bubblePop .2s ease-out, excitedShake .15s ease-in-out 3;
+}
+.excited-bubble::after { border-top-color: var(--accent2); }
+@keyframes bubblePop { 0%{transform:translateX(-50%) scale(0)} 80%{transform:translateX(-50%) scale(1.1)} 100%{transform:translateX(-50%) scale(1)} }
+@keyframes excitedShake { 0%,100%{transform:translateX(-50%)} 50%{transform:translateX(calc(-50% + 3px))} }
+.speech-dots { display: flex; gap: 3px; align-items: center; }
+.speech-dots span { width: 5px; height: 5px; background: var(--accent); border-radius: 50%; animation: bounce 1s infinite; }
+.speech-dots span:nth-child(2) { animation-delay: .15s; }
+.speech-dots span:nth-child(3) { animation-delay: .3s; }
+
+/* Particles */
+.pixel-particle {
+  position: absolute; font-size: 14px; pointer-events: none; z-index: 20;
+  animation: particleFly 1.8s ease-out forwards;
+}
+@keyframes particleFly {
+  0%   { opacity: 1; transform: translate(0,0) scale(1); }
+  100% { opacity: 0; transform: translate(calc(var(--rx,20px)), -50px) scale(0); }
+}
+
+/* ── ROBOT BODY ── */
+.robot-wrap { display: flex; flex-direction: column; align-items: center; position: relative; }
+
+/* Antenna */
+.robot-antenna { display: flex; flex-direction: column; align-items: center; margin-bottom: 2px; }
+.antenna-ball  { width: 8px; height: 8px; border-radius: 50%; animation: antennaPulse 1.5s ease-in-out infinite; }
+.antenna-stem  { width: 2px; height: 10px; background: rgba(255,255,255,.3); }
+@keyframes antennaPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:.7} }
+
+/* Head */
+.robot-head {
+  width: 54px; height: 46px; background: linear-gradient(135deg,#1e1e2e,#2a2a3e);
+  border: 2px solid; border-radius: 10px; position: relative; overflow: hidden;
+  box-shadow: 0 0 10px rgba(124,106,255,.3);
+}
+.robot-face { position: absolute; inset: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+
+/* Eyes */
+.robot-eyes { display: flex; gap: 8px; }
+.robot-eye {
+  width: 14px; height: 14px; border-radius: 50%; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .2s;
+}
+.robot-eye.blink { transform: scaleY(.1); }
+.eye-pupil { width: 5px; height: 5px; background: rgba(0,0,0,.6); border-radius: 50%; }
+.eye-spin  { position: absolute; inset: 2px; border: 1.5px solid rgba(255,255,255,.4); border-top-color: transparent; border-radius: 50%; animation: spinEye .6s linear infinite; }
+@keyframes spinEye { to { transform: rotate(360deg); } }
+
+/* Mouth */
+.robot-mouth {
+  width: 22px; height: 10px; border: 2px solid; border-radius: 0 0 6px 6px;
+  position: relative; overflow: hidden; transition: all .3s;
+}
+.robot-mouth.mouth-talk { animation: mouthTalk .15s ease-in-out infinite; }
+@keyframes mouthTalk { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(.4)} }
+.mouth-excited { position: absolute; inset: 1px; background: currentColor; border-radius: 0 0 4px 4px; opacity: .4; }
+.mouth-o       { position: absolute; inset: 1px; border-radius: 50%; background: currentColor; opacity: .4; }
+
+/* Face scan line */
+.face-scanline {
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: rgba(255,255,255,.1);
+  animation: scanLine 2s linear infinite;
+}
+@keyframes scanLine { 0%{top:0} 100%{top:100%} }
+
+/* Head bolts */
+.head-bolt { position: absolute; width: 5px; height: 5px; border-radius: 50%; top: 50%; transform: translateY(-50%); }
+.left-bolt  { left: -3px; }
+.right-bolt { right: -3px; }
+
+/* Body */
+.robot-body { width: 46px; height: 40px; background: linear-gradient(135deg,#1a1a2e,#252535); border: 2px solid rgba(255,255,255,.1); border-radius: 6px; position: relative; margin-top: 2px; }
+.body-chest { position: absolute; inset: 5px; }
+.chest-screen { width: 100%; height: 100%; background: rgba(0,0,0,.5); border-radius: 4px; display: flex; align-items: flex-end; padding: 3px; gap: 2px; overflow: hidden; }
+.chest-bar { width: 4px; border-radius: 2px 2px 0 0; animation: barPulse 1.2s ease-in-out infinite; flex-shrink: 0; }
+@keyframes barPulse { 0%,100%{opacity:.5;transform:scaleY(.6)} 50%{opacity:1;transform:scaleY(1)} }
+
+/* Arms */
+.robot-arm {
+  position: absolute; top: 4px; width: 10px; height: 28px;
+  background: linear-gradient(180deg,#1a1a2e,#252535); border: 1px solid rgba(255,255,255,.1);
+  border-radius: 4px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 1px;
+}
+.left-arm  { left: -13px; transform-origin: top center; }
+.right-arm { right: -13px; transform-origin: top center; }
+.arm-wave  { animation: armWave .4s ease-in-out infinite; }
+.arm-raise { animation: armRaise .5s ease-out; }
+@keyframes armWave  { 0%,100%{transform:rotate(0)}  50%{transform:rotate(-25deg)} }
+@keyframes armRaise { 0%{transform:rotate(0)} 50%{transform:rotate(-50deg)} 100%{transform:rotate(-10deg)} }
+.arm-hand { font-size: 7px; color: white; }
+
+/* Legs */
+.robot-legs { display: flex; gap: 6px; margin-top: 2px; }
+.robot-leg  { width: 14px; height: 18px; background: linear-gradient(180deg,#1a1a2e,#252535); border: 1px solid rgba(255,255,255,.1); border-radius: 0 0 4px 4px; }
+
+/* Shadow */
+.robot-shadow {
+  width: 50px; height: 8px; margin-top: 2px;
+  background: radial-gradient(ellipse, rgba(0,0,0,.5) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+/* ── MOOD BAR ── */
+.pixel-mood-bar {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 18px;
+  background: rgba(0,0,0,.5); backdrop-filter: blur(4px);
+  display: flex; align-items: center; padding: 0 10px; gap: 6px;
+  border-top: 1px solid rgba(255,255,255,.05);
+}
+.mood-dot  { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; animation: antennaPulse 1.5s ease-in-out infinite; }
+.mood-text { font-size: 9px; color: var(--text3); flex: 1; }
+.room-time { font-size: 9px; color: var(--text3); font-weight: 700; font-variant-numeric: tabular-nums; }
 `;
 
 const styleEl = document.createElement('style');
