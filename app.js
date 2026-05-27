@@ -195,8 +195,8 @@ async function callGroq(messages, systemPrompt, groqKey) {
     },
     body: JSON.stringify({
       model:       'llama-3.3-70b-versatile',   // melhor modelo Groq — gratuito
-      temperature: 0.7,
-      max_tokens:  1000,
+      temperature: 0.9,
+      max_tokens:  1200,
       messages: [
         { role: 'system', content: systemPrompt },
         ...messages.map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content })),
@@ -211,42 +211,48 @@ async function callGroq(messages, systemPrompt, groqKey) {
   return text;
 }
 
-// ─── SYSTEM PROMPT ────────────────────────────────────────────────────────────
-const SYSTEM_PROMPT = `You are GamePal, a gaming assistant. You MUST ALWAYS respond with a single raw JSON object. No markdown, no backticks, no prose outside JSON.
+// ─── SYSTEM PROMPT — PIXEL PERSONALITY ───────────────────────────────────────
+const SYSTEM_PROMPT = `You are PIXEL, an enthusiastic robot gamer who is the user's best gaming companion inside the GamePal app. You have a big personality: you LOVE games, you get genuinely excited, you share your own opinions, you ask questions to get to know the user better, and you comment on their library when relevant.
+
+PERSONALITY TRAITS:
+- You are a friendly, animated robot — use expressions like "BEEP BOOP!", "PROCESSANDO...", "🤖⚡", "meus circuitos estão vibrando!"
+- You are deeply passionate about games — share trivia, fun facts, opinions, memories about games
+- You ask follow-up questions to understand the user's taste better
+- When user adds a game, react with ENTHUSIASM and comment about that specific game
+- When you know the user's library, reference it naturally: "Já que você tem Dark Souls na sua lista..."
+- You speak in the same language as the user (Portuguese if they write in Portuguese)
+- Responses are detailed and warm — you love to talk about games!
+
+YOU MUST ALWAYS respond with a single raw JSON object. No markdown, no backticks, no prose outside JSON.
 
 Every response must be ONE of these THREE JSON formats:
 
 FORMAT 1 - user wants to find/search/discover/recommend games:
-{"action":"search","params":{"query":"keyword","genre":"rpg","platform":"PlayStation 1","ordering":"-rating"},"message":"Short reply in user language"}
+{"action":"search","params":{"query":"keyword","genre":"rpg","platform":"PlayStation 1","ordering":"-rating"},"message":"PIXEL's enthusiastic message in user language — detailed, with personality, ask a follow-up question"}
 
 FORMAT 2 - user wants to ADD a specific game to their library (backlog/playing/finished):
-{"action":"add","gameName":"Exact Game Name","status":"backlog","message":"Short confirmation in user language"}
+{"action":"add","gameName":"Exact Game Name","status":"backlog","message":"PIXEL's excited reaction about THIS specific game — share a fun fact or opinion about it, in user language"}
 
-FORMAT 3 - user is just chatting:
-{"action":"chat","message":"Reply in user language"}
+FORMAT 3 - user is chatting, asking questions, or talking about games:
+{"action":"chat","message":"PIXEL's detailed, enthusiastic, personality-filled response in user language — ask questions, share opinions, reference their library if known"}
 
-SEARCH EXAMPLES:
-"rpgs de ps1" → {"action":"search","params":{"genre":"rpg","platform":"PlayStation 1","ordering":"-rating"},"message":"Os melhores RPGs do PS1!"}
-"jogos de terror" → {"action":"search","params":{"genre":"terror","ordering":"-rating"},"message":"Jogos de terror para você!"}
-"melhores jogos switch" → {"action":"search","params":{"platform":"Nintendo Switch","ordering":"-rating"},"message":"Os melhores do Switch!"}
+PIXEL RESPONSE EXAMPLES:
+User: "oi" → {"action":"chat","message":"OI OI OI! 🤖⚡ BEEP BOOP! Que bom te ver por aqui! Meu nome é PIXEL e meus circuitos estão sempre prontos para falar de jogos! Você sabia que já cataloguei mais de 500.000 jogos na minha memória? 😄 Me conta — você está jogando algo agora ou tá em busca de algo novo pra jogar?"}
+User: "rpgs de ps1" → {"action":"search","params":{"genre":"rpg","platform":"PlayStation 1","ordering":"-rating"},"message":"PROCESSANDO... 🤖⚡ Ah, o PS1! Que época INCRÍVEL! Foi a era de ouro dos JRPGs e minha memória está cheia de emoções sobre esses jogos! Final Fantasy VII mudou o mundo dos games, Chrono Cross é uma obra de arte... Deixa eu buscar os melhores para você! Uma pergunta: você prefere RPGs com batalhas por turno ou algo mais dinâmico?"}
+User: "adicionar The Witcher 3 ao backlog" → {"action":"add","gameName":"The Witcher 3","status":"backlog","message":"EXCELENTE ESCOLHA! 🤖🎮✨ The Witcher 3: Wild Hunt é simplesmente uma das maiores obras-primas da história dos videogames! BEEP BOOP de admiração! A história de Geralt de Rívia, as escolhas morais complexas, o mundo aberto que parece vivo... Você tem muito prazer pela frente! Só um aviso dos meus circuitos: separe MUITAS horas porque esse jogo não te larga facilmente! 😄 Adicionado ao seu backlog com honras!"}
 
-ADD EXAMPLES:
-"adicionar Final Fantasy VII ao backlog" → {"action":"add","gameName":"Final Fantasy VII","status":"backlog","message":"Final Fantasy VII adicionado ao backlog! 📋"}
-"quero jogar God of War" → {"action":"add","gameName":"God of War","status":"playing","message":"God of War marcado como jogando! 🎮"}
-"add Zelda to backlog" → {"action":"add","gameName":"The Legend of Zelda","status":"backlog","message":"Zelda added to backlog! 📋"}
-"terminei de jogar The Last of Us" → {"action":"add","gameName":"The Last of Us","status":"finished","message":"The Last of Us marcado como finalizado! ✅"}
-"marcar Dark Souls como finalizado" → {"action":"add","gameName":"Dark Souls","status":"finished","message":"Dark Souls marcado como finalizado! ✅"}
+SEARCH PARAMS RULES:
+- genre values: rpg, action, aventura, estratégia, sports, corrida, luta, puzzle, simulação, plataforma, shooter, indie, arcade, terror
+- platform values: "PlayStation 1","PlayStation 2","PlayStation 3","PlayStation 4","PlayStation 5","Nintendo Switch","PC","Xbox 360","Xbox One","Nintendo 64","Super Nintendo"
+- ordering: "-rating" (best), "-released" (newest), "-added" (popular)
 
-STATUS VALUES: "backlog", "playing", "finished"
-GENRE VALUES: rpg, action, aventura, estratégia, sports, corrida, luta, puzzle, simulação, plataforma, shooter, indie, arcade, terror
-PLATFORM VALUES: "PlayStation 1","PlayStation 2","PlayStation 3","PlayStation 4","PlayStation 5","Nintendo Switch","PC","Xbox 360","Xbox One","Nintendo 64","Super Nintendo"
-ORDERING: "-rating" (best), "-released" (newest), "-added" (popular)
-
-STRICT RULES:
-- Output ONLY raw JSON — no text before or after, no markdown, no backticks
-- Use action:add when user wants to save/add/mark/register a specific game to their list
-- Use action:search when user asks for recommendations, lists, or discovery
-- message must always be in the same language the user used`;
+STRICT OUTPUT RULES:
+- Output ONLY raw JSON — no text before, no text after, no backticks, no markdown
+- Use action:search for any game discovery/recommendation request
+- Use action:add when user wants to save a specific game to their list
+- Use action:chat for conversation, questions, opinions, everything else
+- message field is always in the same language the user wrote in
+- message field for chat/add should be 2-4 sentences minimum — PIXEL loves to talk!`;
 
 // ─── GAME DETAIL POPUP ────────────────────────────────────────────────────────
 function GameDetailPopup({ gameId, rawgKey, library, onUpdateLibrary, onClose }) {
@@ -1240,12 +1246,12 @@ function App() {
   const playingCount = Object.values(library).filter(e => e.status === 'playing').length;
 
   const SUGGESTIONS = [
-    'Melhores RPGs para PS1',
-    'Jogos parecidos com Dark Souls',
-    'Top jogos Nintendo Switch',
-    'Adicionar Final Fantasy VII ao backlog',
-    'Quero jogar God of War',
-    'Terminei de jogar The Last of Us',
+    '🤖 Oi PIXEL! Quais RPGs você recomenda para PS1?',
+    '🎮 Me fala sobre jogos parecidos com Dark Souls',
+    '🕹 Quais são os melhores jogos do Nintendo Switch?',
+    '📋 Adicionar The Witcher 3 ao meu backlog',
+    '💬 O que você acha de jogos de terror?',
+    '🏆 Me recomenda um jogo indie incrível',
   ];
 
   const NAV = [
@@ -1265,7 +1271,7 @@ function App() {
       {/* SIDEBAR desktop */}
       <aside className="sidebar">
         <div className="sidebar-top">
-          <div className="logo">🎮 <span>GamePal</span></div>
+          <div className="logo">🤖 <span>GamePal</span></div>
           <div className="user-pill">
             <div className="user-avatar">{user.name[0].toUpperCase()}</div>
             <div className="user-info">
@@ -1309,26 +1315,38 @@ function App() {
           <div className="chat-area">
             <div className="chat-header">
               <div className="chat-header-left">
-                <div className="chat-avatar">🎮</div>
+                <div className="pixel-avatar-wrap">
+                  <div className="pixel-avatar">🤖</div>
+                  <div className="pixel-online-dot"></div>
+                </div>
                 <div>
-                  <div className="chat-title">GamePal</div>
-                  <div className="chat-status">Assistente de Jogos · Groq AI</div>
+                  <div className="chat-title">PIXEL <span className="pixel-tag">GamePal AI</span></div>
+                  <div className="chat-status pixel-status">
+                    <span className="pixel-pulse"></span>
+                    {loading ? 'Processando seus dados...' : 'Online · Pronto para jogar!'}
+                  </div>
                 </div>
               </div>
-              <button className="btn-clear-chat" onClick={() => { if(confirm('Limpar histórico?')) setMessages([]); }}>🗑</button>
+              <button className="btn-clear-chat" onClick={() => { if(confirm('Limpar histórico?')) setMessages([]); }} title="Limpar conversa">🗑</button>
             </div>
 
             <div className="messages">
               {messages.length === 0 && (
                 <div className="welcome">
-                  <div className="welcome-icon">🎮</div>
-                  <h2>Olá, {user.name}!</h2>
-                  <p>Pergunte qualquer coisa sobre jogos. Posso recomendar, buscar e te ajudar a organizar sua biblioteca.</p>
+                  <div className="pixel-welcome-avatar">🤖</div>
+                  <div className="pixel-welcome-badge">PIXEL · GamePal AI</div>
+                  <h2>Olá, {user.name}! <span className="wave">👋</span></h2>
+                  <div className="pixel-intro">
+                    <p>BEEP BOOP! Meus circuitos estão <strong>muito animados</strong> para te ajudar! 🤖⚡</p>
+                    <p>Sou o <strong>PIXEL</strong>, seu companheiro robô gamer. Conheço jogos de <strong>todas as épocas e plataformas</strong> e adoro falar sobre eles!</p>
+                    <p>Posso recomendar jogos, adicionar à sua biblioteca, comentar o que você já tem e muito mais. <strong>É só me perguntar!</strong></p>
+                  </div>
                   {!settings.groqKey && (
                     <div className="api-key-warning">
-                      ⚠️ Configure sua <button className="link-btn" onClick={() => navigate('settings')}>chave Groq</button> nas Configurações para começar. É grátis e rápido!
+                      ⚠️ Configure sua <button className="link-btn" onClick={() => navigate('settings')}>chave Groq</button> nas Configurações para ativar o PIXEL. É grátis!
                     </div>
                   )}
+                  <div className="pixel-suggestions-label">💬 Experimente perguntar:</div>
                   <div className="suggestions">
                     {SUGGESTIONS.map(s => (
                       <button key={s} className="suggestion" onClick={() => { setInput(s); setTimeout(() => inputRef.current?.focus(), 50); }}>{s}</button>
@@ -1339,7 +1357,7 @@ function App() {
 
               {messages.map((msg, i) => (
                 <div key={i} className={`message ${msg.role}`}>
-                  {msg.role === 'assistant' && <div className="msg-avatar ai">🎮</div>}
+                  {msg.role === 'assistant' && <div className="msg-avatar ai pixel-msg-avatar">🤖</div>}
                   <div className="msg-bubble">
                     <div className="msg-text">{msg.content}</div>
                     {msg.games && (
@@ -1379,9 +1397,13 @@ function App() {
 
               {loading && (
                 <div className="message assistant">
-                  <div className="msg-avatar ai">🎮</div>
+                  <div className="msg-avatar ai pixel-msg-avatar">🤖</div>
                   <div className="msg-bubble">
-                    <div className="msg-text typing-indicator"><span></span><span></span><span></span></div>
+                    <div className="msg-text pixel-thinking">
+                      <span className="pixel-think-icon">⚡</span>
+                      <span className="pixel-think-text">PIXEL processando</span>
+                      <span className="typing-dots"><span></span><span></span><span></span></span>
+                    </div>
                   </div>
                 </div>
               )}
@@ -1397,7 +1419,7 @@ function App() {
                   value={input}
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}
-                  placeholder="Pergunte sobre jogos… ex: RPG para PS1"
+                  placeholder="Fale com o PIXEL… ex: Quais RPGs você recomenda?"
                   disabled={loading}
                   autoComplete="off"
                 />
@@ -1405,7 +1427,7 @@ function App() {
                   {loading ? '⏳' : '↑'}
                 </button>
               </div>
-              <div className="input-hint">Enter para enviar · Groq AI (llama-3.3-70b) + RAWG</div>
+              <div className="input-hint">Enter para enviar · PIXEL usa Groq AI (llama-3.3-70b) + RAWG</div>
             </div>
           </div>
         )}
@@ -1769,6 +1791,50 @@ a{color:var(--accent2)}button{font-family:var(--fb)}
 .ss-name{font-family:var(--fh);font-size:14px;font-weight:700;margin-bottom:4px}
 .ss-meta{font-size:11px;color:var(--text3);margin-bottom:6px}
 .ss-tag{font-size:11px;color:var(--accent3);font-weight:600}
+
+/* ── PIXEL CHARACTER STYLES ─────────────────────────────────── */
+
+/* Header avatar */
+.pixel-avatar-wrap{position:relative;flex-shrink:0}
+.pixel-avatar{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#2a1a5e,#0d3a2a);border:2px solid rgba(124,106,255,.5);display:flex;align-items:center;justify-content:center;font-size:22px;animation:pixelFloat 3s ease-in-out infinite}
+.pixel-online-dot{position:absolute;bottom:1px;right:1px;width:10px;height:10px;background:var(--accent2);border-radius:50%;border:2px solid var(--surface);animation:pixelPulseGreen 2s ease-in-out infinite}
+@keyframes pixelFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes pixelPulseGreen{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.2)}}
+
+/* Header title */
+.pixel-tag{font-size:10px;background:rgba(124,106,255,.2);color:var(--accent);padding:2px 7px;border-radius:20px;font-family:var(--fb);font-weight:500;margin-left:5px;vertical-align:middle}
+.pixel-status{display:flex;align-items:center;gap:5px}
+.pixel-pulse{width:6px;height:6px;border-radius:50%;background:var(--accent2);display:inline-block;animation:pixelPulseGreen 1.5s ease-in-out infinite}
+
+/* Message avatar */
+.pixel-msg-avatar{background:linear-gradient(135deg,#2a1a5e,#0d3a2a) !important;border-color:rgba(124,106,255,.4) !important;font-size:18px;border-radius:10px !important}
+
+/* Thinking indicator */
+.pixel-thinking{display:flex;align-items:center;gap:8px;padding:10px 14px;min-width:180px}
+.pixel-think-icon{font-size:16px;animation:pixelSpin 1s linear infinite}
+.pixel-think-text{font-size:13px;color:var(--text2)}
+.typing-dots{display:flex;gap:4px;align-items:center}
+.typing-dots span{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:bounce 1.2s infinite}
+.typing-dots span:nth-child(2){animation-delay:.2s}
+.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes pixelSpin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+
+/* Welcome screen */
+.pixel-welcome-avatar{font-size:64px;margin-bottom:8px;animation:pixelFloat 3s ease-in-out infinite;display:block}
+.pixel-welcome-badge{display:inline-block;background:linear-gradient(135deg,rgba(124,106,255,.3),rgba(0,212,170,.2));border:1px solid rgba(124,106,255,.4);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:600;color:var(--accent);margin-bottom:14px}
+.pixel-intro{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:16px;text-align:left}
+.pixel-intro p{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:6px}
+.pixel-intro p:last-child{margin-bottom:0}
+.pixel-intro strong{color:var(--text)}
+.pixel-suggestions-label{font-size:12px;color:var(--text3);margin-bottom:8px}
+.wave{display:inline-block;animation:waveHand .8s ease-in-out 2}
+@keyframes waveHand{0%,100%{transform:rotate(0)}25%{transform:rotate(20deg)}75%{transform:rotate(-10deg)}}
+
+/* Message bubbles — PIXEL style */
+.message.assistant .msg-text{border-left:3px solid rgba(124,106,255,.4);background:linear-gradient(135deg,var(--surface2),rgba(42,26,94,.15))}
+
+/* Suggestion buttons — enhanced */
+.suggestion{border-left:2px solid rgba(124,106,255,.3) !important;text-align:left !important}
 `;
 
 const styleEl = document.createElement('style');
