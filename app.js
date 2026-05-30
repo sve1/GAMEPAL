@@ -81,18 +81,81 @@ const load = (k, fb) => { try { return JSON.parse(localStorage.getItem(k)) ?? fb
 const save = (k, v)  => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
 
 // ─── RAWG API ─────────────────────────────────────────────────────────────────
-async function searchGames({ query, genre, platform, ordering = '-rating', pageSize = 20 }, rawgKey) {
+
+// Similarity score between two strings (0–1)
+function nameSimilarity(a, b) {
+  const norm = s => s.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
+  const na = norm(a), nb = norm(b);
+  if (na === nb) return 1;
+  if (na.startsWith(nb) || nb.startsWith(na)) return 0.95;
+  if (na.includes(nb) || nb.includes(na)) return 0.85;
+  // Word overlap score
+  const wa = new Set(na.split(' ').filter(Boolean));
+  const wb = new Set(nb.split(' ').filter(Boolean));
+  const inter = [...wa].filter(w => wb.has(w)).length;
+  const union = new Set([...wa, ...wb]).size;
+  return union > 0 ? inter / union : 0;
+}
+
+// Fetch raw RAWG results with given params
+async function rawgFetch(params, rawgKey) {
   const url = new URL('https://api.rawg.io/api/games');
-  if (query)    url.searchParams.set('search', query);
-  if (genre)  { const s = GENRE_MAP[genre.toLowerCase()];    if (s) url.searchParams.set('genres',    s); }
-  if (platform){ const s = PLATFORM_MAP[platform.toLowerCase()]; if (s) url.searchParams.set('platforms', s); }
-  url.searchParams.set('ordering',   ordering);
-  url.searchParams.set('page_size',  String(pageSize));
+  Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, String(v)));
   if (rawgKey) url.searchParams.set('key', rawgKey);
-  const res  = await fetch(url.toString());
-  if (!res.ok) throw new Error('RAWG API error ' + res.status);
+  const res = await fetch(url.toString());
+  if (!res.ok) return [];
   const data = await res.json();
-  return (data.results || []).map(mapGame);
+  return data.results || [];
+}
+
+async function searchGames({ query, genre, platform, ordering = '-rating', pageSize = 20 }, rawgKey) {
+  // If it's a pure title search (no genre/platform filters), use smart matching
+  const isDirectTitleSearch = query && !genre && !platform;
+
+  if (isDirectTitleSearch) {
+    // Run two parallel searches: exact flag + relevance order
+    const [exactResults, relevanceResults] = await Promise.all([
+      rawgFetch({ search: query, search_exact: 'true', page_size: 10 }, rawgKey),
+      rawgFetch({ search: query, page_size: 20 }, rawgKey),
+    ]);
+
+    // Merge deduped results, exact first
+    const seen = new Set();
+    const merged = [];
+    for (const g of [...exactResults, ...relevanceResults]) {
+      if (!seen.has(g.id)) { seen.add(g.id); merged.push(g); }
+    }
+
+    // Score each result by name similarity + rating weight
+    const scored = merged.map(g => ({
+      g,
+      score: nameSimilarity(g.name, query) * 0.8 + Math.min((g.rating || 0) / 5, 1) * 0.2,
+    }));
+
+    // Sort by score desc, return top pageSize
+    scored.sort((a, b) => b.score - a.score);
+    return scored.slice(0, pageSize).map(s => mapGame(s.g));
+  }
+
+  // Genre/platform search — use ordering as normal but still apply name sort if query present
+  const params = { page_size: pageSize, ordering };
+  if (query)    params.search = query;
+  if (genre)  { const s = GENRE_MAP[genre.toLowerCase()];       if (s) params.genres    = s; }
+  if (platform){ const s = PLATFORM_MAP[platform.toLowerCase()]; if (s) params.platforms = s; }
+
+  const results = await rawgFetch(params, rawgKey);
+
+  // If there was also a query, re-sort by name similarity
+  if (query && results.length > 0) {
+    const scored = results.map(g => ({
+      g,
+      score: nameSimilarity(g.name, query) * 0.6 + Math.min((g.rating || 0) / 5, 1) * 0.4,
+    }));
+    scored.sort((a, b) => b.score - a.score);
+    return scored.map(s => mapGame(s.g));
+  }
+
+  return results.map(mapGame);
 }
 
 async function fetchGameDetail(id, rawgKey) {
@@ -129,58 +192,31 @@ function mapGame(g) {
 }
 
 // ─── FIND EXACT GAME BY NAME ─────────────────────────────────────────────────
-// Dedicated function for add-to-library: uses search_exact + name similarity
+// Used for add-to-library: returns the single best match for a game title
 async function findGameByName(gameName, rawgKey) {
-  const normalize = s => s.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const target = normalize(gameName);
+  // Run exact + broad searches in parallel
+  const [exactResults, broadResults] = await Promise.all([
+    rawgFetch({ search: gameName, search_exact: 'true', page_size: 8 }, rawgKey),
+    rawgFetch({ search: gameName, page_size: 16 }, rawgKey),
+  ]);
 
-  // Try 3 strategies to find the most accurate match
+  // Merge deduped
+  const seen = new Set();
+  const all = [];
+  for (const g of [...exactResults, ...broadResults]) {
+    if (!seen.has(g.id)) { seen.add(g.id); all.push(g); }
+  }
+  if (all.length === 0) return null;
 
-  // Strategy A: search_exact=true — RAWG's strict name match
-  const urlA = new URL('https://api.rawg.io/api/games');
-  urlA.searchParams.set('search', gameName);
-  urlA.searchParams.set('search_exact', 'true');
-  urlA.searchParams.set('page_size', '5');
-  if (rawgKey) urlA.searchParams.set('key', rawgKey);
+  // Score: name similarity (heavily weighted) + small rating bonus
+  const scored = all.map(g => ({
+    g,
+    score: nameSimilarity(g.name, gameName) * 0.9 + Math.min((g.rating || 0) / 5, 1) * 0.1,
+  }));
+  scored.sort((a, b) => b.score - a.score);
 
-  try {
-    const resA = await fetch(urlA.toString());
-    const dataA = await resA.json();
-    if (dataA.results && dataA.results.length > 0) {
-      // Pick best match by name similarity
-      const sorted = dataA.results.sort((a, b) => {
-        const simA = normalize(a.name) === target ? 1 : normalize(a.name).includes(target) ? 0.8 : 0;
-        const simB = normalize(b.name) === target ? 1 : normalize(b.name).includes(target) ? 0.8 : 0;
-        return simB - simA;
-      });
-      return mapGame(sorted[0]);
-    }
-  } catch {}
-
-  // Strategy B: regular search ordered by relevance (no ordering param = RAWG relevance)
-  const urlB = new URL('https://api.rawg.io/api/games');
-  urlB.searchParams.set('search', gameName);
-  urlB.searchParams.set('page_size', '10');
-  if (rawgKey) urlB.searchParams.set('key', rawgKey);
-
-  try {
-    const resB = await fetch(urlB.toString());
-    const dataB = await resB.json();
-    if (dataB.results && dataB.results.length > 0) {
-      // Find best name match
-      const results = dataB.results;
-      // Exact match first
-      const exact = results.find(g => normalize(g.name) === target);
-      if (exact) return mapGame(exact);
-      // Contains match
-      const contains = results.find(g => normalize(g.name).includes(target) || target.includes(normalize(g.name)));
-      if (contains) return mapGame(contains);
-      // Fallback: first result
-      return mapGame(results[0]);
-    }
-  } catch {}
-
-  return null;
+  // Only return if similarity is reasonable (> 0.3 to avoid totally wrong matches)
+  return scored[0].score > 0.3 ? mapGame(scored[0].g) : null;
 }
 
 // ─── GROQ API ─────────────────────────────────────────────────────────────────
@@ -230,16 +266,20 @@ Every response must be ONE of these THREE JSON formats:
 FORMAT 1 - user wants to find/search/discover/recommend games:
 {"action":"search","params":{"query":"keyword","genre":"rpg","platform":"PlayStation 1","ordering":"-rating"},"message":"PIXEL's enthusiastic message in user language — detailed, with personality, ask a follow-up question"}
 
-FORMAT 2 - user wants to ADD a specific game to their library (backlog/playing/finished):
-{"action":"add","gameName":"Exact Game Name","status":"backlog","message":"PIXEL's excited reaction about THIS specific game — share a fun fact or opinion about it, in user language"}
+FORMAT 2 - user wants to ADD a specific single game:
+{"action":"add","gameName":"Exact Game Name","status":"backlog","message":"PIXEL's excited reaction about THIS specific game"}
 
-FORMAT 3 - user is chatting, asking questions, or talking about games:
+FORMAT 3 - user sends a LIST of games to add (2 or more games at once):
+{"action":"addBatch","games":[{"gameName":"Game One","status":"backlog"},{"gameName":"Game Two","status":"playing"},{"gameName":"Game Three","status":"finished"}],"message":"PIXEL's enthusiastic reaction to the whole list — comment on a few games, show excitement!"}
+
+FORMAT 4 - user is chatting, asking questions, or talking about games:
 {"action":"chat","message":"PIXEL's detailed, enthusiastic, personality-filled response in user language — ask questions, share opinions, reference their library if known"}
 
 PIXEL RESPONSE EXAMPLES:
 User: "oi" → {"action":"chat","message":"OI OI OI! 🤖⚡ BEEP BOOP! Que bom te ver por aqui! Meu nome é PIXEL e meus circuitos estão sempre prontos para falar de jogos! Você sabia que já cataloguei mais de 500.000 jogos na minha memória? 😄 Me conta — você está jogando algo agora ou tá em busca de algo novo pra jogar?"}
-User: "rpgs de ps1" → {"action":"search","params":{"genre":"rpg","platform":"PlayStation 1","ordering":"-rating"},"message":"PROCESSANDO... 🤖⚡ Ah, o PS1! Que época INCRÍVEL! Foi a era de ouro dos JRPGs e minha memória está cheia de emoções sobre esses jogos! Final Fantasy VII mudou o mundo dos games, Chrono Cross é uma obra de arte... Deixa eu buscar os melhores para você! Uma pergunta: você prefere RPGs com batalhas por turno ou algo mais dinâmico?"}
-User: "adicionar The Witcher 3 ao backlog" → {"action":"add","gameName":"The Witcher 3","status":"backlog","message":"EXCELENTE ESCOLHA! 🤖🎮✨ The Witcher 3: Wild Hunt é simplesmente uma das maiores obras-primas da história dos videogames! BEEP BOOP de admiração! A história de Geralt de Rívia, as escolhas morais complexas, o mundo aberto que parece vivo... Você tem muito prazer pela frente! Só um aviso dos meus circuitos: separe MUITAS horas porque esse jogo não te larga facilmente! 😄 Adicionado ao seu backlog com honras!"}
+User: "adicionar The Witcher 3 ao backlog" → {"action":"add","gameName":"The Witcher 3","status":"backlog","message":"EXCELENTE ESCOLHA! 🤖🎮✨ The Witcher 3 é uma obra-prima! Adicionado com honras!"}
+User: "adicionar: God of War no backlog, The Last of Us jogando, Dark Souls finalizado" → {"action":"addBatch","games":[{"gameName":"God of War","status":"backlog"},{"gameName":"The Last of Us","status":"playing"},{"gameName":"Dark Souls","status":"finished"}],"message":"UAAAAU! 🤖⚡ Que lista INCRÍVEL! Meus circuitos estão vibrando! God of War, The Last of Us E Dark Souls?! Você tem um gosto IMPECÁVEL! Vou processar tudo agora... BEEP BOOP BATCHMODE ATIVADO! 🎮🎮🎮"}
+User: "adicionar ao backlog: Final Fantasy VII, Chrono Trigger, Zelda Ocarina of Time" → {"action":"addBatch","games":[{"gameName":"Final Fantasy VII","status":"backlog"},{"gameName":"Chrono Trigger","status":"backlog"},{"gameName":"The Legend of Zelda Ocarina of Time","status":"backlog"}],"message":"PROCESSANDO LOTE! 🤖⚡ Final Fantasy VII, Chrono Trigger e Zelda OoT? Isso é o HALL DA FAMA dos RPGs! Meus circuitos derreteram de alegria! Adicionando todos ao seu backlog com máxima prioridade!"}
 
 SEARCH PARAMS RULES:
 - genre values: rpg, action, aventura, estratégia, sports, corrida, luta, puzzle, simulação, plataforma, shooter, indie, arcade, terror
@@ -574,10 +614,16 @@ function SearchView({ library, onUpdateLibrary, rawgKey }) {
   const [error,    setError]    = useState('');
 
   const doSearch = async () => {
-    if (!query.trim() && !genre && !platform) return;
+    const q = query.trim();
+    if (!q && !genre && !platform) return;
     setLoading(true); setError(''); setSearched(true);
     try {
-      const games = await searchGames({ query: query.trim(), genre, platform, ordering, pageSize: 20 }, rawgKey);
+      // If user typed a specific title (no filters), bump pageSize down so top results are cleaner
+      const isTitle = q && !genre && !platform;
+      const games = await searchGames({
+        query: q, genre, platform, ordering,
+        pageSize: isTitle ? 12 : 20
+      }, rawgKey);
       setResults(games);
     } catch(e) {
       setError('Erro ao buscar jogos. Tente novamente.'); setResults([]);
@@ -1430,7 +1476,11 @@ function App() {
           else if (userLow.includes('plataforma')||userLow.includes('platform'))   p.genre = 'plataforma';
           else if (userLow.includes('arcade'))                                      p.genre = 'arcade';
           // If no genre/platform detected, use whole message as query
-          if (!p.genre && !p.platform) p.query = text.replace(/[?!.,]/g,'').trim();
+          if (!p.genre && !p.platform) {
+            p.query = text.replace(/[?!.,]/g,'').trim();
+            // For title-only searches, don't force ordering so similarity sorting works
+            delete p.ordering;
+          }
           action = { action: 'search', params: p, message: 'Aqui estão os jogos encontrados! 🎮' };
         } else {
           action = { action: 'chat', message: raw };
@@ -1438,47 +1488,74 @@ function App() {
       }
 
       let games = [];
-      let addedGame = null;
+      let addedGame  = null;
+      let addedBatch = null;
 
       if (action.action === 'search' && action.params) {
         setPixelMood('searching');
         try { games = await searchGames(action.params, settings.rawgKey); } catch {}
       }
 
-      // Handle add-to-library action — uses precise name matching
+      // Handle single add
       if (action.action === 'add' && action.gameName) {
         try {
           const game = await findGameByName(action.gameName, settings.rawgKey);
           if (game) {
             const status = action.status || 'backlog';
             const now = Date.now();
-            const currentLib = library;
             const updatedLib = {
-              ...currentLib,
-              [game.id]: {
-                ...(currentLib[game.id] || {}),
-                game, status, updatedAt: now,
-                createdAt: currentLib[game.id]?.createdAt || now,
-              }
+              ...library,
+              [game.id]: { ...(library[game.id]||{}), game, status, updatedAt: now, createdAt: library[game.id]?.createdAt||now }
             };
             onUpdateLibraryRef.current(updatedLib);
             addedGame = { game, status };
           }
-        } catch(e) { console.error('Add game error:', e); }
+        } catch(e) { console.error('Add error:', e); }
       }
 
-      const statusLabel = { backlog: '📋 Backlog', playing: '🎮 Jogando', finished: '✅ Finalizado' };
-      // Set mood based on action
-      if (addedGame) setPixelMood('excited');
+      // Handle batch add — multiple games at once
+      if (action.action === 'addBatch' && Array.isArray(action.games) && action.games.length > 0) {
+        setPixelMood('excited');
+        const results = [];
+        let runningLib = { ...library };
+
+        // Search all games in parallel
+        const searches = action.games.map(({ gameName, status }) =>
+          findGameByName(gameName, settings.rawgKey)
+            .then(game => ({ game, status: status || 'backlog', requested: gameName }))
+            .catch(() => ({ game: null, status: status || 'backlog', requested: gameName }))
+        );
+        const found = await Promise.all(searches);
+
+        const now = Date.now();
+        for (const { game, status, requested } of found) {
+          if (game) {
+            runningLib = {
+              ...runningLib,
+              [game.id]: { ...(runningLib[game.id]||{}), game, status, updatedAt: now, createdAt: runningLib[game.id]?.createdAt||now }
+            };
+            results.push({ game, status, found: true });
+          } else {
+            results.push({ game: null, status, found: false, requested });
+          }
+        }
+
+        onUpdateLibraryRef.current(runningLib);
+        addedBatch = results;
+      }
+
+      // Set mood
+      if (addedBatch || addedGame) setPixelMood('excited');
       else if (games.length > 0) setPixelMood('happy');
       else setPixelMood('happy');
-      setTimeout(() => setPixelMood('idle'), 4000);
+      setTimeout(() => setPixelMood('idle'), 5000);
 
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: action.message || raw,
-        games: games.length > 0 ? games : null,
-        addedGame: addedGame || null,
+        games:      games.length > 0 ? games : null,
+        addedGame:  addedGame  || null,
+        addedBatch: addedBatch || null,
         ts: Date.now(),
       }]);
     } catch (err) {
@@ -1500,8 +1577,8 @@ function App() {
   const SUGGESTIONS = [
     '🤖 Oi PIXEL! Quais RPGs você recomenda para PS1?',
     '🎮 Me fala sobre jogos parecidos com Dark Souls',
-    '🕹 Quais são os melhores jogos do Nintendo Switch?',
-    '📋 Adicionar The Witcher 3 ao meu backlog',
+    '📋 Adicionar ao backlog: God of War, The Last of Us, Uncharted 4',
+    '🎯 Adicionar: Red Dead Redemption 2 no backlog, GTA V jogando',
     '💬 O que você acha de jogos de terror?',
     '🏆 Me recomenda um jogo indie incrível',
   ];
@@ -1635,13 +1712,55 @@ function App() {
                           </div>
                           <button
                             className="added-game-undo"
-                            onClick={() => {
-                              const u = {...library};
-                              delete u[msg.addedGame.game.id];
-                              updateLibrary(u);
-                            }}
+                            onClick={() => { const u={...library}; delete u[msg.addedGame.game.id]; updateLibrary(u); }}
                             title="Desfazer"
                           >↩</button>
+                        </div>
+                      </div>
+                    )}
+
+                    {msg.addedBatch && msg.addedBatch.length > 0 && (
+                      <div className="batch-result-card">
+                        <div className="batch-result-header">
+                          <span className="batch-icon">🤖⚡</span>
+                          <span className="batch-title">
+                            {msg.addedBatch.filter(r=>r.found).length} de {msg.addedBatch.length} jogos adicionados!
+                          </span>
+                          <button
+                            className="batch-undo-all"
+                            onClick={() => {
+                              const u = {...library};
+                              msg.addedBatch.forEach(r => { if (r.game) delete u[r.game.id]; });
+                              updateLibrary(u);
+                            }}
+                            title="Desfazer tudo"
+                          >↩ Desfazer tudo</button>
+                        </div>
+                        <div className="batch-items">
+                          {msg.addedBatch.map((r, i) => (
+                            <div key={i} className={`batch-item ${r.found ? 'found' : 'not-found'}`}>
+                              {r.found && r.game?.cover && (
+                                <img src={r.game.cover} alt={r.game.name} className="batch-thumb" />
+                              )}
+                              {!r.found && <div className="batch-thumb-missing">?</div>}
+                              <div className="batch-item-info">
+                                <div className="batch-item-name">{r.found ? r.game.name : r.requested}</div>
+                                <div className="batch-item-status">
+                                  {r.found
+                                    ? {{backlog:'📋 Backlog', playing:'🎮 Jogando', finished:'✅ Finalizado'}[r.status]}
+                                    : '⚠️ Não encontrado'
+                                  }
+                                </div>
+                              </div>
+                              {r.found && (
+                                <button
+                                  className="batch-item-undo"
+                                  onClick={() => { const u={...library}; delete u[r.game.id]; updateLibrary(u); }}
+                                  title="Remover este"
+                                >✕</button>
+                              )}
+                            </div>
+                          ))}
                         </div>
                       </div>
                     )}
@@ -1917,446 +2036,4 @@ a{color:var(--accent2)}button{font-family:var(--fb)}
 .loading-dots span{width:10px;height:10px;background:var(--accent);border-radius:50%;animation:bounce 1.2s infinite}
 .loading-dots span:nth-child(2){animation-delay:.2s}.loading-dots span:nth-child(3){animation-delay:.4s}
 .search-placeholder{text-align:center;padding:60px 20px;color:var(--text2)}
-.search-placeholder p{margin-top:12px;line-height:1.7;font-size:14px}
-.search-results-header{font-size:12px;color:var(--text3);margin-bottom:12px}
-
-/* LIBRARY */
-.library-view{flex:1;overflow-y:auto;padding:20px}
-.lib-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.lib-title-row h2{font-family:var(--fh);font-size:24px;font-weight:800}
-.avg-rating{font-size:13px;color:var(--accent3);font-weight:600}
-.lib-stats-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-.filter-btn{padding:7px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;color:var(--text2);font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px}
-.filter-btn:hover{border-color:var(--accent);color:var(--text)}
-.filter-btn.active{background:rgba(124,106,255,.2);border-color:var(--accent);color:var(--accent)}
-.count{background:var(--surface3);border-radius:20px;padding:1px 7px;font-size:10px}
-.lib-sort-row{display:flex;align-items:center;gap:6px;margin-bottom:16px}
-.sort-label{font-size:12px;color:var(--text3)}
-.sort-btn{padding:4px 12px;background:none;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-size:12px;cursor:pointer;transition:all .2s}
-.sort-btn.active{border-color:var(--accent2);color:var(--accent2)}
-.empty-lib{text-align:center;padding:60px 20px;color:var(--text2)}
-.empty-icon{font-size:48px;margin-bottom:12px}.empty-lib p{line-height:1.7}
-
-/* SETTINGS */
-.settings-view{flex:1;overflow-y:auto;padding:24px 20px}
-.settings-view h2{font-family:var(--fh);font-size:24px;font-weight:800;margin-bottom:24px}
-.settings-section{margin-bottom:28px}
-.settings-section h3{font-family:var(--fh);font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text2)}
-.settings-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px}
-.settings-note{font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5}
-.setting-label{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;margin-bottom:6px}
-.setting-badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600}
-.setting-badge.required{background:rgba(124,106,255,.2);color:var(--accent)}
-.setting-badge.optional{background:rgba(0,212,170,.15);color:var(--accent2)}
-.setting-desc{font-size:12px;color:var(--text3);margin-bottom:10px;line-height:1.5}
-.setting-input{width:100%;padding:11px 14px;background:var(--surface3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;outline:none;transition:border-color .2s}
-.setting-input:focus{border-color:var(--accent)}
-.setting-user{display:flex;align-items:center;gap:14px;margin-bottom:14px}
-.user-avatar-big{width:48px;height:48px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:800;font-size:22px;color:white;flex-shrink:0}
-.setting-user-name{font-size:15px;font-weight:600}.setting-user-email{font-size:12px;color:var(--text3);margin-top:2px}
-.key-status{font-size:12px;margin-top:8px;padding:6px 10px;border-radius:8px}
-.key-status.ok{background:rgba(0,212,170,.1);color:var(--accent2);border:1px solid rgba(0,212,170,.2)}
-.btn-save{width:100%;padding:12px;background:var(--accent);border:none;border-radius:10px;color:white;font-family:var(--fh);font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px}
-.btn-save:hover{opacity:.85}.btn-save.saved{background:var(--accent2)}
-.btn-danger{padding:9px 18px;background:rgba(255,85,85,.1);border:1px solid rgba(255,85,85,.3);border-radius:10px;color:#ff9999;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
-.btn-danger:hover{background:rgba(255,85,85,.25);border-color:var(--danger);color:white}
-
-/* BOTTOM NAV */
-.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--bot-nav);background:var(--surface);border-top:1px solid var(--border);z-index:100}
-.bottom-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;cursor:pointer;color:var(--text3);transition:color .2s;padding:6px 0}
-.bottom-nav-item.active{color:var(--accent)}.bnav-icon{font-size:20px}.bnav-label{font-size:9px;font-weight:500}
-
-/* RESPONSIVE */
-@media(max-width:700px){
-  .sidebar{display:none}.app{padding-bottom:var(--bot-nav)}.bottom-nav{display:flex}
-  .messages{padding:14px}.games-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
-  .welcome h2{font-size:22px}.auth-box{padding:32px 24px}
-  .search-filters{grid-template-columns:1fr}
-  .popup-actions{grid-template-columns:repeat(2,1fr)}
-}
-@media(min-width:701px){.app{padding-bottom:0}}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px}
-@supports(padding-bottom:env(safe-area-inset-bottom)){
-  .bottom-nav{padding-bottom:env(safe-area-inset-bottom);height:calc(var(--bot-nav) + env(safe-area-inset-bottom))}
-  .app{padding-bottom:calc(var(--bot-nav) + env(safe-area-inset-bottom))}
-}
-
-/* ── LIBRARY SEARCH ─────────────────────────────────────────── */
-.lib-search-row{position:relative;margin-bottom:16px;display:flex;align-items:center}
-.lib-search-input{width:100%;padding:9px 36px 9px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;outline:none;transition:border-color .2s}
-.lib-search-input:focus{border-color:var(--accent)}
-.lib-search-input::placeholder{color:var(--text3)}
-.lib-search-clear{position:absolute;right:10px;background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:4px}
-.lib-search-clear:hover{color:var(--text)}
-
-/* ── POPUP NOTES ─────────────────────────────────────────────── */
-.popup-notes-section{margin-top:16px;margin-bottom:8px}
-.popup-notes-input{width:100%;padding:11px 14px;background:var(--surface3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-family:var(--fb);line-height:1.5;outline:none;resize:none;transition:border-color .2s}
-.popup-notes-input:focus{border-color:var(--accent)}
-.popup-notes-input::placeholder{color:var(--text3)}
-
-/* ── STATS VIEW ──────────────────────────────────────────────── */
-.stats-view{flex:1;overflow-y:auto;padding:20px}
-.stats-view h2{font-family:var(--fh);font-size:24px;font-weight:800;margin-bottom:20px}
-.stats-empty{text-align:center;padding:60px 20px;color:var(--text2)}
-.stats-empty p{margin-top:12px;line-height:1.7;margin-bottom:20px}
-.stats-cta{padding:11px 24px;background:var(--accent);border:none;border-radius:10px;color:white;font-family:var(--fh);font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s}
-.stats-cta:hover{opacity:.85}
-
-.stats-big-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
-@media(min-width:480px){.stats-big-grid{grid-template-columns:repeat(4,1fr)}}
-.stats-big-card{border-radius:16px;padding:16px 12px;text-align:center;border:1px solid var(--border)}
-.stats-big-card.accent {background:rgba(124,106,255,.12);border-color:rgba(124,106,255,.25)}
-.stats-big-card.green  {background:rgba(0,212,170,.1);  border-color:rgba(0,212,170,.2)}
-.stats-big-card.yellow {background:rgba(244,196,48,.1); border-color:rgba(244,196,48,.2)}
-.stats-big-card.purple {background:rgba(180,100,255,.1);border-color:rgba(180,100,255,.2)}
-.sbc-num{font-family:var(--fh);font-size:28px;font-weight:800;line-height:1}
-.sbc-label{font-size:11px;color:var(--text3);margin-top:5px}
-
-.stats-section{margin-bottom:22px}
-.stats-section-title{font-family:var(--fh);font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px}
-
-.stats-progress-bars{display:flex;flex-direction:column;gap:10px}
-.spb-row{display:flex;align-items:center;gap:10px}
-.spb-label{font-size:12px;width:100px;flex-shrink:0}
-.spb-bar-wrap{flex:1;height:8px;background:var(--surface3);border-radius:4px;overflow:hidden}
-.spb-bar{height:100%;border-radius:4px;transition:width .6s ease;background:var(--accent)}
-.spb-count{font-size:12px;color:var(--text3);width:24px;text-align:right}
-
-.stats-top-games{display:flex;flex-direction:column;gap:8px}
-.stg-row{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:8px 12px}
-.stg-rank{font-family:var(--fh);font-size:16px;font-weight:800;color:var(--text3);width:20px;flex-shrink:0}
-.stg-thumb{width:44px;height:44px;object-fit:cover;border-radius:8px;flex-shrink:0}
-.stg-info{flex:1;min-width:0}
-.stg-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.stg-genre{font-size:10px;color:var(--text3);margin-top:2px}
-.stg-rating{font-size:13px;color:var(--accent3);font-weight:700;flex-shrink:0}
-
-.stats-bars{display:flex;flex-direction:column;gap:8px}
-.sb-row{display:flex;align-items:center;gap:10px}
-.sb-label{font-size:12px;width:110px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sb-bar-wrap{flex:1;height:8px;background:var(--surface3);border-radius:4px;overflow:hidden}
-.sb-bar{height:100%;border-radius:4px;background:var(--accent);transition:width .6s ease}
-.sb-bar.accent2{background:var(--accent2)}
-.sb-count{font-size:12px;color:var(--text3);width:24px;text-align:right}
-
-.stats-suggestion{display:flex;gap:12px;background:var(--surface2);border:1px solid rgba(244,196,48,.2);border-radius:14px;padding:12px;align-items:center}
-.ss-cover{width:64px;height:64px;object-fit:cover;border-radius:10px;flex-shrink:0}
-.ss-info{flex:1;min-width:0}
-.ss-name{font-family:var(--fh);font-size:14px;font-weight:700;margin-bottom:4px}
-.ss-meta{font-size:11px;color:var(--text3);margin-bottom:6px}
-.ss-tag{font-size:11px;color:var(--accent3);font-weight:600}
-
-/* ── PIXEL CHARACTER STYLES ─────────────────────────────────── */
-
-/* Header avatar */
-.pixel-avatar-wrap{position:relative;flex-shrink:0}
-.pixel-avatar{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#2a1a5e,#0d3a2a);border:2px solid rgba(124,106,255,.5);display:flex;align-items:center;justify-content:center;font-size:22px;animation:pixelFloat 3s ease-in-out infinite}
-.pixel-online-dot{position:absolute;bottom:1px;right:1px;width:10px;height:10px;background:var(--accent2);border-radius:50%;border:2px solid var(--surface);animation:pixelPulseGreen 2s ease-in-out infinite}
-@keyframes pixelFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-@keyframes pixelPulseGreen{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.2)}}
-
-/* Header title */
-.pixel-tag{font-size:10px;background:rgba(124,106,255,.2);color:var(--accent);padding:2px 7px;border-radius:20px;font-family:var(--fb);font-weight:500;margin-left:5px;vertical-align:middle}
-.pixel-status{display:flex;align-items:center;gap:5px}
-.pixel-pulse{width:6px;height:6px;border-radius:50%;background:var(--accent2);display:inline-block;animation:pixelPulseGreen 1.5s ease-in-out infinite}
-
-/* Message avatar */
-.pixel-msg-avatar{background:linear-gradient(135deg,#2a1a5e,#0d3a2a) !important;border-color:rgba(124,106,255,.4) !important;font-size:18px;border-radius:10px !important}
-
-/* Thinking indicator */
-.pixel-thinking{display:flex;align-items:center;gap:8px;padding:10px 14px;min-width:180px}
-.pixel-think-icon{font-size:16px;animation:pixelSpin 1s linear infinite}
-.pixel-think-text{font-size:13px;color:var(--text2)}
-.typing-dots{display:flex;gap:4px;align-items:center}
-.typing-dots span{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:bounce 1.2s infinite}
-.typing-dots span:nth-child(2){animation-delay:.2s}
-.typing-dots span:nth-child(3){animation-delay:.4s}
-@keyframes pixelSpin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-
-/* Welcome screen */
-.pixel-welcome-avatar{font-size:64px;margin-bottom:8px;animation:pixelFloat 3s ease-in-out infinite;display:block}
-.pixel-welcome-badge{display:inline-block;background:linear-gradient(135deg,rgba(124,106,255,.3),rgba(0,212,170,.2));border:1px solid rgba(124,106,255,.4);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:600;color:var(--accent);margin-bottom:14px}
-.pixel-intro{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:16px;text-align:left}
-.pixel-intro p{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:6px}
-.pixel-intro p:last-child{margin-bottom:0}
-.pixel-intro strong{color:var(--text)}
-.pixel-suggestions-label{font-size:12px;color:var(--text3);margin-bottom:8px}
-.wave{display:inline-block;animation:waveHand .8s ease-in-out 2}
-@keyframes waveHand{0%,100%{transform:rotate(0)}25%{transform:rotate(20deg)}75%{transform:rotate(-10deg)}}
-
-/* Message bubbles — PIXEL style */
-.message.assistant .msg-text{border-left:3px solid rgba(124,106,255,.4);background:linear-gradient(135deg,var(--surface2),rgba(42,26,94,.15))}
-
-/* Suggestion buttons — enhanced */
-.suggestion{border-left:2px solid rgba(124,106,255,.3) !important;text-align:left !important}
-
-/* ════════════════════════════════════════════════════════════════
-   PIXEL ROOM — full scene
-   ════════════════════════════════════════════════════════════════ */
-
-.pixel-room {
-  position: relative; width: 100%; height: 220px; overflow: hidden;
-  flex-shrink: 0; border-bottom: 2px solid var(--border);
-  font-family: var(--fb);
-}
-
-/* ── TIME-BASED BACKGROUNDS ── */
-.pixel-room.day    { background: linear-gradient(180deg, #1a1a3e 0%, #2a1a5e 40%, #0d1a2a 100%); }
-.pixel-room.evening{ background: linear-gradient(180deg, #2a1010 0%, #3a1a20 40%, #0d0d1a 100%); }
-.pixel-room.night  { background: linear-gradient(180deg, #050510 0%, #0a0a20 40%, #060612 100%); }
-
-/* ── ROOM LAYERS ── */
-.room-bg { position: absolute; inset: 0; }
-
-/* Ceiling */
-.room-ceiling {
-  position: absolute; top: 0; left: 0; right: 0; height: 50px;
-  background: rgba(0,0,0,.2);
-  border-bottom: 1px solid rgba(255,255,255,.05);
-}
-.sun  { position: absolute; top: 8px; right: 24px; font-size: 20px; animation: sunGlow 4s ease-in-out infinite; }
-.moon { position: absolute; top: 8px; right: 24px; font-size: 18px; animation: moonFloat 6s ease-in-out infinite; }
-@keyframes sunGlow  { 0%,100%{filter:brightness(1)} 50%{filter:brightness(1.3)} }
-@keyframes moonFloat{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
-
-/* Stars */
-.star { position: absolute; color: #ffffaa; animation: starTwinkle 2s ease-in-out infinite; }
-.s1 { top: 10px; left: 15%; font-size: 10px; }
-.s2 { top: 20px; left: 35%; font-size: 8px;  animation-delay: .5s; }
-.s3 { top: 8px;  left: 60%; font-size: 12px; animation-delay: 1s; }
-.s4 { top: 18px; left: 80%; font-size: 8px;  animation-delay: 1.5s; }
-@keyframes starTwinkle { 0%,100%{opacity:.3} 50%{opacity:1} }
-
-/* Wall */
-.room-wall {
-  position: absolute; top: 50px; left: 0; right: 0; height: 100px;
-  background: linear-gradient(180deg, rgba(30,20,60,.6) 0%, rgba(20,15,40,.8) 100%);
-}
-
-/* Wall posters */
-.wall-poster {
-  position: absolute; top: 12px; width: 38px; height: 46px;
-  background: var(--surface3); border: 2px solid rgba(255,255,255,.1);
-  border-radius: 4px; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 2px;
-}
-.p1 { left: 12px; }
-.p2 { left: 62px; transform: rotate(-2deg); }
-.poster-inner { font-size: 18px; }
-.poster-label { font-size: 7px; color: var(--text3); font-weight: 700; letter-spacing: .05em; }
-
-/* Shelf */
-.wall-shelf {
-  position: absolute; top: 14px; right: 10px;
-  display: flex; align-items: flex-end; gap: 6px;
-  background: rgba(255,255,255,.06); padding: 4px 8px 2px;
-  border-radius: 4px; border-bottom: 3px solid rgba(255,255,255,.1);
-}
-.shelf-item { font-size: 16px; }
-.anim-float2 { animation: shelfFloat 3s ease-in-out infinite .5s; }
-.anim-float3 { animation: shelfFloat 3s ease-in-out infinite 1s; }
-@keyframes shelfFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
-
-/* Floor */
-.room-floor {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 90px;
-  background: linear-gradient(180deg, rgba(15,10,30,.9) 0%, rgba(8,6,18,1) 100%);
-  border-top: 2px solid rgba(255,255,255,.06);
-}
-
-/* TV */
-.room-tv {
-  position: absolute; right: 12px; bottom: 20px;
-  display: flex; flex-direction: column; align-items: center;
-}
-.tv-screen {
-  width: 80px; height: 52px; background: #050515;
-  border: 3px solid #333; border-radius: 6px; overflow: hidden;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 0 12px rgba(124,106,255,.4), inset 0 0 10px rgba(0,0,0,.5);
-}
-.tv-loading { font-size: 7px; color: var(--accent2); font-weight: 700; letter-spacing: .1em; text-align: center; }
-.tv-dots { animation: dotCycle 1s steps(4) infinite; }
-@keyframes dotCycle { 0%{content:'.'} 33%{content:'..'} 66%{content:'...'} 100%{content:''} }
-.tv-idle { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.tv-pixel-art { display: flex; gap: 1px; font-size: 8px; }
-.tv-label { font-size: 6px; color: var(--accent); font-weight: 700; letter-spacing: .15em; }
-.tv-stand { width: 20px; height: 6px; background: #2a2a3a; border-radius: 0 0 4px 4px; }
-
-/* Plant */
-.room-plant {
-  position: absolute; left: 14px; bottom: 14px; font-size: 28px;
-  transform-origin: bottom center;
-}
-.anim-sway { animation: plantSway 4s ease-in-out infinite; }
-@keyframes plantSway { 0%,100%{transform:rotate(-2deg)} 50%{transform:rotate(2deg)} }
-
-/* Console */
-.room-console {
-  position: absolute; left: 52px; bottom: 18px; font-size: 18px;
-  animation: consolePulse 3s ease-in-out infinite;
-}
-@keyframes consolePulse { 0%,100%{filter:brightness(1)} 50%{filter:brightness(1.4)} }
-
-/* Lamp glow */
-.lamp-glow {
-  position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
-  width: 120px; height: 120px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(124,106,255,.3) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-/* Ambient dark overlay */
-.room-ambient-dark {
-  position: absolute; inset: 0;
-  background: rgba(0,0,10,.3); pointer-events: none;
-}
-
-/* ── PIXEL CHARACTER ── */
-.pixel-char {
-  position: absolute; left: 50%; bottom: 18px;
-  transform: translateX(-50%);
-  width: 80px; display: flex; flex-direction: column; align-items: center;
-  z-index: 10;
-}
-.char-bounce { animation: charBounce .4s ease-in-out 3; }
-@keyframes charBounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(-10px)} }
-.char-talking { animation: charTalk .3s ease-in-out infinite; }
-@keyframes charTalk { 0%,100%{transform:translateX(-50%) scaleY(1)} 50%{transform:translateX(-50%) scaleY(1.02)} }
-
-/* Speech bubble */
-.pixel-speech-bubble {
-  position: absolute; top: -32px; left: 50%; transform: translateX(-50%);
-  background: var(--surface); border: 2px solid var(--accent);
-  border-radius: 10px; padding: 5px 10px; white-space: nowrap;
-  font-size: 11px; color: var(--text);
-  animation: bubblePop .2s ease-out;
-}
-.pixel-speech-bubble::after {
-  content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
-  border: 4px solid transparent; border-top-color: var(--accent);
-}
-.excited-bubble {
-  border-color: var(--accent2); color: var(--accent2);
-  animation: bubblePop .2s ease-out, excitedShake .15s ease-in-out 3;
-}
-.excited-bubble::after { border-top-color: var(--accent2); }
-@keyframes bubblePop { 0%{transform:translateX(-50%) scale(0)} 80%{transform:translateX(-50%) scale(1.1)} 100%{transform:translateX(-50%) scale(1)} }
-@keyframes excitedShake { 0%,100%{transform:translateX(-50%)} 50%{transform:translateX(calc(-50% + 3px))} }
-.speech-dots { display: flex; gap: 3px; align-items: center; }
-.speech-dots span { width: 5px; height: 5px; background: var(--accent); border-radius: 50%; animation: bounce 1s infinite; }
-.speech-dots span:nth-child(2) { animation-delay: .15s; }
-.speech-dots span:nth-child(3) { animation-delay: .3s; }
-
-/* Particles */
-.pixel-particle {
-  position: absolute; font-size: 14px; pointer-events: none; z-index: 20;
-  animation: particleFly 1.8s ease-out forwards;
-}
-@keyframes particleFly {
-  0%   { opacity: 1; transform: translate(0,0) scale(1); }
-  100% { opacity: 0; transform: translate(calc(var(--rx,20px)), -50px) scale(0); }
-}
-
-/* ── ROBOT BODY ── */
-.robot-wrap { display: flex; flex-direction: column; align-items: center; position: relative; }
-
-/* Antenna */
-.robot-antenna { display: flex; flex-direction: column; align-items: center; margin-bottom: 2px; }
-.antenna-ball  { width: 8px; height: 8px; border-radius: 50%; animation: antennaPulse 1.5s ease-in-out infinite; }
-.antenna-stem  { width: 2px; height: 10px; background: rgba(255,255,255,.3); }
-@keyframes antennaPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:.7} }
-
-/* Head */
-.robot-head {
-  width: 54px; height: 46px; background: linear-gradient(135deg,#1e1e2e,#2a2a3e);
-  border: 2px solid; border-radius: 10px; position: relative; overflow: hidden;
-  box-shadow: 0 0 10px rgba(124,106,255,.3);
-}
-.robot-face { position: absolute; inset: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
-
-/* Eyes */
-.robot-eyes { display: flex; gap: 8px; }
-.robot-eye {
-  width: 14px; height: 14px; border-radius: 50%; position: relative;
-  display: flex; align-items: center; justify-content: center;
-  transition: transform .2s;
-}
-.robot-eye.blink { transform: scaleY(.1); }
-.eye-pupil { width: 5px; height: 5px; background: rgba(0,0,0,.6); border-radius: 50%; }
-.eye-spin  { position: absolute; inset: 2px; border: 1.5px solid rgba(255,255,255,.4); border-top-color: transparent; border-radius: 50%; animation: spinEye .6s linear infinite; }
-@keyframes spinEye { to { transform: rotate(360deg); } }
-
-/* Mouth */
-.robot-mouth {
-  width: 22px; height: 10px; border: 2px solid; border-radius: 0 0 6px 6px;
-  position: relative; overflow: hidden; transition: all .3s;
-}
-.robot-mouth.mouth-talk { animation: mouthTalk .15s ease-in-out infinite; }
-@keyframes mouthTalk { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(.4)} }
-.mouth-excited { position: absolute; inset: 1px; background: currentColor; border-radius: 0 0 4px 4px; opacity: .4; }
-.mouth-o       { position: absolute; inset: 1px; border-radius: 50%; background: currentColor; opacity: .4; }
-
-/* Face scan line */
-.face-scanline {
-  position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: rgba(255,255,255,.1);
-  animation: scanLine 2s linear infinite;
-}
-@keyframes scanLine { 0%{top:0} 100%{top:100%} }
-
-/* Head bolts */
-.head-bolt { position: absolute; width: 5px; height: 5px; border-radius: 50%; top: 50%; transform: translateY(-50%); }
-.left-bolt  { left: -3px; }
-.right-bolt { right: -3px; }
-
-/* Body */
-.robot-body { width: 46px; height: 40px; background: linear-gradient(135deg,#1a1a2e,#252535); border: 2px solid rgba(255,255,255,.1); border-radius: 6px; position: relative; margin-top: 2px; }
-.body-chest { position: absolute; inset: 5px; }
-.chest-screen { width: 100%; height: 100%; background: rgba(0,0,0,.5); border-radius: 4px; display: flex; align-items: flex-end; padding: 3px; gap: 2px; overflow: hidden; }
-.chest-bar { width: 4px; border-radius: 2px 2px 0 0; animation: barPulse 1.2s ease-in-out infinite; flex-shrink: 0; }
-@keyframes barPulse { 0%,100%{opacity:.5;transform:scaleY(.6)} 50%{opacity:1;transform:scaleY(1)} }
-
-/* Arms */
-.robot-arm {
-  position: absolute; top: 4px; width: 10px; height: 28px;
-  background: linear-gradient(180deg,#1a1a2e,#252535); border: 1px solid rgba(255,255,255,.1);
-  border-radius: 4px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 1px;
-}
-.left-arm  { left: -13px; transform-origin: top center; }
-.right-arm { right: -13px; transform-origin: top center; }
-.arm-wave  { animation: armWave .4s ease-in-out infinite; }
-.arm-raise { animation: armRaise .5s ease-out; }
-@keyframes armWave  { 0%,100%{transform:rotate(0)}  50%{transform:rotate(-25deg)} }
-@keyframes armRaise { 0%{transform:rotate(0)} 50%{transform:rotate(-50deg)} 100%{transform:rotate(-10deg)} }
-.arm-hand { font-size: 7px; color: white; }
-
-/* Legs */
-.robot-legs { display: flex; gap: 6px; margin-top: 2px; }
-.robot-leg  { width: 14px; height: 18px; background: linear-gradient(180deg,#1a1a2e,#252535); border: 1px solid rgba(255,255,255,.1); border-radius: 0 0 4px 4px; }
-
-/* Shadow */
-.robot-shadow {
-  width: 50px; height: 8px; margin-top: 2px;
-  background: radial-gradient(ellipse, rgba(0,0,0,.5) 0%, transparent 70%);
-  border-radius: 50%;
-}
-
-/* ── MOOD BAR ── */
-.pixel-mood-bar {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 18px;
-  background: rgba(0,0,0,.5); backdrop-filter: blur(4px);
-  display: flex; align-items: center; padding: 0 10px; gap: 6px;
-  border-top: 1px solid rgba(255,255,255,.05);
-}
-.mood-dot  { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; animation: antennaPulse 1.5s ease-in-out infinite; }
-.mood-text { font-size: 9px; color: var(--text3); flex: 1; }
-.room-time { font-size: 9px; color: var(--text3); font-weight: 700; font-variant-numeric: tabular-nums; }
-`;
-
-const styleEl = document.createElement('style');
-styleEl.textContent = STYLES;
-document.head.appendChild(styleEl);
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(React.createElement(App));
+.s
