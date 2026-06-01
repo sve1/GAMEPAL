@@ -77,7 +77,7 @@ const PLATFORMS_LIST = [
 ];
 
 // ─── STORAGE ──────────────────────────────────────────────────────────────────
-const load = (k, fb) => { try { return JSON.parse(localStorage.getItem(k)) ?? fb; } catch { return fb; } };
+const load = (k, fb) => { try { var v = JSON.parse(localStorage.getItem(k)); return v !== null && v !== undefined ? v : fb; } catch(e) { return fb; } };
 const save = (k, v)  => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
 
 // ─── RAWG API ─────────────────────────────────────────────────────────────────
@@ -171,7 +171,7 @@ async function fetchGameDetail(id, rawgKey) {
     developers:     (g.developers  || []).map(d => d.name).join(', '),
     publishers:     (g.publishers  || []).map(p => p.name).join(', '),
     tags:           (g.tags        || []).slice(0,8).map(t => t.name),
-    esrb:           g.esrb_rating?.name || '',
+    esrb:           (g.esrb_rating && g.esrb_rating.name) || '',
     playtime:       g.playtime || 0,
     ratingsCount:   g.ratings_count || 0,
     screenshots:    [],
@@ -242,7 +242,7 @@ async function callGroq(messages, systemPrompt, groqKey) {
 
   const data = await res.json();
   if (data.error) throw new Error(data.error.message || 'Groq API error');
-  const text = data.choices?.[0]?.message?.content || '';
+  const text = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || '';
   if (!text) throw new Error('Resposta vazia do Groq. Tente novamente.');
   return text;
 }
@@ -324,7 +324,7 @@ function GameDetailPopup({ gameId, rawgKey, library, onUpdateLibrary, onClose })
   const setStatus = (status) => {
     if (!detail) return;
     const now = Date.now();
-    onUpdateLibrary({ ...library, [detail.id]: { ...entry, game: detail, status, updatedAt: now, createdAt: entry?.createdAt || now } });
+    onUpdateLibrary({ ...library, [detail.id]: { ...entry, game: detail, status, updatedAt: now, createdAt: (entry && entry.createdAt ? entry.createdAt : now) } });
   };
 
   const setRating = (r) => {
@@ -372,7 +372,7 @@ function GameDetailPopup({ gameId, rawgKey, library, onUpdateLibrary, onClose })
                     {detail.metacritic}
                   </div>
                 )}
-                {entry?.status && (
+                {(entry && entry.status) && (
                   <div className="popup-status-badge" style={{ background: SC[entry.status] }}>
                     {SL[entry.status]}
                   </div>
@@ -447,7 +447,7 @@ function GameDetailPopup({ gameId, rawgKey, library, onUpdateLibrary, onClose })
               )}
 
               {/* My rating */}
-              {entry?.rating && (
+              {(entry && entry.rating) && (
                 <div className="popup-my-rating">
                   <div className="popup-section-title">Minha Avaliação</div>
                   <div className="popup-rating-display">
@@ -456,7 +456,7 @@ function GameDetailPopup({ gameId, rawgKey, library, onUpdateLibrary, onClose })
                   </div>
                 </div>
               )}
-              {entry?.status === 'finished' && !entry?.rating && (
+              {(entry && entry.status) === 'finished' && !(entry && entry.rating) && (
                 <div className="popup-my-rating">
                   <div className="popup-section-title">Avaliar</div>
                   <StarRating value={0} onChange={setRating} />
@@ -465,13 +465,13 @@ function GameDetailPopup({ gameId, rawgKey, library, onUpdateLibrary, onClose })
 
               {/* Actions */}
               <div className="popup-actions">
-                <button className={`popup-action-btn ${entry?.status === 'backlog'  ? 'active-backlog'  : ''}`} onClick={() => setStatus('backlog')}>
+                <button className={`popup-action-btn ${(entry && entry.status) === 'backlog'  ? 'active-backlog'  : ''}`} onClick={() => setStatus('backlog')}>
                   📋 Backlog
                 </button>
-                <button className={`popup-action-btn ${entry?.status === 'playing'  ? 'active-playing'  : ''}`} onClick={() => setStatus('playing')}>
+                <button className={`popup-action-btn ${(entry && entry.status) === 'playing'  ? 'active-playing'  : ''}`} onClick={() => setStatus('playing')}>
                   🎮 Jogando
                 </button>
-                <button className={`popup-action-btn ${entry?.status === 'finished' ? 'active-finished' : ''}`} onClick={() => setStatus('finished')}>
+                <button className={`popup-action-btn ${(entry && entry.status) === 'finished' ? 'active-finished' : ''}`} onClick={() => setStatus('finished')}>
                   ✅ Finalizado
                 </button>
                 {entry && (
@@ -513,7 +513,7 @@ function StarRating({ value, onChange, readonly = false }) {
     <div className="star-rating">
       {[1,2,3,4,5,6,7,8,9,10].map(n => (
         <span key={n}
-          className={`star ${n <= (hovered ?? value ?? 0) ? 'lit' : ''}`}
+          className={`star ${n <= (hovered !== null && hovered !== undefined ? hovered : (value !== null && value !== undefined ? value : 0)) ? 'lit' : ''}`}
           onMouseEnter={() => !readonly && setHovered(n)}
           onMouseLeave={() => !readonly && setHovered(null)}
           onClick={() => !readonly && onChange && onChange(n)}
@@ -531,7 +531,7 @@ function GameCard({ game, library, onUpdateLibrary, rawgKey }) {
 
   const setStatus = (status) => {
     const now = Date.now();
-    onUpdateLibrary({ ...library, [game.id]: { ...entry, game, status, updatedAt: now, createdAt: entry?.createdAt || now } });
+    onUpdateLibrary({ ...library, [game.id]: { ...entry, game, status, updatedAt: now, createdAt: (entry && entry.createdAt ? entry.createdAt : now) } });
     if (status === 'finished') setShowRating(true);
   };
   const setRating = (r) => {
@@ -551,7 +551,7 @@ function GameCard({ game, library, onUpdateLibrary, rawgKey }) {
         {/* Clickable cover → popup */}
         <div className="game-cover" onClick={() => setShowPopup(true)}>
           {game.cover ? <img src={game.cover} alt={game.name} loading="lazy" /> : <div className="no-cover">🎮</div>}
-          {entry?.status && <div className="status-badge" style={{ background: SC[entry.status] }}>{SL[entry.status]}</div>}
+          {(entry && entry.status) && <div className="status-badge" style={{ background: SC[entry.status] }}>{SL[entry.status]}</div>}
           {game.metacritic && (
             <div className="meta-badge" style={{ background: game.metacritic >= 75 ? '#3cb371' : game.metacritic >= 50 ? '#f4c430' : '#cc3333' }}>
               {game.metacritic}
@@ -569,19 +569,19 @@ function GameCard({ game, library, onUpdateLibrary, rawgKey }) {
           </div>
           <div className="game-plat">{game.platforms}</div>
 
-          {entry?.rating && !showRating && <div className="my-rating">Nota: <span>{entry.rating}/10</span></div>}
+          {(entry && entry.rating) && !showRating && <div className="my-rating">Nota: <span>{entry.rating}/10</span></div>}
           {showRating && (
             <div className="rating-row">
               <span className="rating-label">Avaliar:</span>
-              <StarRating value={entry?.rating || 0} onChange={setRating} />
+              <StarRating value={(entry && entry.rating) || 0} onChange={setRating} />
             </div>
           )}
 
           <div className="card-actions">
-            <button className={`btn-action ${entry?.status === 'backlog'  ? 'active backlog'  : ''}`} onClick={() => setStatus('backlog')}  title="Backlog">📋</button>
-            <button className={`btn-action ${entry?.status === 'playing'  ? 'active playing'  : ''}`} onClick={() => setStatus('playing')}  title="Jogando">🎮</button>
-            <button className={`btn-action ${entry?.status === 'finished' ? 'active finished' : ''}`} onClick={() => setStatus('finished')} title="Finalizado">✅</button>
-            {entry?.status === 'finished' && (
+            <button className={`btn-action ${(entry && entry.status) === 'backlog'  ? 'active backlog'  : ''}`} onClick={() => setStatus('backlog')}  title="Backlog">📋</button>
+            <button className={`btn-action ${(entry && entry.status) === 'playing'  ? 'active playing'  : ''}`} onClick={() => setStatus('playing')}  title="Jogando">🎮</button>
+            <button className={`btn-action ${(entry && entry.status) === 'finished' ? 'active finished' : ''}`} onClick={() => setStatus('finished')} title="Finalizado">✅</button>
+            {(entry && entry.status) === 'finished' && (
               <button className="btn-action rate" onClick={() => setShowRating(!showRating)} title="Avaliar">⭐</button>
             )}
             {entry && <button className="btn-action remove" onClick={removeGame} title="Remover">✕</button>}
@@ -758,7 +758,7 @@ function StatsView({ library, onNavigate }) {
   // Estimated hours (based on RAWG playtime if available, else 15h avg)
   const estHours = entries
     .filter(e => e.status === 'finished')
-    .reduce((s, e) => s + (e.game.playtime || 15), 0);
+    .reduce((s, e) => s + ((e.game.playtime || 15)), 0);
 
   // Backlog suggestion
   const backlogGames = entries.filter(e => e.status === 'backlog');
@@ -779,8 +779,8 @@ function StatsView({ library, onNavigate }) {
     );
   }
 
-  const maxGenre = topGenres[0]?.[1] || 1;
-  const maxPlat  = topPlats[0]?.[1]  || 1;
+  const maxGenre = (topGenres[0] && topGenres[0][1]) || 1;
+  const maxPlat  = (topPlats[0] && topPlats[0][1]) || 1;
 
   return (
     <div className="stats-view">
@@ -1373,7 +1373,7 @@ function App() {
   useEffect(() => { save(CHAT_KEY,     messages.slice(-80)); }, [messages]);
   useEffect(() => { save(STORAGE_KEY,  library);  }, [library]);
   useEffect(() => { save(SETTINGS_KEY, settings); }, [settings]);
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, loading]);
+  useEffect(() => { bottomRef.current && bottomRef.current.scrollIntoView({ behavior: 'smooth' }); }, [messages, loading]);
 
   useEffect(() => {
     const h = () => { const v = window.location.hash.replace('#',''); if (['chat','library','search','stats','settings'].includes(v)) setView(v); };
@@ -1387,7 +1387,7 @@ function App() {
     return () => window.removeEventListener('beforeinstallprompt', h);
   }, []);
 
-  useEffect(() => { window.__hideSplash?.(); }, []);
+  useEffect(() => { window.__hideSplash && window.__hideSplash(); }, []);
 
   const navigate      = (v) => { setView(v); window.location.hash = v; };
   const handleLogin   = (u) => { save(USER_KEY, u); setUser(u); };
@@ -1505,7 +1505,7 @@ function App() {
             const now = Date.now();
             const updatedLib = {
               ...library,
-              [game.id]: { ...(library[game.id]||{}), game, status, updatedAt: now, createdAt: library[game.id]?.createdAt||now }
+              [game.id]: { ...(library[game.id]||{}), game, status, updatedAt: now, createdAt: (library[game.id] && library[game.id].createdAt ? library[game.id].createdAt : now) }
             };
             onUpdateLibraryRef.current(updatedLib);
             addedGame = { game, status };
@@ -1532,7 +1532,7 @@ function App() {
           if (game) {
             runningLib = {
               ...runningLib,
-              [game.id]: { ...(runningLib[game.id]||{}), game, status, updatedAt: now, createdAt: runningLib[game.id]?.createdAt||now }
+              [game.id]: { ...(runningLib[game.id]||{}), game, status, updatedAt: now, createdAt: (runningLib[game.id] && runningLib[game.id].createdAt ? runningLib[game.id].createdAt : now) }
             };
             results.push({ game, status, found: true });
           } else {
@@ -1567,7 +1567,7 @@ function App() {
       }]);
     } finally {
       setLoading(false);
-      setTimeout(() => inputRef.current?.focus(), 100);
+      setTimeout(() => inputRef.current && inputRef.current.focus(), 100);
     }
   };
 
@@ -1643,7 +1643,7 @@ function App() {
         {view === 'chat' && (
           <div className="chat-area">
             {/* PIXEL ROOM — interactive scene */}
-            <PixelRoom mood={pixelMood} loading={loading} lastMsg={messages[messages.length-1]?.content || ''} />
+            <PixelRoom mood={pixelMood} loading={loading} lastMsg={(messages.length > 0 && messages[messages.length-1].content) || ''} />
 
             <div className="chat-header">
               <div className="chat-header-left">
@@ -1681,7 +1681,7 @@ function App() {
                   <div className="pixel-suggestions-label">💬 Experimente perguntar:</div>
                   <div className="suggestions">
                     {SUGGESTIONS.map(s => (
-                      <button key={s} className="suggestion" onClick={() => { setInput(s); setTimeout(() => inputRef.current?.focus(), 50); }}>{s}</button>
+                      <button key={s} className="suggestion" onClick={() => { setInput(s); setTimeout(() => inputRef.current && inputRef.current.focus(), 50); }}>{s}</button>
                     ))}
                   </div>
                 </div>
@@ -1739,7 +1739,7 @@ function App() {
                         <div className="batch-items">
                           {msg.addedBatch.map((r, i) => (
                             <div key={i} className={`batch-item ${r.found ? 'found' : 'not-found'}`}>
-                              {r.found && r.game?.cover && (
+                              {r.found && r.game && r.game.cover && (
                                 <img src={r.game.cover} alt={r.game.name} className="batch-thumb" />
                               )}
                               {!r.found && <div className="batch-thumb-missing">?</div>}
@@ -2028,12 +2028,4 @@ a{color:var(--accent2)}button{font-family:var(--fb)}
 .genre-pills{display:flex;flex-wrap:wrap;gap:6px}
 .genre-pill{padding:6px 12px;background:var(--surface3);border:1px solid var(--border);border-radius:20px;color:var(--text2);font-size:12px;cursor:pointer;transition:all .2s}
 .genre-pill:hover{border-color:var(--accent);color:var(--accent)}
-.genre-pill.active{background:rgba(124,106,255,.2);border-color:var(--accent);color:var(--accent)}
-.search-error{background:rgba(255,85,85,.1);border:1px solid rgba(255,85,85,.3);border-radius:10px;padding:12px;font-size:13px;color:#ff9999;margin-bottom:16px}
-.search-loading{text-align:center;padding:40px;color:var(--text2)}
-.search-loading p{margin-top:12px;font-size:14px}
-.loading-dots{display:flex;gap:6px;justify-content:center}
-.loading-dots span{width:10px;height:10px;background:var(--accent);border-radius:50%;animation:bounce 1.2s infinite}
-.loading-dots span:nth-child(2){animation-delay:.2s}.loading-dots span:nth-child(3){animation-delay:.4s}
-.search-placeholder{text-align:center;padding:60px 20px;color:var(--text2)}
-.s
+.genre-pill.active{background:rgba(124,106,255,.2);border-color:var(--accent);color
