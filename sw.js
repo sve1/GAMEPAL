@@ -1,5 +1,5 @@
-const CACHE_NAME='journey-v1.1';
-const ASSETS=['./','./index.html','./vendor/react.min.js?v=journey-1','./vendor/react-dom.min.js?v=journey-1','./api.js?v=journey-1','./app.js?v=journey-1','./journey.css?v=journey-1','./manifest.json','./icons/icon-192.png','./icons/icon-512.png'];
+const CACHE_NAME='journey-v2';
+const ASSETS=['./','./index.html','./vendor/react.min.js?v=journey-2','./vendor/react-dom.min.js?v=journey-2','./api.js?v=journey-2','./app.js?v=journey-2','./journey.css?v=journey-2','./manifest.json','./icons/icon.svg?v=journey-2','./icons/apple-touch-icon.png?v=journey-2','./icons/icon-192.png?v=journey-2','./icons/icon-512.png?v=journey-2'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(ASSETS)));self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>(k.startsWith('gamepal-')||k.startsWith('journey-'))&&k!==CACHE_NAME).map(k=>caches.delete(k)))));self.clients.claim()});
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;const u=new URL(e.request.url);if(u.origin!==self.location.origin)return;e.respondWith(fetch(e.request).then(r=>{if(r.ok){const copy=r.clone();e.waitUntil(caches.open(CACHE_NAME).then(c=>c.put(e.request,copy)))}return r}).catch(async()=>{const cached=await caches.match(e.request);if(cached)return cached;if(e.request.mode==='navigate')return await caches.match('./index.html')||Response.error();return Response.error()}))});

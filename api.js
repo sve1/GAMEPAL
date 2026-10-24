@@ -1,5 +1,5 @@
-// ─── GamePal PWA – app.js ─────────────────────────────────────────────────────
-// v4 — Groq AI (llama-3.3-70b), Game Detail Popup, Search + Library
+// ─── Journey PWA – api.js ─────────────────────────────────────────────────────
+// Journey — RAWG catalog and media
 // ─────────────────────────────────────────────────────────────────────────────
 
 var useState    = React.useState;
@@ -10,7 +10,6 @@ var useMemo     = React.useMemo;
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
 const STORAGE_KEY  = 'gamepal_library_v1';
-const CHAT_KEY     = 'gamepal_chat_v1';
 const USER_KEY     = 'gamepal_user_v1';
 const SETTINGS_KEY = 'gamepal_settings_v1';
 
@@ -224,31 +223,21 @@ async function findGameByName(gameName, rawgKey) {
   return scored[0].score > 0.3 ? mapGame(scored[0].g) : null;
 }
 
-// ─── GROQ API ─────────────────────────────────────────────────────────────────
-async function callGroq(messages, systemPrompt, groqKey) {
-  if (!groqKey) throw new Error('Chave Groq não configurada. Vá em Configurações ⚙️');
-
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type':  'application/json',
-      'Authorization': `Bearer ${groqKey}`,
-    },
-    body: JSON.stringify({
-      model:       'llama-3.3-70b-versatile',   // melhor modelo Groq — gratuito
-      temperature: 0.9,
-      max_tokens:  1200,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        ...messages.map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content })),
-      ],
-    }),
-  });
-
-  const data = await res.json();
-  if (data.error) throw new Error(data.error.message || 'Groq API error');
-  const text = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || '';
-  if (!text) throw new Error('Resposta vazia do Groq. Tente novamente.');
-  return text;
+// RAWG game pages: core metadata and optional media fail independently.
+function safeMediaUrl(value) {
+  if(typeof value !== 'string') return undefined;
+  try { const url=new URL(value); return url.protocol==='https:'?url.href:undefined; } catch(e) { return undefined; }
 }
-
+async function fetchGameOverview(id,key,signal) {
+  async function request(suffix='') {
+    const url=new URL('https://api.rawg.io/api/games/'+encodeURIComponent(id)+suffix);
+    url.searchParams.set('key',key);
+    const res=await fetch(url.toString(),{signal});
+    if(!res.ok)throw Error(res.status===401||res.status===403?'Verifique sua chave RAWG no Perfil.':'Não foi possível consultar o RAWG. Tente novamente.');
+    return res.json();
+  }
+  const [core,shots,movies]=await Promise.allSettled([request(),request('/screenshots'),request('/movies')]);
+  if(core.status==='rejected')throw core.reason;
+  const g=core.value;
+  return {info:{...mapGame(g),description:g.description_raw||'',releaseDate:g.released||'',developers:(g.developers||[]).map(d=>d.name).join(', '),publishers:(g.publishers||[]).map(p=>p.name).join(', '),platformDetails:(g.platforms||[]).map(p=>({name:p.platform.name,released_at:p.released_at})),website:g.website||'',esrb:g.esrb_rating?.name||'',tags:(g.tags||[]).filter(t=>!t.language||t.language==='eng').slice(0,16).map(t=>t.name),screenshots:shots.status==='fulfilled'?(shots.value.results||[]):[],trailers:movies.status==='fulfilled'?(movies.value.results||[]):[]},errors:[...(shots.status==='rejected'?['screenshots']:[]),...(movies.status==='rejected'?['trailers']:[])]};
+}

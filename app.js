@@ -2,12 +2,12 @@
 
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw new Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw new Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -19,6 +19,221 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+var overviewCache = new Map();
+function GameOverview(_ref) {
+  var _trailers$clip, _trailers$clip2, _trailers$clip3, _trailers$clip4;
+  var game = _ref.game,
+    rawgKey = _ref.rawgKey;
+  var _useState = useState(game),
+    _useState2 = _slicedToArray(_useState, 2),
+    info = _useState2[0],
+    setInfo = _useState2[1],
+    _useState3 = useState(false),
+    _useState4 = _slicedToArray(_useState3, 2),
+    loading = _useState4[0],
+    setLoading = _useState4[1],
+    _useState5 = useState(''),
+    _useState6 = _slicedToArray(_useState5, 2),
+    problem = _useState6[0],
+    setProblem = _useState6[1],
+    _useState7 = useState([]),
+    _useState8 = _slicedToArray(_useState7, 2),
+    mediaErrors = _useState8[0],
+    setMediaErrors = _useState8[1],
+    _useState9 = useState(0),
+    _useState10 = _slicedToArray(_useState9, 2),
+    attempt = _useState10[0],
+    setAttempt = _useState10[1],
+    _useState11 = useState(null),
+    _useState12 = _slicedToArray(_useState11, 2),
+    shot = _useState12[0],
+    setShot = _useState12[1],
+    _useState13 = useState(0),
+    _useState14 = _slicedToArray(_useState13, 2),
+    clip = _useState14[0],
+    setClip = _useState14[1];
+  var manual = String(game.id).startsWith('manual-');
+  useEffect(function () {
+    if (manual || !rawgKey) return;
+    var controller = new AbortController();
+    var mounted = true;
+    var cacheKey = String(game.id);
+    var cached = overviewCache.get(cacheKey);
+    if (cached && attempt === 0) {
+      setInfo(cached.info);
+      setMediaErrors(cached.errors);
+      return function () {
+        return controller.abort();
+      };
+    }
+    setLoading(true);
+    setProblem('');
+    setMediaErrors([]);
+    var timer = setTimeout(function () {
+      return controller.abort();
+    }, 20000);
+    fetchGameOverview(game.id, rawgKey, controller.signal).then(function (result) {
+      if (!mounted) return;
+      var merged = _objectSpread(_objectSpread({}, game), result.info);
+      setInfo(merged);
+      setMediaErrors(result.errors);
+      if (!result.errors.length) overviewCache.set(cacheKey, {
+        info: merged,
+        errors: []
+      });
+    })["catch"](function (e) {
+      if (mounted) setProblem(e.name === 'AbortError' ? 'A consulta demorou demais. Tente novamente.' : e.message);
+    })["finally"](function () {
+      clearTimeout(timer);
+      if (mounted) setLoading(false);
+    });
+    return function () {
+      mounted = false;
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [game.id, rawgKey, attempt]);
+  var platforms = info.platformDetails || String(info.platforms || '').split(', ').filter(Boolean).map(function (name) {
+    return {
+      name: name
+    };
+  });
+  var screenshots = (info.screenshots || []).filter(function (s) {
+    return safeMediaUrl(s.image);
+  });
+  var trailers = (info.trailers || []).filter(function (t) {
+    var _t$data, _t$data2;
+    return safeMediaUrl(((_t$data = t.data) === null || _t$data === void 0 ? void 0 : _t$data.max) || ((_t$data2 = t.data) === null || _t$data2 === void 0 ? void 0 : _t$data2['480']));
+  });
+  var facts = [['Lançamento', info.releaseDate ? dateLabel(info.releaseDate + 'T12:00:00') : info.released], ['Desenvolvimento', info.developers], ['Publicação', info.publishers], ['Gêneros', info.genres], ['Classificação', info.esrb], ['Metacritic', info.metacritic ? String(info.metacritic) + '/100' : null], ['Nota RAWG', info.rating && info.rating !== 'N/A' ? info.rating + '/5' : null]].filter(function (_ref2) {
+    var _ref3 = _slicedToArray(_ref2, 2),
+      v = _ref3[1];
+    return v;
+  });
+  return /*#__PURE__*/React.createElement("div", {
+    className: "overview"
+  }, loading && /*#__PURE__*/React.createElement("div", {
+    className: "detail-loading",
+    role: "status"
+  }, "Carregando informa\xE7\xF5es do jogo\u2026"), problem && /*#__PURE__*/React.createElement("div", {
+    className: "notice",
+    role: "alert"
+  }, problem, /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return setAttempt(function (a) {
+        return a + 1;
+      });
+    }
+  }, "Tentar novamente")), !manual && !rawgKey && /*#__PURE__*/React.createElement("p", {
+    className: "media-notice"
+  }, "Configure a chave RAWG no Perfil para carregar sinopse e m\xEDdia."), /*#__PURE__*/React.createElement("section", {
+    className: "synopsis"
+  }, /*#__PURE__*/React.createElement("h2", null, "Sinopse"), /*#__PURE__*/React.createElement("p", null, info.description || (loading ? 'Buscando sinopse…' : 'Sinopse não disponível para este jogo.'))), platforms.length > 0 && /*#__PURE__*/React.createElement("section", null, /*#__PURE__*/React.createElement("h2", null, "Plataformas"), /*#__PURE__*/React.createElement("div", {
+    className: "platform-chips"
+  }, platforms.map(function (p) {
+    return /*#__PURE__*/React.createElement("span", {
+      key: p.name
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "gamepad"
+    }), p.name, p.released_at && /*#__PURE__*/React.createElement("small", null, p.released_at.slice(0, 4)));
+  }))), facts.length > 0 && /*#__PURE__*/React.createElement("dl", {
+    className: "game-facts"
+  }, facts.map(function (_ref4) {
+    var _ref5 = _slicedToArray(_ref4, 2),
+      label = _ref5[0],
+      value = _ref5[1];
+    return /*#__PURE__*/React.createElement("div", {
+      key: label
+    }, /*#__PURE__*/React.createElement("dt", null, label), /*#__PURE__*/React.createElement("dd", null, value));
+  })), trailers.length > 0 && /*#__PURE__*/React.createElement("section", {
+    className: "trailer-section"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section-heading"
+  }, /*#__PURE__*/React.createElement("h2", null, "Trailers"), /*#__PURE__*/React.createElement(Icon, {
+    name: "play"
+  })), /*#__PURE__*/React.createElement("video", {
+    key: ((_trailers$clip = trailers[clip]) === null || _trailers$clip === void 0 ? void 0 : _trailers$clip.id) || clip,
+    controls: true,
+    playsInline: true,
+    preload: "none",
+    poster: safeMediaUrl((_trailers$clip2 = trailers[clip]) === null || _trailers$clip2 === void 0 ? void 0 : _trailers$clip2.preview),
+    src: safeMediaUrl(((_trailers$clip3 = trailers[clip]) === null || _trailers$clip3 === void 0 || (_trailers$clip3 = _trailers$clip3.data) === null || _trailers$clip3 === void 0 ? void 0 : _trailers$clip3.max) || ((_trailers$clip4 = trailers[clip]) === null || _trailers$clip4 === void 0 || (_trailers$clip4 = _trailers$clip4.data) === null || _trailers$clip4 === void 0 ? void 0 : _trailers$clip4['480'])),
+    onError: function onError() {
+      return setMediaErrors(function (a) {
+        return _toConsumableArray(new Set([].concat(_toConsumableArray(a), ['Não foi possível reproduzir este trailer.'])));
+      });
+    }
+  }, "Seu navegador n\xE3o suporta este v\xEDdeo."), trailers.length > 1 && /*#__PURE__*/React.createElement("div", {
+    className: "trailer-picker"
+  }, trailers.map(function (t, i) {
+    return /*#__PURE__*/React.createElement("button", {
+      key: t.id || i,
+      className: i === clip ? 'active' : '',
+      onClick: function onClick() {
+        return setClip(i);
+      }
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "play"
+    }), t.name || 'Trailer ' + (i + 1));
+  }))), screenshots.length > 0 && /*#__PURE__*/React.createElement("section", null, /*#__PURE__*/React.createElement("h2", null, "Galeria"), /*#__PURE__*/React.createElement("div", {
+    className: "screenshot-grid"
+  }, screenshots.map(function (s, i) {
+    return /*#__PURE__*/React.createElement("button", {
+      key: s.id || i,
+      "aria-label": 'Ampliar screenshot ' + (i + 1),
+      onClick: function onClick() {
+        return setShot(shot === i ? null : i);
+      },
+      "aria-expanded": shot === i
+    }, /*#__PURE__*/React.createElement("img", {
+      src: safeMediaUrl(s.image),
+      alt: 'Screenshot ' + (i + 1) + ' de ' + game.name,
+      loading: "lazy"
+    }));
+  })), shot !== null && screenshots[shot] && /*#__PURE__*/React.createElement("div", {
+    className: "expanded-shot"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return setShot(null);
+    },
+    "aria-label": "Fechar imagem"
+  }, "\xD7"), /*#__PURE__*/React.createElement("img", {
+    src: safeMediaUrl(screenshots[shot].image),
+    alt: 'Screenshot ampliada de ' + game.name
+  }))), !loading && !problem && !manual && rawgKey && !trailers.length && /*#__PURE__*/React.createElement("p", {
+    className: "media-notice"
+  }, mediaErrors.some(function (e) {
+    return e.includes('trailers');
+  }) ? 'Trailers indisponíveis nesta consulta.' : 'Nenhum trailer disponível no RAWG para este jogo.'), !loading && mediaErrors.length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "media-notice",
+    role: "status"
+  }, "Alguns conte\xFAdos n\xE3o puderam ser carregados. ", /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return setAttempt(function (a) {
+        return a + 1;
+      });
+    }
+  }, "Recarregar m\xEDdia")), (info.tags || []).length > 0 && /*#__PURE__*/React.createElement("section", null, /*#__PURE__*/React.createElement("h2", null, "Caracter\xEDsticas"), /*#__PURE__*/React.createElement("div", {
+    className: "tags"
+  }, info.tags.map(function (t) {
+    return /*#__PURE__*/React.createElement("span", {
+      key: t
+    }, t);
+  }))), safeMediaUrl(info.website) && /*#__PURE__*/React.createElement("a", {
+    className: "external-game",
+    href: safeMediaUrl(info.website),
+    target: "_blank",
+    rel: "noopener noreferrer"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "explore"
+  }), "Site oficial"), /*#__PURE__*/React.createElement("p", {
+    className: "attribution"
+  }, "Dados e m\xEDdia: ", /*#__PURE__*/React.createElement("a", {
+    href: "https://rawg.io",
+    target: "_blank",
+    rel: "noopener noreferrer"
+  }, "RAWG")));
+}
 var STATES = {
   backlog: 'Quero jogar',
   playing: 'Jogando',
@@ -36,14 +251,19 @@ var dateLabel = function dateLabel(v) {
     year: 'numeric'
   });
 };
-function Icon(_ref) {
-  var name = _ref.name;
+function Icon(_ref6) {
+  var name = _ref6.name;
   var paths = {
     home: 'M3 10l9-7 9 7v11h-6v-7H9v7H3z',
     library: 'M4 3v18M9 3v18M14 3v18M18 4l4 16',
     journal: 'M5 3h14v18H5zM9 8h6M9 12h6M9 16h3',
     explore: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18M16 8l-3 5-5 3 3-5z',
     profile: 'M16 7a4 4 0 1 0-8 0 4 4 0 0 0 8 0M4 21v-2a8 8 0 0 1 16 0v2',
+    play: 'M9 5l11 7-11 7z',
+    gamepad: 'M7 7h10a4 4 0 0 1 4 4l1 7c0 3-4 3-6-1H8c-2 4-6 4-6 1l1-7a4 4 0 0 1 4-4M6 12h6M9 9v6M16 11h.01M19 14h.01',
+    plus: 'M12 5v14M5 12h14',
+    chevron: 'M9 5l7 7-7 7',
+    search: 'M20 20l-5-5M17 10a7 7 0 1 0-14 0 7 7 0 0 0 14 0',
     spark: 'M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z'
   };
   return /*#__PURE__*/React.createElement("svg", {
@@ -58,114 +278,92 @@ function Icon(_ref) {
 }
 function Journey() {
   var _entry$rating, _modal$session3, _modal$session4, _modal$session5;
-  var _useState = useState(function () {
+  var _useState15 = useState(function () {
       return load(STORAGE_KEY, {});
     }),
-    _useState2 = _slicedToArray(_useState, 2),
-    library = _useState2[0],
-    setLibrary = _useState2[1],
-    _useState3 = useState(function () {
+    _useState16 = _slicedToArray(_useState15, 2),
+    library = _useState16[0],
+    setLibrary = _useState16[1],
+    _useState17 = useState(function () {
       return load(SETTINGS_KEY, {});
     }),
-    _useState4 = _slicedToArray(_useState3, 2),
-    settings = _useState4[0],
-    setSettings = _useState4[1],
-    _useState5 = useState(function () {
+    _useState18 = _slicedToArray(_useState17, 2),
+    settings = _useState18[0],
+    setSettings = _useState18[1],
+    _useState19 = useState(function () {
       return load(USER_KEY, {
         name: 'Viajante'
       });
     }),
-    _useState6 = _slicedToArray(_useState5, 2),
-    user = _useState6[0],
-    setUser = _useState6[1];
-  var _useState7 = useState('home'),
-    _useState8 = _slicedToArray(_useState7, 2),
-    view = _useState8[0],
-    setView = _useState8[1],
-    _useState9 = useState(null),
-    _useState10 = _slicedToArray(_useState9, 2),
-    selected = _useState10[0],
-    setSelected = _useState10[1],
-    _useState11 = useState(''),
-    _useState12 = _slicedToArray(_useState11, 2),
-    query = _useState12[0],
-    setQuery = _useState12[1],
-    _useState13 = useState('all'),
-    _useState14 = _slicedToArray(_useState13, 2),
-    filter = _useState14[0],
-    setFilter = _useState14[1],
-    _useState15 = useState(''),
-    _useState16 = _slicedToArray(_useState15, 2),
-    platform = _useState16[0],
-    setPlatform = _useState16[1],
-    _useState17 = useState('recent'),
-    _useState18 = _slicedToArray(_useState17, 2),
-    sort = _useState18[0],
-    setSort = _useState18[1],
-    _useState19 = useState(false),
     _useState20 = _slicedToArray(_useState19, 2),
-    list = _useState20[0],
-    setList = _useState20[1],
-    _useState21 = useState([]),
+    user = _useState20[0],
+    setUser = _useState20[1];
+  var _useState21 = useState('home'),
     _useState22 = _slicedToArray(_useState21, 2),
-    results = _useState22[0],
-    setResults = _useState22[1],
-    _useState23 = useState(false),
+    view = _useState22[0],
+    setView = _useState22[1],
+    _useState23 = useState(null),
     _useState24 = _slicedToArray(_useState23, 2),
-    busy = _useState24[0],
-    setBusy = _useState24[1],
+    selected = _useState24[0],
+    setSelected = _useState24[1],
     _useState25 = useState(''),
     _useState26 = _slicedToArray(_useState25, 2),
-    error = _useState26[0],
-    setError = _useState26[1],
-    _useState27 = useState(''),
+    query = _useState26[0],
+    setQuery = _useState26[1],
+    _useState27 = useState('all'),
     _useState28 = _slicedToArray(_useState27, 2),
-    toast = _useState28[0],
-    setToast = _useState28[1],
-    _useState29 = useState(null),
+    filter = _useState28[0],
+    setFilter = _useState28[1],
+    _useState29 = useState(''),
     _useState30 = _slicedToArray(_useState29, 2),
-    undo = _useState30[0],
-    setUndo = _useState30[1],
-    _useState31 = useState(''),
+    platform = _useState30[0],
+    setPlatform = _useState30[1],
+    _useState31 = useState('recent'),
     _useState32 = _slicedToArray(_useState31, 2),
-    collection = _useState32[0],
-    setCollection = _useState32[1],
-    _useState33 = useState(function () {
-      return load('journey_collections_v1', []);
-    }),
+    sort = _useState32[0],
+    setSort = _useState32[1],
+    _useState33 = useState(false),
     _useState34 = _slicedToArray(_useState33, 2),
-    collections = _useState34[0],
-    setCollections = _useState34[1];
-  var _useState35 = useState(null),
+    list = _useState34[0],
+    setList = _useState34[1],
+    _useState35 = useState([]),
     _useState36 = _slicedToArray(_useState35, 2),
-    modal = _useState36[0],
-    setModal = _useState36[1],
-    _useState37 = useState('journey'),
+    results = _useState36[0],
+    setResults = _useState36[1],
+    _useState37 = useState(false),
     _useState38 = _slicedToArray(_useState37, 2),
-    tab = _useState38[0],
-    setTab = _useState38[1],
-    _useState39 = useState(false),
+    busy = _useState38[0],
+    setBusy = _useState38[1],
+    _useState39 = useState(''),
     _useState40 = _slicedToArray(_useState39, 2),
-    ai = _useState40[0],
-    setAi = _useState40[1],
+    error = _useState40[0],
+    setError = _useState40[1],
     _useState41 = useState(''),
     _useState42 = _slicedToArray(_useState41, 2),
-    prompt = _useState42[0],
-    setPrompt = _useState42[1],
-    _useState43 = useState(''),
+    toast = _useState42[0],
+    setToast = _useState42[1],
+    _useState43 = useState(null),
     _useState44 = _slicedToArray(_useState43, 2),
-    reply = _useState44[0],
-    setReply = _useState44[1],
-    _useState45 = useState(false),
+    undo = _useState44[0],
+    setUndo = _useState44[1],
+    _useState45 = useState(''),
     _useState46 = _slicedToArray(_useState45, 2),
-    aiBusy = _useState46[0],
-    setAiBusy = _useState46[1],
+    collection = _useState46[0],
+    setCollection = _useState46[1],
     _useState47 = useState(function () {
-      return load(CHAT_KEY, []);
+      return load('journey_collections_v1', []);
     }),
     _useState48 = _slicedToArray(_useState47, 2),
-    history = _useState48[0],
-    setHistory = _useState48[1];
+    collections = _useState48[0],
+    setCollections = _useState48[1];
+  var _useState49 = useState(null),
+    _useState50 = _slicedToArray(_useState49, 2),
+    modal = _useState50[0],
+    setModal = _useState50[1],
+    _useState51 = useState('about'),
+    _useState52 = _slicedToArray(_useState51, 2),
+    tab = _useState52[0],
+    setTab = _useState52[1];
   var fileRef = useRef(),
     restoreRef = useRef(),
     previousFocus = useRef();
@@ -254,13 +452,12 @@ function Journey() {
   }, [toast]);
   useEffect(function () {
     var _Array$from$pop;
-    if (!selected && !modal && !ai) return;
+    if (!selected && !modal) return;
     previousFocus.current = document.activeElement;
     var key = function key(e) {
       if (e.key === 'Escape') {
         setSelected(null);
         setModal(null);
-        setAi(false);
       }
       if (e.key === 'Tab') {
         var box = Array.from(document.querySelectorAll('[role="dialog"]')).pop();
@@ -284,7 +481,7 @@ function Journey() {
       document.removeEventListener('keydown', key);
       (_previousFocus$curren = previousFocus.current) === null || _previousFocus$curren === void 0 || _previousFocus$curren.focus();
     };
-  }, [!!selected, !!modal, ai]);
+  }, [!!selected, !!modal]);
   function nav(v) {
     setView(v);
     location.hash = v;
@@ -296,50 +493,50 @@ function Journey() {
     return _search.apply(this, arguments);
   }
   function _search() {
-    _search = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(e) {
-      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-        while (1) switch (_context3.prev = _context3.next) {
+    _search = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(e) {
+      return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+        while (1) switch (_context2.prev = _context2.next) {
           case 0:
             e === null || e === void 0 || e.preventDefault();
             if (query.trim()) {
-              _context3.next = 3;
+              _context2.next = 3;
               break;
             }
-            return _context3.abrupt("return");
+            return _context2.abrupt("return");
           case 3:
             setError('');
             setBusy(true);
-            _context3.prev = 5;
+            _context2.prev = 5;
             if (settings.rawgKey) {
-              _context3.next = 8;
+              _context2.next = 8;
               break;
             }
             throw Error('Adicione sua chave RAWG no Perfil para pesquisar o catálogo. Você também pode cadastrar um jogo manualmente.');
           case 8:
-            _context3.t0 = setResults;
-            _context3.next = 11;
+            _context2.t0 = setResults;
+            _context2.next = 11;
             return searchGames({
               query: query.trim(),
               pageSize: 24
             }, settings.rawgKey);
           case 11:
-            _context3.t1 = _context3.sent;
-            (0, _context3.t0)(_context3.t1);
-            _context3.next = 18;
+            _context2.t1 = _context2.sent;
+            (0, _context2.t0)(_context2.t1);
+            _context2.next = 18;
             break;
           case 15:
-            _context3.prev = 15;
-            _context3.t2 = _context3["catch"](5);
-            setError(_context3.t2.message);
+            _context2.prev = 15;
+            _context2.t2 = _context2["catch"](5);
+            setError(_context2.t2.message);
           case 18:
-            _context3.prev = 18;
+            _context2.prev = 18;
             setBusy(false);
-            return _context3.finish(18);
+            return _context2.finish(18);
           case 21:
           case "end":
-            return _context3.stop();
+            return _context2.stop();
         }
-      }, _callee3, null, [[5, 15, 18, 21]]);
+      }, _callee2, null, [[5, 15, 18, 21]]);
     }));
     return _search.apply(this, arguments);
   }
@@ -367,31 +564,31 @@ function Journey() {
     return _restore.apply(this, arguments);
   }
   function _restore() {
-    _restore = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(file) {
+    _restore = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(file) {
       var data;
-      return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-        while (1) switch (_context4.prev = _context4.next) {
+      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+        while (1) switch (_context3.prev = _context3.next) {
           case 0:
             if (file) {
-              _context4.next = 2;
+              _context3.next = 2;
               break;
             }
-            return _context4.abrupt("return");
+            return _context3.abrupt("return");
           case 2:
-            _context4.prev = 2;
-            _context4.t0 = JSON;
-            _context4.next = 6;
+            _context3.prev = 2;
+            _context3.t0 = JSON;
+            _context3.next = 6;
             return file.text();
           case 6:
-            _context4.t1 = _context4.sent;
-            data = _context4.t0.parse.call(_context4.t0, _context4.t1);
-            if (!(data.format !== 'journey' || data.version !== 1 || !data.library || _typeof(data.library) !== 'object' || Array.isArray(data.library) || Object.entries(data.library).some(function (_ref14) {
-              var _ref15 = _slicedToArray(_ref14, 2),
-                id = _ref15[0],
-                e = _ref15[1];
+            _context3.t1 = _context3.sent;
+            data = _context3.t0.parse.call(_context3.t0, _context3.t1);
+            if (!(data.format !== 'journey' || data.version !== 1 || !data.library || _typeof(data.library) !== 'object' || Array.isArray(data.library) || Object.entries(data.library).some(function (_ref18) {
+              var _ref19 = _slicedToArray(_ref18, 2),
+                id = _ref19[0],
+                e = _ref19[1];
               return !(e !== null && e !== void 0 && e.game) || String(e.game.id) !== id || typeof e.game.name !== 'string' || !STATES[e.status] || e.journeys && !Array.isArray(e.journeys);
             }))) {
-              _context4.next = 10;
+              _context3.next = 10;
               break;
             }
             throw Error('Arquivo de backup inválido.');
@@ -400,80 +597,21 @@ function Journey() {
               type: 'restore',
               data: data
             });
-            _context4.next = 16;
+            _context3.next = 16;
             break;
           case 13:
-            _context4.prev = 13;
-            _context4.t2 = _context4["catch"](2);
-            setToast(_context4.t2.message);
+            _context3.prev = 13;
+            _context3.t2 = _context3["catch"](2);
+            setToast(_context3.t2.message);
           case 16:
             restoreRef.current.value = '';
           case 17:
           case "end":
-            return _context4.stop();
+            return _context3.stop();
         }
-      }, _callee4, null, [[2, 13]]);
+      }, _callee3, null, [[2, 13]]);
     }));
     return _restore.apply(this, arguments);
-  }
-  function ask(_x3) {
-    return _ask.apply(this, arguments);
-  }
-  function _ask() {
-    _ask = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(e) {
-      var context, messages, answer, next;
-      return _regeneratorRuntime().wrap(function _callee5$(_context5) {
-        while (1) switch (_context5.prev = _context5.next) {
-          case 0:
-            e.preventDefault();
-            if (settings.groqKey) {
-              _context5.next = 4;
-              break;
-            }
-            setReply('Configure sua chave Groq no Perfil para conversar com o PIXEL.');
-            return _context5.abrupt("return");
-          case 4:
-            setAiBusy(true);
-            _context5.prev = 5;
-            context = selected ? library[selected.id] : entries.map(function (e) {
-              return {
-                name: e.game.name,
-                status: e.status
-              };
-            });
-            messages = history.concat({
-              role: 'user',
-              content: prompt
-            }).slice(-12);
-            _context5.next = 10;
-            return callGroq(messages, 'Você é PIXEL, um companheiro de jogos calmo e prestativo no Journey. Responda em português em texto simples. Preferência de spoilers: ' + (settings.spoilers || 'Sem spoilers') + '. Use somente os registros fornecidos ao resumir progresso; não invente sessões ou acontecimentos. Não afirme alterar dados. Contexto: ' + JSON.stringify(context), settings.groqKey);
-          case 10:
-            answer = _context5.sent;
-            setReply(answer);
-            next = messages.concat({
-              role: 'assistant',
-              content: answer
-            });
-            setHistory(next);
-            save(CHAT_KEY, next);
-            setPrompt('');
-            _context5.next = 21;
-            break;
-          case 18:
-            _context5.prev = 18;
-            _context5.t0 = _context5["catch"](5);
-            setReply(_context5.t0.message);
-          case 21:
-            _context5.prev = 21;
-            setAiBusy(false);
-            return _context5.finish(21);
-          case 24:
-          case "end":
-            return _context5.stop();
-        }
-      }, _callee5, null, [[5, 18, 21, 24]]);
-    }));
-    return _ask.apply(this, arguments);
   }
   function card(e) {
     var g = e.game || e;
@@ -482,7 +620,7 @@ function Journey() {
       key: g.id,
       onClick: function onClick() {
         setSelected(g);
-        setTab('journey');
+        setTab('about');
       }
     }, /*#__PURE__*/React.createElement("div", {
       className: "cover"
@@ -497,7 +635,7 @@ function Journey() {
       className: 'badge ' + e.status
     }, STATES[e.status])), /*#__PURE__*/React.createElement("div", {
       className: "game-info"
-    }, /*#__PURE__*/React.createElement("h3", null, g.name), /*#__PURE__*/React.createElement("p", null, e.platform || g.genres || g.released || 'Sua próxima aventura')));
+    }, /*#__PURE__*/React.createElement("h3", null, g.name), /*#__PURE__*/React.createElement("p", null, e.platform || g.developers || g.released || '')));
   }
   function empty(title, desc, action) {
     return /*#__PURE__*/React.createElement("div", {
@@ -509,7 +647,9 @@ function Journey() {
       onClick: function onClick() {
         return nav('explore');
       }
-    }, "Encontrar um jogo \u2192"));
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "gamepad"
+    }), " Adicionar jogo"));
   }
   var entry = selected && library[selected.id],
     journeys = (entry === null || entry === void 0 ? void 0 : entry.journeys) || [{
@@ -532,13 +672,15 @@ function Journey() {
     href: "#home",
     onClick: function onClick() {
       return nav('home');
-    }
-  }, "journey", /*#__PURE__*/React.createElement("span", null, "\u2197")), /*#__PURE__*/React.createElement("div", {
-    className: "nav-caption"
-  }, "SEU UNIVERSO DE JOGOS"), /*#__PURE__*/React.createElement("nav", null, [['home', 'Início'], ['library', 'Biblioteca'], ['journal', 'Diário'], ['explore', 'Explorar'], ['profile', 'Perfil']].map(function (_ref2) {
-    var _ref3 = _slicedToArray(_ref2, 2),
-      v = _ref3[0],
-      label = _ref3[1];
+    },
+    "aria-label": "Journey \u2014 In\xEDcio"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "icons/icon.svg?v=journey-2",
+    alt: ""
+  }), "journey"), /*#__PURE__*/React.createElement("nav", null, [['home', 'Início'], ['library', 'Biblioteca'], ['journal', 'Diário'], ['explore', 'Explorar'], ['profile', 'Perfil']].map(function (_ref7) {
+    var _ref8 = _slicedToArray(_ref7, 2),
+      v = _ref8[0],
+      label = _ref8[1];
     return /*#__PURE__*/React.createElement("button", {
       key: v,
       "aria-current": view === v ? 'page' : undefined,
@@ -551,101 +693,97 @@ function Journey() {
     }), /*#__PURE__*/React.createElement("span", null, label));
   })), /*#__PURE__*/React.createElement("div", {
     className: "sidebar-bottom"
-  }, /*#__PURE__*/React.createElement("p", null, "Uma hist\xF3ria de cada vez."), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: function onClick() {
       return nav('profile');
     },
     className: "avatar-row"
-  }, /*#__PURE__*/React.createElement("b", null, ((user === null || user === void 0 ? void 0 : user.name) || 'V')[0]), /*#__PURE__*/React.createElement("span", null, (user === null || user === void 0 ? void 0 : user.name) || 'Viajante', /*#__PURE__*/React.createElement("small", null, "Minha jornada"))))), /*#__PURE__*/React.createElement("main", null, /*#__PURE__*/React.createElement("header", null, /*#__PURE__*/React.createElement("span", null, {
-    home: 'O próximo capítulo é seu.',
-    library: 'Todos os mundos que você guarda.',
-    journal: 'Pequenos registros. Grandes histórias.',
-    explore: 'Encontre sua próxima aventura.',
-    profile: 'Sua história, até aqui.'
-  }[view]), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("b", null, ((user === null || user === void 0 ? void 0 : user.name) || 'V')[0]), /*#__PURE__*/React.createElement("span", null, (user === null || user === void 0 ? void 0 : user.name) || 'Viajante')))), /*#__PURE__*/React.createElement("main", null, /*#__PURE__*/React.createElement("header", {
+    className: "mobile-brand"
+  }, /*#__PURE__*/React.createElement("a", {
+    href: "#home",
     onClick: function onClick() {
-      setAi(true);
-      setReply('');
-    },
-    className: "pixel"
+      return nav('home');
+    }
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "icons/icon.svg?v=journey-2",
+    alt: ""
+  }), "journey")), view === 'home' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "page-title home-title"
+  }, /*#__PURE__*/React.createElement("h1", null, "Seus jogos"), /*#__PURE__*/React.createElement("button", {
+    "aria-label": "Adicionar jogo",
+    className: "icon-button",
+    onClick: function onClick() {
+      return nav('explore');
+    }
   }, /*#__PURE__*/React.createElement(Icon, {
-    name: "spark"
-  }), " PIXEL")), view === 'home' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
-    className: "page-title"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("small", null, "SEU PONTO DE PARTIDA"), /*#__PURE__*/React.createElement("h1", null, "Continue sua jornada", /*#__PURE__*/React.createElement("span", null, ".")), /*#__PURE__*/React.createElement("p", null, "Bom te ver, ", (user === null || user === void 0 ? void 0 : user.name) || 'Viajante', ". H\xE1 mundos esperando por voc\xEA."))), hero ? /*#__PURE__*/React.createElement("section", {
+    name: "plus"
+  }))), hero ? /*#__PURE__*/React.createElement("section", {
     className: "hero"
   }, hero.game.cover && /*#__PURE__*/React.createElement("img", {
     src: hero.game.cover,
     alt: ""
   }), /*#__PURE__*/React.createElement("div", {
     className: "hero-content"
-  }, /*#__PURE__*/React.createElement("small", null, STATES[hero.status], " \xB7 ", hero.platform || 'Sua biblioteca'), /*#__PURE__*/React.createElement("h2", null, hero.game.name), /*#__PURE__*/React.createElement("p", null, hero.where || 'Cada sessão escreve um novo capítulo da sua história.'), /*#__PURE__*/React.createElement("button", {
-    className: "primary",
+  }, /*#__PURE__*/React.createElement("small", null, STATES[hero.status]), /*#__PURE__*/React.createElement("h2", null, hero.game.name), /*#__PURE__*/React.createElement("button", {
+    className: "primary game-action",
     onClick: function onClick() {
       setSelected(hero.game);
-      setTab('journey');
+      setTab('about');
     }
-  }, "Continuar jornada \u2197"))) : /*#__PURE__*/React.createElement("section", {
-    className: "hero welcome"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "hero-content"
-  }, /*#__PURE__*/React.createElement("small", null, "UM NOVO COME\xC7O"), /*#__PURE__*/React.createElement("h2", null, "Todo grande jogo", /*#__PURE__*/React.createElement("br", null), "deixa uma hist\xF3ria."), /*#__PURE__*/React.createElement("p", null, "Guarde a sua. Comece pelo que voc\xEA est\xE1 jogando agora."), /*#__PURE__*/React.createElement("button", {
-    className: "primary",
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "play"
+  }), hero.status === 'playing' ? 'Continuar jornada' : 'Ver jogo'))) : empty('Sua biblioteca começa aqui', '', /*#__PURE__*/React.createElement("button", {
+    className: "primary game-action",
     onClick: function onClick() {
       return nav('explore');
     }
-  }, "Come\xE7ar minha jornada \u2197")), /*#__PURE__*/React.createElement("div", {
-    className: "orbit",
-    "aria-hidden": "true"
-  }, "J")), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "gamepad"
+  }), "Adicionar jogo")), playing.length > 0 && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "section-heading"
-  }, /*#__PURE__*/React.createElement("h2", null, "Em seus controles"), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("h2", null, "Jogando"), /*#__PURE__*/React.createElement("button", {
+    "aria-label": "Ver biblioteca",
     onClick: function onClick() {
       return nav('library');
     }
-  }, "Ver biblioteca \u2197")), playing.length ? /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "library"
+  }))), /*#__PURE__*/React.createElement("div", {
     className: "grid"
-  }, playing.map(card)) : /*#__PURE__*/React.createElement("div", {
-    className: "panel"
-  }, /*#__PURE__*/React.createElement("p", null, "Marque um jogo como \u201CJogando\u201D para encontr\xE1-lo aqui.")), /*#__PURE__*/React.createElement("div", {
-    className: "two-col"
-  }, /*#__PURE__*/React.createElement("section", {
-    className: "panel"
-  }, /*#__PURE__*/React.createElement("small", null, "\xDALTIMA MEM\xD3RIA"), sessions[0] ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h2", null, sessions[0].game.name), /*#__PURE__*/React.createElement("p", null, sessions[0].text || 'Uma nova sessão registrada.'), /*#__PURE__*/React.createElement("small", null, dateLabel(sessions[0].date + 'T12:00:00')), /*#__PURE__*/React.createElement("button", {
-    onClick: function onClick() {
-      return nav('journal');
-    }
-  }, "Abrir di\xE1rio \u2197")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h2", null, "O que ficou com voc\xEA?"), /*#__PURE__*/React.createElement("p", null, "Uma descoberta, uma batalha ou aquele cen\xE1rio. Seu di\xE1rio come\xE7a com uma lembran\xE7a."))), /*#__PURE__*/React.createElement("section", {
-    className: "panel"
-  }, /*#__PURE__*/React.createElement("small", null, "PR\xD3XIMOS CAP\xCDTULOS"), entries.filter(function (e) {
+  }, playing.map(card))), entries.some(function (e) {
     return e.status === 'backlog';
-  }).slice(0, 3).map(function (e) {
-    return /*#__PURE__*/React.createElement("button", {
-      className: "next-game",
-      key: e.game.id,
-      onClick: function onClick() {
-        return setSelected(e.game);
-      }
-    }, e.game.name, /*#__PURE__*/React.createElement("span", null, "\u2197"));
-  }), /*#__PURE__*/React.createElement("button", {
-    onClick: function onClick() {
-      return nav('explore');
-    }
-  }, "Explorar possibilidades \u2192")))), view === 'library' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  }) && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "section-heading"
+  }, /*#__PURE__*/React.createElement("h2", null, "Quero jogar")), /*#__PURE__*/React.createElement("div", {
+    className: "grid"
+  }, entries.filter(function (e) {
+    return e.status === 'backlog';
+  }).map(card))), entries.some(function (e) {
+    return e.status === 'finished';
+  }) && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "section-heading"
+  }, /*#__PURE__*/React.createElement("h2", null, "Conclu\xEDdos")), /*#__PURE__*/React.createElement("div", {
+    className: "grid"
+  }, entries.filter(function (e) {
+    return e.status === 'finished';
+  }).slice(0, 6).map(card)))), view === 'library' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "page-title"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("small", null, "SEUS MUNDOS"), /*#__PURE__*/React.createElement("h1", null, "Biblioteca", /*#__PURE__*/React.createElement("span", null, ".")), /*#__PURE__*/React.createElement("p", null, entries.length, " jogos. Incont\xE1veis hist\xF3rias.")), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", null, "Biblioteca"), /*#__PURE__*/React.createElement("p", null, entries.length, " ", entries.length === 1 ? 'jogo' : 'jogos')), /*#__PURE__*/React.createElement("button", {
     className: "primary",
     onClick: function onClick() {
       return setModal({
         type: 'manual'
       });
     }
-  }, "+ Adicionar jogo")), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "plus"
+  }), "Adicionar jogo")), /*#__PURE__*/React.createElement("div", {
     className: "tabs"
-  }, [['all', 'Todos']].concat(_toConsumableArray(Object.entries(STATES))).map(function (_ref4) {
-    var _ref5 = _slicedToArray(_ref4, 2),
-      v = _ref5[0],
-      l = _ref5[1];
+  }, [['all', 'Todos']].concat(_toConsumableArray(Object.entries(STATES))).map(function (_ref9) {
+    var _ref10 = _slicedToArray(_ref9, 2),
+      v = _ref10[0],
+      l = _ref10[1];
     return /*#__PURE__*/React.createElement("button", {
       className: filter === v ? 'active' : '',
       key: v,
@@ -720,7 +858,7 @@ function Journey() {
     className: 'grid ' + (list ? 'list' : '')
   }, filtered.map(card)) : empty('Um espaço para suas histórias', 'Adicione seu primeiro jogo ou ajuste os filtros.')), view === 'journal' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "page-title"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("small", null, "SEU \xC1LBUM DE MEM\xD3RIAS"), /*#__PURE__*/React.createElement("h1", null, "Di\xE1rio", /*#__PURE__*/React.createElement("span", null, ".")), /*#__PURE__*/React.createElement("p", null, "O que voc\xEA jogou. O que voc\xEA sentiu. O que ficou."))), sessions.length ? /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", null, "Di\xE1rio", /*#__PURE__*/React.createElement("span", null, ".")))), sessions.length ? /*#__PURE__*/React.createElement("div", {
     className: "timeline"
   }, sessions.map(function (s, i) {
     return /*#__PURE__*/React.createElement("article", {
@@ -730,19 +868,19 @@ function Journey() {
       onClick: function onClick() {
         return setSelected(s.game);
       }
-    }, /*#__PURE__*/React.createElement("h2", null, s.game.name, " \u2197")), s.text && /*#__PURE__*/React.createElement("p", null, s.text), s.image && /*#__PURE__*/React.createElement("img", {
+    }, /*#__PURE__*/React.createElement("h2", null, s.game.name)), s.text && /*#__PURE__*/React.createElement("p", null, s.text), s.image && /*#__PURE__*/React.createElement("img", {
       src: s.image,
       alt: 'Memória de ' + s.game.name
     }));
   })) : empty('Sua história merece ser lembrada', 'Abra um jogo da biblioteca e registre sua primeira sessão.')), view === 'explore' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "page-title"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("small", null, "AL\xC9M DO PR\xD3XIMO HORIZONTE"), /*#__PURE__*/React.createElement("h1", null, "Explorar", /*#__PURE__*/React.createElement("span", null, ".")), /*#__PURE__*/React.createElement("p", null, "Qual mundo voc\xEA quer conhecer agora?")), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", null, "Explorar", /*#__PURE__*/React.createElement("span", null, "."))), /*#__PURE__*/React.createElement("button", {
     onClick: function onClick() {
       return setModal({
         type: 'manual'
       });
     }
-  }, "Cadastrar manualmente \u2197")), /*#__PURE__*/React.createElement("form", {
+  }, "Cadastrar manualmente")), /*#__PURE__*/React.createElement("form", {
     className: "searchbar",
     onSubmit: search
   }, /*#__PURE__*/React.createElement(Icon, {
@@ -768,20 +906,22 @@ function Journey() {
         type: 'manual'
       });
     }
-  }, "+ Cadastrar jogo")), /*#__PURE__*/React.createElement("p", {
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "plus"
+  }), "Cadastrar jogo")), /*#__PURE__*/React.createElement("p", {
     className: "attribution"
   }, "Cat\xE1logo e imagens: RAWG. Registros pessoais ficam neste dispositivo.")), view === 'profile' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "page-title"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("small", null, "O JOGADOR POR TR\xC1S DAS HIST\xD3RIAS"), /*#__PURE__*/React.createElement("h1", null, (user === null || user === void 0 ? void 0 : user.name) || 'Viajante', /*#__PURE__*/React.createElement("span", null, ".")), /*#__PURE__*/React.createElement("p", null, "Cada mundo visitado faz parte de voc\xEA."))), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", null, (user === null || user === void 0 ? void 0 : user.name) || 'Viajante', /*#__PURE__*/React.createElement("span", null, ".")))), /*#__PURE__*/React.createElement("div", {
     className: "stats"
   }, [[entries.length, 'na biblioteca'], [entries.filter(function (e) {
     return e.status === 'finished';
   }).length, 'concluídos'], [sessions.length, 'memórias'], [(sessions.reduce(function (n, s) {
     return n + (+s.minutes || 0);
-  }, 0) / 60).toFixed(1) + 'h', 'registradas']].map(function (_ref6) {
-    var _ref7 = _slicedToArray(_ref6, 2),
-      n = _ref7[0],
-      l = _ref7[1];
+  }, 0) / 60).toFixed(1) + 'h', 'registradas']].map(function (_ref11) {
+    var _ref12 = _slicedToArray(_ref11, 2),
+      n = _ref12[0],
+      l = _ref12[1];
     return /*#__PURE__*/React.createElement("div", {
       className: "panel",
       key: l
@@ -797,10 +937,10 @@ function Journey() {
           name: f.get('name').trim() || 'Viajante'
         }),
         s = _objectSpread(_objectSpread({}, settings), {}, {
-          groqKey: f.get('groq').trim(),
-          rawgKey: f.get('rawg').trim(),
-          spoilers: f.get('spoilers')
+          rawgKey: f.get('rawg').trim()
         });
+      delete s.groqKey;
+      delete s.spoilers;
       try {
         localStorage.setItem(USER_KEY, JSON.stringify(u));
         localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
@@ -815,20 +955,12 @@ function Journey() {
     name: "name",
     defaultValue: user === null || user === void 0 ? void 0 : user.name,
     maxLength: "80"
-  })), /*#__PURE__*/React.createElement("label", null, "Spoilers", /*#__PURE__*/React.createElement("select", {
-    name: "spoilers",
-    defaultValue: settings.spoilers || 'Sem spoilers'
-  }, /*#__PURE__*/React.createElement("option", null, "Sem spoilers"), /*#__PURE__*/React.createElement("option", null, "Dicas leves"), /*#__PURE__*/React.createElement("option", null, "Resposta completa"))), /*#__PURE__*/React.createElement("label", null, "Chave RAWG \xB7 cat\xE1logo", /*#__PURE__*/React.createElement("input", {
+  })), /*#__PURE__*/React.createElement("label", null, "Chave RAWG \xB7 cat\xE1logo", /*#__PURE__*/React.createElement("input", {
     name: "rawg",
     type: "password",
     autoComplete: "off",
     defaultValue: settings.rawgKey
-  })), /*#__PURE__*/React.createElement("label", null, "Chave Groq \xB7 PIXEL", /*#__PURE__*/React.createElement("input", {
-    name: "groq",
-    type: "password",
-    autoComplete: "off",
-    defaultValue: settings.groqKey
-  })), /*#__PURE__*/React.createElement("p", null, "Chaves guardadas neste navegador e enviadas apenas ao respectivo provedor ao usar o recurso. Biblioteca e di\xE1rio funcionam sem IA."), /*#__PURE__*/React.createElement("p", null, "Ao conversar, sua pergunta e o contexto do jogo aberto (ou os nomes e estados da biblioteca) s\xE3o enviados \xE0 Groq."), /*#__PURE__*/React.createElement("button", {
+  })), /*#__PURE__*/React.createElement("p", null, "A chave RAWG fica neste navegador e \xE9 usada apenas para consultar o cat\xE1logo."), /*#__PURE__*/React.createElement("button", {
     className: "primary"
   }, "Salvar prefer\xEAncias")), /*#__PURE__*/React.createElement("div", {
     className: "panel"
@@ -874,17 +1006,12 @@ function Journey() {
     alt: ""
   }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("small", null, entry ? STATES[entry.status] : 'UM NOVO MUNDO'), /*#__PURE__*/React.createElement("h1", null, selected.name), /*#__PURE__*/React.createElement("p", null, selected.genres, " \xB7 ", selected.released))), /*#__PURE__*/React.createElement("div", {
     className: "detail-body"
-  }, !entry ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", null, "Adicione \xE0 biblioteca para come\xE7ar a guardar sua hist\xF3ria."), /*#__PURE__*/React.createElement("button", {
-    className: "primary",
-    onClick: function onClick() {
-      return add(selected);
-    }
-  }, "+ Adicionar \xE0 biblioteca")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "tabs"
-  }, [['journey', 'Minha jornada'], ['about', 'Sobre'], ['memories', 'Memórias']].map(function (_ref8) {
-    var _ref9 = _slicedToArray(_ref8, 2),
-      v = _ref9[0],
-      l = _ref9[1];
+  }, [['about', 'Visão geral']].concat(_toConsumableArray(entry ? [['journey', 'Minha jornada'], ['memories', 'Memórias']] : [])).map(function (_ref13) {
+    var _ref14 = _slicedToArray(_ref13, 2),
+      v = _ref14[0],
+      l = _ref14[1];
     return /*#__PURE__*/React.createElement("button", {
       key: v,
       className: tab === v ? 'active' : '',
@@ -892,7 +1019,14 @@ function Journey() {
         return setTab(v);
       }
     }, l);
-  })), tab === 'journey' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  })), !entry && /*#__PURE__*/React.createElement("button", {
+    className: "primary game-action add-library",
+    onClick: function onClick() {
+      return add(selected);
+    }
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "plus"
+  }), "Adicionar \xE0 biblioteca"), /*#__PURE__*/React.createElement(React.Fragment, null, tab === 'journey' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "toolbar"
   }, /*#__PURE__*/React.createElement("select", {
     "aria-label": "Status da jornada",
@@ -902,10 +1036,10 @@ function Journey() {
         status: e.target.value
       });
     }
-  }, Object.entries(STATES).map(function (_ref10) {
-    var _ref11 = _slicedToArray(_ref10, 2),
-      v = _ref11[0],
-      l = _ref11[1];
+  }, Object.entries(STATES).map(function (_ref15) {
+    var _ref16 = _slicedToArray(_ref15, 2),
+      v = _ref16[0],
+      l = _ref16[1];
     return /*#__PURE__*/React.createElement("option", {
       key: v,
       value: v
@@ -919,7 +1053,9 @@ function Journey() {
         journey: active.id
       });
     }
-  }, "+ Registrar sess\xE3o")), /*#__PURE__*/React.createElement("form", {
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "play"
+  }), "Registrar sess\xE3o")), /*#__PURE__*/React.createElement("form", {
     key: selected.id + '-' + entry.updatedAt,
     className: "form",
     onSubmit: function onSubmit(e) {
@@ -1027,48 +1163,11 @@ function Journey() {
         id: selected.id
       });
     }
-  }, "+ Nova campanha / replay")), /*#__PURE__*/React.createElement("button", {
-    onClick: function onClick() {
-      setAi(true);
-      setReply('');
-      setPrompt('Me ajude a retomar este jogo usando minhas anotações.');
-    }
-  }, "Consultar o PIXEL \u2197")), tab === 'about' && /*#__PURE__*/React.createElement("div", {
-    className: "panel"
-  }, /*#__PURE__*/React.createElement("h2", null, "Sobre este mundo"), /*#__PURE__*/React.createElement("p", null, selected.description || 'Abra os detalhes do catálogo para consultar a sinopse e as informações do jogo.'), /*#__PURE__*/React.createElement("p", null, "Plataformas do cat\xE1logo: ", selected.platforms || 'Não informadas'), settings.rawgKey && !String(selected.id).startsWith('manual-') && /*#__PURE__*/React.createElement("button", {
-    disabled: busy,
-    onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-      return _regeneratorRuntime().wrap(function _callee$(_context) {
-        while (1) switch (_context.prev = _context.next) {
-          case 0:
-            setBusy(true);
-            _context.prev = 1;
-            _context.t0 = setSelected;
-            _context.t1 = _objectSpread;
-            _context.t2 = _objectSpread({}, selected);
-            _context.next = 7;
-            return fetchGameDetail(selected.id, settings.rawgKey);
-          case 7:
-            _context.t3 = _context.sent;
-            _context.t4 = (0, _context.t1)(_context.t2, _context.t3);
-            (0, _context.t0)(_context.t4);
-            _context.next = 15;
-            break;
-          case 12:
-            _context.prev = 12;
-            _context.t5 = _context["catch"](1);
-            setToast('Não foi possível carregar os detalhes. Tente novamente.');
-          case 15:
-            _context.prev = 15;
-            setBusy(false);
-            return _context.finish(15);
-          case 18:
-          case "end":
-            return _context.stop();
-        }
-      }, _callee, null, [[1, 12, 15, 18]]);
-    }))
-  }, busy ? 'Carregando…' : 'Carregar detalhes RAWG')), tab === 'memories' && (sessions.filter(function (s) {
+  }, "+ Nova campanha / replay"))), tab === 'about' && /*#__PURE__*/React.createElement(GameOverview, {
+    key: selected.id,
+    game: selected,
+    rawgKey: settings.rawgKey
+  }), tab === 'memories' && (sessions.filter(function (s) {
     return s.game.id === selected.id;
   }).length ? sessions.filter(function (s) {
     return s.game.id === selected.id;
@@ -1127,23 +1226,23 @@ function Journey() {
   }, "Importar e mesclar")) : /*#__PURE__*/React.createElement("form", {
     className: "form",
     onSubmit: ( /*#__PURE__*/function () {
-      var _ref13 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(e) {
+      var _ref17 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(e) {
         var f, name, _name, next, en, js, j, _modal$session, _fileRef$current, _modal$session2, image, file, _en, _js, session;
-        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-          while (1) switch (_context2.prev = _context2.next) {
+        return _regeneratorRuntime().wrap(function _callee$(_context) {
+          while (1) switch (_context.prev = _context.next) {
             case 0:
               e.preventDefault();
               f = new FormData(e.currentTarget);
               if (!(modal.type === 'manual')) {
-                _context2.next = 8;
+                _context.next = 8;
                 break;
               }
               name = f.get('name').trim();
               if (name) {
-                _context2.next = 6;
+                _context.next = 6;
                 break;
               }
-              return _context2.abrupt("return");
+              return _context.abrupt("return");
             case 6:
               add({
                 id: 'manual-' + Date.now(),
@@ -1156,15 +1255,15 @@ function Journey() {
               setModal(null);
             case 8:
               if (!(modal.type === 'collection')) {
-                _context2.next = 14;
+                _context.next = 14;
                 break;
               }
               _name = f.get('name').trim();
               if (_name) {
-                _context2.next = 12;
+                _context.next = 12;
                 break;
               }
-              return _context2.abrupt("return");
+              return _context.abrupt("return");
             case 12:
               next = _toConsumableArray(new Set([].concat(_toConsumableArray(collections), [_name])));
               try {
@@ -1192,23 +1291,23 @@ function Journey() {
                 setModal(null);
               }
               if (!(modal.type === 'session')) {
-                _context2.next = 28;
+                _context.next = 28;
                 break;
               }
               image = ((_modal$session = modal.session) === null || _modal$session === void 0 ? void 0 : _modal$session.image) || '';
               file = (_fileRef$current = fileRef.current) === null || _fileRef$current === void 0 ? void 0 : _fileRef$current.files[0];
               if (!file) {
-                _context2.next = 25;
+                _context.next = 25;
                 break;
               }
               if (!(!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 1500000)) {
-                _context2.next = 22;
+                _context.next = 22;
                 break;
               }
               setToast('Escolha uma imagem JPG, PNG ou WebP de até 1,5 MB.');
-              return _context2.abrupt("return");
+              return _context.abrupt("return");
             case 22:
-              _context2.next = 24;
+              _context.next = 24;
               return new Promise(function (resolve, reject) {
                 var r = new FileReader();
                 r.onload = function () {
@@ -1218,7 +1317,7 @@ function Journey() {
                 r.readAsDataURL(file);
               });
             case 24:
-              image = _context2.sent;
+              image = _context.sent;
             case 25:
               _en = library[modal.id], _js = _en.journeys || [{
                 id: 'original',
@@ -1247,15 +1346,15 @@ function Journey() {
               }
             case 28:
             case "end":
-              return _context2.stop();
+              return _context.stop();
           }
-        }, _callee2);
+        }, _callee);
       }));
-      return function (_x4) {
-        return _ref13.apply(this, arguments);
+      return function (_x3) {
+        return _ref17.apply(this, arguments);
       };
     }())
-  }, /*#__PURE__*/React.createElement("small", null, "ESCREVA SEU PR\xD3XIMO CAP\xCDTULO"), /*#__PURE__*/React.createElement("h2", null, {
+  }, /*#__PURE__*/React.createElement("h2", null, {
     manual: 'Adicionar um mundo',
     collection: 'Nova coleção',
     replay: 'Uma nova jornada',
@@ -1292,36 +1391,7 @@ function Journey() {
     placeholder: "RPG, aventura\u2026"
   }))), /*#__PURE__*/React.createElement("button", {
     className: "primary"
-  }, modal.type === 'session' ? 'Guardar memória' : 'Salvar')))), ai && /*#__PURE__*/React.createElement("div", {
-    className: "backdrop top"
-  }, /*#__PURE__*/React.createElement("section", {
-    className: "dialog compact",
-    role: "dialog",
-    "aria-modal": "true",
-    "aria-label": "Conversar com PIXEL"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "close",
-    "aria-label": "Fechar PIXEL",
-    onClick: function onClick() {
-      return setAi(false);
-    }
-  }, "\xD7"), /*#__PURE__*/React.createElement("small", null, "SEU COMPANHEIRO DE JORNADA"), /*#__PURE__*/React.createElement("h2", null, "Um momento com PIXEL."), /*#__PURE__*/React.createElement("p", null, selected ? 'Conversando sobre ' + selected.name : 'Encontre seu próximo jogo ou converse sobre sua biblioteca.'), /*#__PURE__*/React.createElement("small", null, settings.spoilers || 'Sem spoilers'), /*#__PURE__*/React.createElement("div", {
-    className: "ai-reply",
-    "aria-live": "polite"
-  }, aiBusy ? 'Pensando na sua jornada…' : reply || 'O que vamos descobrir hoje?'), /*#__PURE__*/React.createElement("form", {
-    className: "form",
-    onSubmit: ask
-  }, /*#__PURE__*/React.createElement("label", null, "Sua mensagem", /*#__PURE__*/React.createElement("textarea", {
-    required: true,
-    value: prompt,
-    onChange: function onChange(e) {
-      return setPrompt(e.target.value);
-    },
-    maxLength: "4000"
-  })), /*#__PURE__*/React.createElement("button", {
-    className: "primary",
-    disabled: aiBusy
-  }, "Enviar ao PIXEL \u2192")), /*#__PURE__*/React.createElement("small", null, "Respostas de IA podem conter erros. O PIXEL n\xE3o altera seus registros."))), toast && /*#__PURE__*/React.createElement("div", {
+  }, modal.type === 'session' ? 'Guardar memória' : 'Salvar')))), toast && /*#__PURE__*/React.createElement("div", {
     className: "toast",
     role: "status"
   }, toast, undo && /*#__PURE__*/React.createElement("button", {
