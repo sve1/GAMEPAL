@@ -1,12 +1,12 @@
 const STATES = {
-  backlog: 'Quero jogar',
-  playing: 'Jogando',
-  paused: 'Em pausa',
-  finished: 'Concluído',
-  quit: 'Deixei de jogar'
+  backlog: 'Backlog',
+  playing: 'Playing',
+  paused: 'Paused',
+  finished: 'Completed',
+  quit: 'Stopped'
 };
 const nowDate = () => new Date().toLocaleDateString('en-CA');
-const dateLabel = v => new Date(v).toLocaleDateString('pt-BR', {
+const dateLabel = v => new Date(v).toLocaleDateString('en-US', {
   day: 'numeric',
   month: 'short',
   year: 'numeric'
@@ -33,7 +33,7 @@ function Journey() {
   const [library, setLibrary] = useState(() => load(STORAGE_KEY, {})),
     [settings, setSettings] = useState(() => load(SETTINGS_KEY, {})),
     [user, setUser] = useState(() => load(USER_KEY, {
-      name: 'Viajante'
+      name: 'Player'
     }));
   const [view, setView] = useState('home'),
     [selected, setSelected] = useState(null),
@@ -61,7 +61,7 @@ function Journey() {
     }]).flatMap(j => (j.sessions || []).map(s => ({
       ...s,
       game: e.game,
-      journey: j.title || 'Primeira jornada'
+      journey: j.title || 'First playthrough'
     })))).sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
   const playing = entries.filter(e => e.status === 'playing').sort((a, b) => b.updatedAt - a.updatedAt),
     hero = playing[0] || entries.slice().sort((a, b) => b.updatedAt - a.updatedAt)[0];
@@ -71,7 +71,7 @@ function Journey() {
       setLibrary(next);
       return true;
     } catch (e) {
-      setToast('Não foi possível salvar. Exporte um backup e libere espaço no dispositivo.');
+      setToast('Unable to save. Export a backup and free up device storage.');
       return false;
     }
   }
@@ -88,7 +88,7 @@ function Journey() {
       }
     })) {
       setUndo(old);
-      setToast('Jornada atualizada.');
+      setToast('Journey updated.');
     }
   }
   function add(game) {
@@ -105,7 +105,7 @@ function Journey() {
         createdAt: t,
         updatedAt: t
       }
-    })) setToast('Adicionado à sua biblioteca.');
+    })) setToast('Added to your library.');
     setSelected(game);
   }
   useEffect(() => {
@@ -166,7 +166,7 @@ function Journey() {
     setError('');
     setBusy(true);
     try {
-      if (!settings.rawgKey) throw Error('Adicione sua chave RAWG no Perfil para pesquisar o catálogo. Você também pode cadastrar um jogo manualmente.');
+      if (!settings.rawgKey) throw Error('Set your RAWG key in Profile to search the catalog, or add a game manually.');
       setResults(await searchGames({
         query: query.trim(),
         pageSize: 24
@@ -199,7 +199,7 @@ function Journey() {
     if (!file) return;
     try {
       const data = JSON.parse(await file.text());
-      if (data.format !== 'journey' || data.version !== 1 || !data.library || typeof data.library !== 'object' || Array.isArray(data.library) || Object.entries(data.library).some(([id, e]) => !e?.game || String(e.game.id) !== id || typeof e.game.name !== 'string' || !STATES[e.status] || e.journeys && !Array.isArray(e.journeys))) throw Error('Arquivo de backup inválido.');
+      if (data.format !== 'journey' || data.version !== 1 || !data.library || typeof data.library !== 'object' || Array.isArray(data.library) || Object.entries(data.library).some(([id, e]) => !e?.game || String(e.game.id) !== id || typeof e.game.name !== 'string' || !STATES[e.status] || e.journeys && !Array.isArray(e.journeys))) throw Error('Invalid backup file.');
       setModal({
         type: 'restore',
         data
@@ -217,38 +217,38 @@ function Journey() {
     }}><div className="cover">{g.cover ? <img src={g.cover} alt="" loading="lazy" onError={e => e.currentTarget.style.display = 'none'} /> : <span>J</span>}{e.status && <span className={'badge ' + e.status}>{STATES[e.status]}</span>}</div><div className="game-info"><h3>{g.name}</h3><p>{e.platform || g.developers || g.released || ''}</p></div></button>;
   }
   function empty(title, desc, action) {
-    return <div className="empty"><Icon name="explore" /><h2>{title}</h2><p>{desc}</p>{action || <button className="primary" onClick={() => nav('explore')}><Icon name="gamepad" /> Adicionar jogo</button>}</div>;
+    return <div className="empty"><Icon name="explore" /><h2>{title}</h2><p>{desc}</p>{action || <button className="primary" onClick={() => nav('explore')}><Icon name="gamepad" /> Add game</button>}</div>;
   }
   const entry = selected && library[selected.id],
     journeys = entry?.journeys || [{
       id: 'original',
-      title: 'Primeira jornada',
+      title: 'First playthrough',
       sessions: entry?.sessions || []
     }],
     active = journeys.find(j => j.id === entry?.activeJourney) || journeys[0];
   const filtered = entries.filter(e => (filter === 'all' || e.status === filter) && (!platform || e.platform === platform) && (!collection || (e.collections || []).includes(collection)) && e.game.name.toLowerCase().includes(query.toLowerCase())).sort((a, b) => sort === 'name' ? a.game.name.localeCompare(b.game.name) : sort === 'rating' ? (b.rating || 0) - (a.rating || 0) : b.updatedAt - a.updatedAt);
-  return <div className="app"><aside><a className="wordmark" href="#home" onClick={() => nav('home')} aria-label="Journey — Início"><img src="icons/icon.svg?v=journey-2" alt="" />journey</a><nav>{[['home', 'Início'], ['library', 'Biblioteca'], ['journal', 'Diário'], ['explore', 'Explorar'], ['profile', 'Perfil']].map(([v, label]) => <button key={v} aria-current={view === v ? 'page' : undefined} className={view === v ? 'active' : ''} onClick={() => nav(v)}><Icon name={v} /><span>{label}</span></button>)}</nav><div className="sidebar-bottom"><button onClick={() => nav('profile')} className="avatar-row"><b>{(user?.name || 'V')[0]}</b><span>{user?.name || 'Viajante'}</span></button></div></aside><main><header className="mobile-brand"><a href="#home" onClick={() => nav('home')}><img src="icons/icon.svg?v=journey-2" alt="" />journey</a></header>
- {view === 'home' && <><div className="page-title home-title"><h1>Seus jogos</h1><button aria-label="Adicionar jogo" className="icon-button" onClick={() => nav('explore')}><Icon name="plus" /></button></div>{hero ? <section className="hero">{hero.game.cover && <img src={hero.game.cover} alt="" />}<div className="hero-content"><small>{STATES[hero.status]}</small><h2>{hero.game.name}</h2><button className="primary game-action" onClick={() => {
+  return <div className="app"><aside><a className="wordmark" href="#home" onClick={() => nav('home')} aria-label="Journey — Home"><img src="icons/icon.svg?v=journey-3" alt="" />journey</a><nav>{[['home', 'Home'], ['library', 'Library'], ['journal', 'Journal'], ['explore', 'Explore'], ['profile', 'Profile']].map(([v, label]) => <button key={v} aria-current={view === v ? 'page' : undefined} className={view === v ? 'active' : ''} onClick={() => nav(v)}><Icon name={v} /><span>{label}</span></button>)}</nav><div className="sidebar-bottom"><button onClick={() => nav('profile')} className="avatar-row"><b>{(user?.name || 'V')[0]}</b><span>{user?.name || 'Player'}</span></button></div></aside><main><header className="mobile-brand"><a href="#home" onClick={() => nav('home')}><img src="icons/icon.svg?v=journey-3" alt="" />journey</a></header>
+ {view === 'home' && <><div className="page-title home-title"><h1>Your games</h1><button aria-label="Add game" className="icon-button" onClick={() => nav('explore')}><Icon name="plus" /></button></div>{hero ? <section className="hero">{hero.game.cover && <img src={hero.game.cover} alt="" />}<div className="hero-content"><small>{STATES[hero.status]}</small><h2>{hero.game.name}</h2><button className="primary game-action" onClick={() => {
               setSelected(hero.game);
               setTab('about');
-            }}><Icon name="play" />{hero.status === 'playing' ? 'Continuar jornada' : 'Ver jogo'}</button></div></section> : empty('Sua biblioteca começa aqui', '', <button className="primary game-action" onClick={() => nav('explore')}><Icon name="gamepad" />Adicionar jogo</button>)}{playing.length > 0 && <><div className="section-heading"><h2>Jogando</h2><button aria-label="Ver biblioteca" onClick={() => nav('library')}><Icon name="library" /></button></div><div className="grid">{playing.map(card)}</div></>}{entries.some(e => e.status === 'backlog') && <><div className="section-heading"><h2>Quero jogar</h2></div><div className="grid">{entries.filter(e => e.status === 'backlog').map(card)}</div></>}{entries.some(e => e.status === 'finished') && <><div className="section-heading"><h2>Concluídos</h2></div><div className="grid">{entries.filter(e => e.status === 'finished').slice(0, 6).map(card)}</div></>}</>}
- {view === 'library' && <><div className="page-title"><div><h1>Biblioteca</h1><p>{entries.length} {entries.length === 1 ? 'jogo' : 'jogos'}</p></div><button className="primary" onClick={() => setModal({
+            }}><Icon name="play" />{hero.status === 'playing' ? 'Continue journey' : 'View game'}</button></div></section> : empty('Your library starts here', '', <button className="primary game-action" onClick={() => nav('explore')}><Icon name="gamepad" />Add game</button>)}{playing.length > 0 && <><div className="section-heading"><h2>Playing</h2><button aria-label="Ver biblioteca" onClick={() => nav('library')}><Icon name="library" /></button></div><div className="grid">{playing.map(card)}</div></>}{entries.some(e => e.status === 'backlog') && <><div className="section-heading"><h2>Backlog</h2></div><div className="grid">{entries.filter(e => e.status === 'backlog').map(card)}</div></>}{entries.some(e => e.status === 'finished') && <><div className="section-heading"><h2>Completed</h2></div><div className="grid">{entries.filter(e => e.status === 'finished').slice(0, 6).map(card)}</div></>}</>}
+ {view === 'library' && <><div className="page-title"><div><h1>Library</h1><p>{entries.length} {entries.length === 1 ? 'game' : 'games'}</p></div><button className="primary" onClick={() => setModal({
             type: 'manual'
-          })}><Icon name="plus" />Adicionar jogo</button></div><div className="tabs">{[['all', 'Todos'], ...Object.entries(STATES)].map(([v, l]) => <button className={filter === v ? 'active' : ''} key={v} onClick={() => setFilter(v)}>{l} <small>{v === 'all' ? entries.length : entries.filter(e => e.status === v).length}</small></button>)}</div><div className="toolbar"><input aria-label="Buscar na biblioteca" placeholder="Buscar nos seus jogos…" value={query} onChange={e => setQuery(e.target.value)} /><select aria-label="Plataforma" value={platform} onChange={e => setPlatform(e.target.value)}><option value="">Todas as plataformas</option>{[...new Set(entries.map(e => e.platform).filter(Boolean))].map(p => <option key={p}>{p}</option>)}</select><select aria-label="Ordenação" value={sort} onChange={e => setSort(e.target.value)}><option value="recent">Recentes</option><option value="name">Nome A–Z</option><option value="rating">Minha nota</option></select><button aria-pressed={list} onClick={() => setList(!list)}>{list ? 'Grade' : 'Lista'}</button></div><div className="collections"><button className={!collection ? 'active' : ''} onClick={() => setCollection('')}>Todas as coleções</button>{collections.map(c => <button key={c} className={collection === c ? 'active' : ''} onClick={() => setCollection(c)}>{c}</button>)}<button onClick={() => setModal({
+          })}><Icon name="plus" />Add game</button></div><div className="tabs">{[['all', 'All'], ...Object.entries(STATES)].map(([v, l]) => <button className={filter === v ? 'active' : ''} key={v} onClick={() => setFilter(v)}>{l} <small>{v === 'all' ? entries.length : entries.filter(e => e.status === v).length}</small></button>)}</div><div className="toolbar"><input aria-label="Search library" placeholder="Search your games…" value={query} onChange={e => setQuery(e.target.value)} /><select aria-label="Platform" value={platform} onChange={e => setPlatform(e.target.value)}><option value="">All platforms</option>{[...new Set(entries.map(e => e.platform).filter(Boolean))].map(p => <option key={p}>{p}</option>)}</select><select aria-label="Sort by" value={sort} onChange={e => setSort(e.target.value)}><option value="recent">Recently updated</option><option value="name">Name A–Z</option><option value="rating">My rating</option></select><button aria-pressed={list} onClick={() => setList(!list)}>{list ? 'Grid' : 'List'}</button></div><div className="collections"><button className={!collection ? 'active' : ''} onClick={() => setCollection('')}>All collections</button>{collections.map(c => <button key={c} className={collection === c ? 'active' : ''} onClick={() => setCollection(c)}>{c}</button>)}<button onClick={() => setModal({
             type: 'collection'
-          })}>+ Coleção</button></div>{filtered.length ? <div className={'grid ' + (list ? 'list' : '')}>{filtered.map(card)}</div> : empty('Um espaço para suas histórias', 'Adicione seu primeiro jogo ou ajuste os filtros.')}</>}
- {view === 'journal' && <><div className="page-title"><div><h1>Diário<span>.</span></h1></div></div>{sessions.length ? <div className="timeline">{sessions.map((s, i) => <article className="memory" key={s.id + '-' + i}><small>{dateLabel(s.date + 'T12:00:00')} · {s.minutes ? s.minutes + ' min' : 'Sem duração'} · {s.journey}</small><button onClick={() => setSelected(s.game)}><h2>{s.game.name}</h2></button>{s.text && <p>{s.text}</p>}{s.image && <img src={s.image} alt={'Memória de ' + s.game.name} />}</article>)}</div> : empty('Sua história merece ser lembrada', 'Abra um jogo da biblioteca e registre sua primeira sessão.')}</>}
- {view === 'explore' && <><div className="page-title"><div><h1>Explorar<span>.</span></h1></div><button onClick={() => setModal({
+          })}>+ Collection</button></div>{filtered.length ? <div className={'grid ' + (list ? 'list' : '')}>{filtered.map(card)}</div> : empty('A space for your games', 'Add a game or adjust your filters.')}</>}
+ {view === 'journal' && <><div className="page-title"><div><h1>Journal<span>.</span></h1></div></div>{sessions.length ? <div className="timeline">{sessions.map((s, i) => <article className="memory" key={s.id + '-' + i}><small>{dateLabel(s.date + 'T12:00:00')} · {s.minutes ? s.minutes + ' min' : 'No duration'} · {s.journey}</small><button onClick={() => setSelected(s.game)}><h2>{s.game.name}</h2></button>{s.text && <p>{s.text}</p>}{s.image && <img src={s.image} alt={'Memory of ' + s.game.name} />}</article>)}</div> : empty('Your story starts here', 'Open a game to log your first session.')}</>}
+ {view === 'explore' && <><div className="page-title"><div><h1>Explore<span>.</span></h1></div><button onClick={() => setModal({
             type: 'manual'
-          })}>Cadastrar manualmente</button></div><form className="searchbar" onSubmit={search}><Icon name="explore" /><input aria-label="Nome do jogo" placeholder="Busque um jogo, uma nova história…" value={query} onChange={e => setQuery(e.target.value)} /><button className="primary" disabled={busy}>{busy ? 'Buscando…' : 'Buscar'}</button></form>{error && <p className="notice" role="alert">{error}</p>}{results.length ? <div className="grid">{results.map(card)}</div> : !busy && empty('Há um mundo para cada momento', 'Pesquise pelo nome de um jogo ou registre um título manualmente.', <button onClick={() => setModal({
+          })}>Add manually</button></div><form className="searchbar" onSubmit={search}><Icon name="explore" /><input aria-label="Game title" placeholder="Search for a game…" value={query} onChange={e => setQuery(e.target.value)} /><button className="primary" disabled={busy}>{busy ? 'Searching…' : 'Search'}</button></form>{error && <p className="notice" role="alert">{error}</p>}{results.length ? <div className="grid">{results.map(card)}</div> : !busy && empty('Find your next game', 'Search by title or add a game manually.', <button onClick={() => setModal({
           type: 'manual'
-        })}><Icon name="plus" />Cadastrar jogo</button>)}<p className="attribution">Catálogo e imagens: RAWG. Registros pessoais ficam neste dispositivo.</p></>}
- {view === 'profile' && <><div className="page-title"><div><h1>{user?.name || 'Viajante'}<span>.</span></h1></div></div><div className="stats">{[[entries.length, 'na biblioteca'], [entries.filter(e => e.status === 'finished').length, 'concluídos'], [sessions.length, 'memórias'], [(sessions.reduce((n, s) => n + (+s.minutes || 0), 0) / 60).toFixed(1) + 'h', 'registradas']].map(([n, l]) => <div className="panel" key={l}><strong>{n}</strong><p>{l}</p></div>)}</div><div className="two-col"><form className="panel form" onSubmit={e => {
+        })}><Icon name="plus" />Add game</button>)}<p className="attribution">Catalog and images: RAWG. Your entries stay on this device.</p></>}
+ {view === 'profile' && <><div className="page-title"><div><h1>{user?.name || 'Player'}<span>.</span></h1></div></div><div className="stats">{[[entries.length, 'in library'], [entries.filter(e => e.status === 'finished').length, 'completed'], [sessions.length, 'memories'], [(sessions.reduce((n, s) => n + (+s.minutes || 0), 0) / 60).toFixed(1) + 'h', 'logged']].map(([n, l]) => <div className="panel" key={l}><strong>{n}</strong><p>{l}</p></div>)}</div><div className="two-col"><form className="panel form" onSubmit={e => {
             e.preventDefault();
-            const f = new FormData(e.currentTarget);
+            const f = new FormDate(e.currentTarget);
             const u = {
                 ...user,
-                name: f.get('name').trim() || 'Viajante'
+                name: f.get('name').trim() || 'Player'
               },
               s = {
                 ...settings,
@@ -261,21 +261,21 @@ function Journey() {
               localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
               setUser(u);
               setSettings(s);
-              setToast('Preferências salvas.');
+              setToast('Settings saved.');
             } catch (e) {
-              setToast('Não foi possível salvar as preferências.');
+              setToast('Unable to save settings.');
             }
-          }}><h2>Seu espaço</h2><label>Como podemos chamar você?<input name="name" defaultValue={user?.name} maxLength="80" /></label><label>Chave RAWG · catálogo<input name="rawg" type="password" autoComplete="off" defaultValue={settings.rawgKey} /></label><p>A chave RAWG fica neste navegador e é usada apenas para consultar o catálogo.</p><button className="primary">Salvar preferências</button></form><div className="panel"><h2>Suas memórias, com você.</h2><p>Exporte um backup antes de trocar de aparelho ou limpar os dados do navegador. O arquivo inclui biblioteca, jornadas, imagens e coleções; não inclui chaves de API.</p><button className="primary" onClick={backup}>Exportar backup</button><button onClick={() => restoreRef.current.click()}>Importar backup</button><input ref={restoreRef} type="file" accept="application/json" hidden onChange={e => restore(e.target.files[0])} /><hr /><h2>Seu ano em jogos</h2><p>{entries.filter(e => e.status === 'finished' && new Date(e.updatedAt).getFullYear() === new Date().getFullYear()).length} jogos concluídos ou atualizados como concluídos neste ano.</p><p>Gêneros na sua biblioteca: {[...new Set(entries.flatMap(e => (e.game.genres || '').split(', ').filter(Boolean)))].slice(0, 6).join(' · ') || 'Suas preferências começam a aparecer conforme você adiciona jogos.'}</p><small>Journey · suas histórias nos jogos</small></div></div></>}
+          }}><h2>Settings</h2><label>Display name<input name="name" defaultValue={user?.name} maxLength="80" /></label><label>RAWG API key<input name="rawg" type="password" autoComplete="off" defaultValue={settings.rawgKey} /></label><p>Your RAWG key stays in this browser and is used only for catalog requests.</p><button className="primary">Save settings</button></form><div className="panel"><h2>Your memories, backed up.</h2><p>Export a backup before switching devices or clearing browser data. Includes games, playthroughs, images and collections. API keys are excluded.</p><button className="primary" onClick={backup}>Export backup</button><button onClick={() => restoreRef.current.click()}>Import backup</button><input ref={restoreRef} type="file" accept="application/json" hidden onChange={e => restore(e.target.files[0])} /><hr /><h2>Your year in games</h2><p>{entries.filter(e => e.status === 'finished' && new Date(e.updatedAt).getFullYear() === new Date().getFullYear()).length} games marked or updated as completed this year.</p><p>Library genres: {[...new Set(entries.flatMap(e => (e.game.genres || '').split(', ').filter(Boolean)))].slice(0, 6).join(' · ') || 'Add games to discover your favorite genres.'}</p><small>Journey · your stories in games</small></div></div></>}
  </main>
- {selected && <div className="backdrop" onClick={e => e.target === e.currentTarget && setSelected(null)}><section className="dialog detail" role="dialog" aria-modal="true" aria-label={selected.name}><button className="close" aria-label="Fechar jogo" onClick={() => setSelected(null)}>×</button><div className="detail-hero">{selected.cover && <img src={selected.cover} alt="" />}<div><small>{entry ? STATES[entry.status] : 'UM NOVO MUNDO'}</small><h1>{selected.name}</h1><p>{selected.genres} · {selected.released}</p></div></div><div className="detail-body"><div className="tabs">{[['about', 'Visão geral'], ...(entry ? [['journey', 'Minha jornada'], ['memories', 'Memórias']] : [])].map(([v, l]) => <button key={v} className={tab === v ? 'active' : ''} onClick={() => setTab(v)}>{l}</button>)}</div>{!entry && <button className="primary game-action add-library" onClick={() => add(selected)}><Icon name="plus" />Adicionar à biblioteca</button>}{<>{tab === 'journey' && <><div className="toolbar"><select aria-label="Status da jornada" value={entry.status} onChange={e => change(selected.id, {
+ {selected && !modal && <div className="backdrop" onClick={e => e.target === e.currentTarget && setSelected(null)}><section className="dialog detail" role="dialog" aria-modal="true" aria-label={selected.name}><button className="close" aria-label="Close game" onClick={() => setSelected(null)}>×</button><div className="detail-hero">{selected.cover && <img src={selected.cover} alt="" />}<div><small>{entry ? STATES[entry.status] : 'UM NOVO MUNDO'}</small><h1>{selected.name}</h1><p>{selected.genres} · {selected.released}</p></div></div><div className="detail-body"><div className="tabs">{[['about', 'Overview'], ...(entry ? [['journey', 'My journey'], ['memories', 'Memories']] : [])].map(([v, l]) => <button key={v} className={tab === v ? 'active' : ''} onClick={() => setTab(v)}>{l}</button>)}</div>{!entry && <button className="primary game-action add-library" onClick={() => add(selected)}><Icon name="plus" />Add to library</button>}{<>{tab === 'journey' && <><div className="toolbar"><select aria-label="Play status" value={entry.status} onChange={e => change(selected.id, {
                   status: e.target.value
                 })}>{Object.entries(STATES).map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select><button className="primary" onClick={() => setModal({
                   type: 'session',
                   id: selected.id,
                   journey: active.id
-                })}><Icon name="play" />Registrar sessão</button></div><form key={selected.id + '-' + entry.updatedAt} className="form" onSubmit={e => {
+                })}><Icon name="play" />Log session</button></div><form key={selected.id + '-' + entry.updatedAt} className="form" onSubmit={e => {
                 e.preventDefault();
-                const f = new FormData(e.currentTarget);
+                const f = new FormDate(e.currentTarget);
                 change(selected.id, {
                   platform: f.get('platform'),
                   access: f.get('access'),
@@ -287,18 +287,18 @@ function Journey() {
                   endDate: f.get('end'),
                   collections: f.getAll('collections')
                 });
-              }}><label>Onde você está jogando?<input name="platform" list="platforms" defaultValue={entry.platform || ''} placeholder="Escolha ou digite sua plataforma" /><datalist id="platforms">{PLATFORMS_LIST.map(p => <option key={p}>{p}</option>)}</datalist></label><div className="two-col"><label>Acesso<select name="access" defaultValue={entry.access || 'Tenho'}>{['Tenho', 'Assinatura', 'Emprestado', 'Desejo comprar'].map(x => <option key={x}>{x}</option>)}</select></label><label>Conclusão<select name="completion" defaultValue={entry.completion || ''}><option value="">Ainda em jornada</option>{['História concluída', '100%', 'Platinado', 'Jogo contínuo'].map(x => <option key={x}>{x}</option>)}</select></label></div><label>Onde parei<textarea name="where" defaultValue={entry.where || ''} placeholder="Deixe uma pista para quando voltar…" maxLength="4000" /></label><div className="two-col"><label>Comecei em<input type="date" name="start" defaultValue={entry.startDate || ''} /></label><label>Terminei em<input type="date" name="end" defaultValue={entry.endDate || ''} /></label></div><label>Minha nota · 0 a 10<input name="rating" type="number" min="0" max="10" step="0.5" defaultValue={entry.rating ?? ''} /></label><label>O que ficou comigo<textarea name="note" defaultValue={entry.note || ''} placeholder="Sua impressão, momento favorito ou vontade de voltar…" maxLength="8000" /></label>{collections.length > 0 && <fieldset><legend>Coleções</legend>{collections.map(c => <label className="check" key={c}><input name="collections" type="checkbox" value={c} defaultChecked={(entry.collections || []).includes(c)} />{c}</label>)}</fieldset>}<button className="primary">Salvar minha jornada</button></form><hr /><div className="toolbar"><select aria-label="Selecionar campanha" value={active.id} onChange={e => change(selected.id, {
+              }}><label>Your platform<input name="platform" list="platforms" defaultValue={entry.platform || ''} placeholder="Choose or enter a platform" /><datalist id="platforms">{PLATFORMS_LIST.map(p => <option key={p}>{p}</option>)}</datalist></label><div className="two-col"><label>Access<select name="access" defaultValue={entry.access || 'Owned'}>{['Owned', 'Subscription', 'Borrowed', 'Want to buy'].map(x => <option key={x}>{x}</option>)}</select></label><label>Completion<select name="completion" defaultValue={entry.completion || ''}><option value="">In progress</option>{['Story completed', '100%', 'Platinum', 'Ongoing game'].map(x => <option key={x}>{x}</option>)}</select></label></div><label>Where I left off<textarea name="where" defaultValue={entry.where || ''} placeholder="Leave a note for next time…" maxLength="4000" /></label><div className="two-col"><label>Started on<input type="date" name="start" defaultValue={entry.startDate || ''} /></label><label>Finished on<input type="date" name="end" defaultValue={entry.endDate || ''} /></label></div><label>My rating · 0 a 10<input name="rating" type="number" min="0" max="10" step="0.5" defaultValue={entry.rating ?? ''} /></label><label>My thoughts<textarea name="note" defaultValue={entry.note || ''} placeholder="Your thoughts, favorite moment, or reason to return…" maxLength="8000" /></label>{collections.length > 0 && <fieldset><legend>Collections</legend>{collections.map(c => <label className="check" key={c}><input name="collections" type="checkbox" value={c} defaultChecked={(entry.collections || []).includes(c)} />{c}</label>)}</fieldset>}<button className="primary">Save journey</button></form><hr /><div className="toolbar"><select aria-label="Select playthrough" value={active.id} onChange={e => change(selected.id, {
                   activeJourney: e.target.value
                 })}>{journeys.map(j => <option key={j.id} value={j.id}>{j.title}</option>)}</select><button onClick={() => setModal({
                   type: 'replay',
                   id: selected.id
-                })}>+ Nova campanha / replay</button></div></>}{tab === 'about' && <GameOverview key={selected.id} game={selected} rawgKey={settings.rawgKey} />}{tab === 'memories' && (sessions.filter(s => s.game.id === selected.id).length ? sessions.filter(s => s.game.id === selected.id).map((s, i) => <article className="memory" key={i}><small>{dateLabel(s.date + 'T12:00:00')} · {s.journey} · {s.minutes || 0} min</small><p>{s.text}</p>{s.image && <img src={s.image} alt="Memória do jogo" />}<button onClick={() => setModal({
+                })}>+ New playthrough</button></div></>}{tab === 'about' && <GameOverview key={selected.id} game={selected} rawgKey={settings.rawgKey} />}{tab === 'memories' && (sessions.filter(s => s.game.id === selected.id).length ? sessions.filter(s => s.game.id === selected.id).map((s, i) => <article className="memory" key={i}><small>{dateLabel(s.date + 'T12:00:00')} · {s.journey} · {s.minutes || 0} min</small><p>{s.text}</p>{s.image && <img src={s.image} alt="Game memory" />}<button onClick={() => setModal({
                 type: 'session',
                 id: selected.id,
                 journey: journeys.find(j => (j.sessions || []).some(x => x.id === s.id))?.id || 'original',
                 session: s
-              })}>Editar registro</button></article>) : <p className="empty">Registre sua primeira sessão para guardar uma memória.</p>)}</>}</div></section></div>}
- {modal && <div className="backdrop top"><section className="dialog compact" role="dialog" aria-modal="true" aria-label="Registrar no Journey"><button className="close" aria-label="Fechar registro" onClick={() => setModal(null)}>×</button>{modal.type === 'restore' ? <><h2>Importar suas jornadas?</h2><p>Os jogos do arquivo serão mesclados com a biblioteca. Em jogos com o mesmo identificador, prevalece o backup. Exporte seus dados atuais antes de continuar.</p><button onClick={backup}>Exportar dados atuais</button><button className="primary" onClick={() => {
+              })}>Edit entry</button></article>) : <p className="empty">Log your first session to save a memory.</p>)}</>}</div></section></div>}
+ {modal && <div className="backdrop top"><section className="dialog compact" role="dialog" aria-modal="true" aria-label="Save to Journey"><button className="close" aria-label="Close form" onClick={() => setModal(null)}>×</button>{modal.type === 'restore' ? <><h2>Import your journeys?</h2><p>Games will be merged into your library. For matching IDs, the backup takes priority. Export your current data first.</p><button onClick={backup}>Export current data</button><button className="primary" onClick={() => {
             if (persist({
               ...library,
               ...modal.data.library
@@ -307,11 +307,11 @@ function Journey() {
               setCollections(c);
               save('journey_collections_v1', c);
               setModal(null);
-              setToast('Backup importado.');
+              setToast('Backup imported.');
             }
-          }}>Importar e mesclar</button></> : <form className="form" onSubmit={async e => {
+          }}>Import and merge</button></> : <form className="form" onSubmit={async e => {
           e.preventDefault();
-          const f = new FormData(e.currentTarget);
+          const f = new FormDate(e.currentTarget);
           if (modal.type === 'manual') {
             const name = f.get('name').trim();
             if (!name) return;
@@ -334,14 +334,14 @@ function Journey() {
               setCollections(next);
               setModal(null);
             } catch (e) {
-              setToast('Não foi possível salvar.');
+              setToast('Unable to save.');
             }
           }
           if (modal.type === 'replay') {
             const en = library[modal.id],
               js = en.journeys || [{
                 id: 'original',
-                title: 'Primeira jornada',
+                title: 'First playthrough',
                 sessions: en.sessions || []
               }],
               j = {
@@ -360,20 +360,20 @@ function Journey() {
             const file = fileRef.current?.files[0];
             if (file) {
               if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 1500000) {
-                setToast('Escolha uma imagem JPG, PNG ou WebP de até 1,5 MB.');
+                setToast('Choose a JPG, PNG or WebP image up to 1.5 MB.');
                 return;
               }
               image = await new Promise((resolve, reject) => {
                 const r = new FileReader();
                 r.onload = () => resolve(r.result);
                 r.onerror = reject;
-                r.readAsDataURL(file);
+                r.readAsDateURL(file);
               });
             }
             const en = library[modal.id],
               js = en.journeys || [{
                 id: 'original',
-                title: 'Primeira jornada',
+                title: 'First playthrough',
                 sessions: en.sessions || []
               }];
             const session = {
@@ -395,21 +395,21 @@ function Journey() {
               }
             })) {
               setModal(null);
-              setToast('Memória guardada.');
+              setToast('Memory saved.');
             }
           }
         }}><h2>{{
-              manual: 'Adicionar um mundo',
-              collection: 'Nova coleção',
-              replay: 'Uma nova jornada',
-              session: 'Guardar uma memória'
-            }[modal.type]}</h2>{modal.type === 'session' ? <><label>Data<input name="date" type="date" defaultValue={modal.session?.date || nowDate()} required /></label><label>Tempo jogado · minutos<input name="minutes" type="number" min="0" max="1440" defaultValue={modal.session?.minutes || ''} /></label><label>O que aconteceu?<textarea name="text" maxLength="8000" defaultValue={modal.session?.text || ''} placeholder="Uma descoberta, um desafio ou como você se sentiu…" /></label><label>Screenshot · opcional<input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp" /></label><p>Até 1,5 MB por imagem. Exporte backups para preservar suas memórias.</p></> : <><label>Nome<input name="name" required maxLength="160" autoFocus placeholder={modal.type === 'collection' ? 'Favoritos da vida' : modal.type === 'replay' ? 'Segunda campanha · PC' : 'Nome do jogo'} /></label>{modal.type === 'manual' && <label>Gênero · opcional<input name="genre" maxLength="100" placeholder="RPG, aventura…" /></label>}</>}<button className="primary">{modal.type === 'session' ? 'Guardar memória' : 'Salvar'}</button></form>}</section></div>}
+              manual: 'Add a game',
+              collection: 'New collection',
+              replay: 'New playthrough',
+              session: 'Log a session'
+            }[modal.type]}</h2>{modal.type === 'session' ? <><label>Date<input name="date" type="date" defaultValue={modal.session?.date || nowDate()} required /></label><label>Time played · minutes<input name="minutes" type="number" min="0" max="1440" defaultValue={modal.session?.minutes || ''} /></label><label>What happened?<textarea name="text" maxLength="8000" defaultValue={modal.session?.text || ''} placeholder="A discovery, a challenge, or how you felt…" /></label><label>Screenshot · optional<input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp" /></label><p>Up to 1.5 MB per image. Export backups to preserve your memories.</p></> : <><label>Name<input name="name" required maxLength="160" autoFocus placeholder={modal.type === 'collection' ? 'Favoritos da vida' : modal.type === 'replay' ? 'Segunda campanha · PC' : 'Game title'} /></label>{modal.type === 'manual' && <label>Genre · optional<input name="genre" maxLength="100" placeholder="RPG, aventura…" /></label>}</>}<button className="primary">{modal.type === 'session' ? 'Save memory' : 'Save'}</button></form>}</section></div>}
  {toast && <div className="toast" role="status">{toast}{undo && <button onClick={() => {
         if (persist(undo)) {
           setUndo(null);
-          setToast('Alteração desfeita.');
+          setToast('Change undone.');
         }
-      }}>Desfazer</button>}<button aria-label="Dispensar mensagem" onClick={() => setToast('')}>×</button></div>}
+      }}>Undo</button>}<button aria-label="Dismiss message" onClick={() => setToast('')}>×</button></div>}
  </div>;
 }
 ReactDOM.createRoot(document.getElementById('root')).render(<Journey />);

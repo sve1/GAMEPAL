@@ -39,7 +39,7 @@ function GameOverview({
         errors: []
       });
     }).catch(e => {
-      if (mounted) setProblem(e.name === 'AbortError' ? 'A consulta demorou demais. Tente novamente.' : e.message);
+      if (mounted) setProblem(e.name === 'AbortError' ? 'Request timed out. Please try again.' : e.message);
     }).finally(() => {
       clearTimeout(timer);
       if (mounted) setLoading(false);
@@ -55,20 +55,20 @@ function GameOverview({
   }));
   const screenshots = (info.screenshots || []).filter(s => safeMediaUrl(s.image));
   const trailers = (info.trailers || []).filter(t => safeMediaUrl(t.data?.max || t.data?.['480']));
-  const facts = [['Lançamento', info.releaseDate ? dateLabel(info.releaseDate + 'T12:00:00') : info.released], ['Desenvolvimento', info.developers], ['Publicação', info.publishers], ['Gêneros', info.genres], ['Classificação', info.esrb], ['Metacritic', info.metacritic ? String(info.metacritic) + '/100' : null], ['Nota RAWG', info.rating && info.rating !== 'N/A' ? info.rating + '/5' : null]].filter(([, v]) => v);
+  const facts = [['Release date', info.releaseDate ? dateLabel(info.releaseDate + 'T12:00:00') : info.released], ['Developer', info.developers], ['Publisher', info.publishers], ['Genres', info.genres], ['Age rating', info.esrb], ['Metacritic', info.metacritic ? String(info.metacritic) + '/100' : null], ['Nota RAWG', info.rating && info.rating !== 'N/A' ? info.rating + '/5' : null]].filter(([, v]) => v);
   return <div className="overview">
- {loading && <div className="detail-loading" role="status">Carregando informações do jogo…</div>}
- {problem && <div className="notice" role="alert">{problem}<button onClick={() => setAttempt(a => a + 1)}>Tentar novamente</button></div>}
- {!manual && !rawgKey && <p className="media-notice">Configure a chave RAWG no Perfil para carregar sinopse e mídia.</p>}
- <section className="synopsis"><h2>Sinopse</h2><p>{info.description || (loading ? 'Buscando sinopse…' : 'Sinopse não disponível para este jogo.')}</p></section>
- {platforms.length > 0 && <section><h2>Plataformas</h2><div className="platform-chips">{platforms.map(p => <span key={p.name}><Icon name="gamepad" />{p.name}{p.released_at && <small>{p.released_at.slice(0, 4)}</small>}</span>)}</div></section>}
+ {loading && <div className="detail-loading" role="status">Loading game details…</div>}
+ {problem && <div className="notice" role="alert">{problem}<button onClick={() => setAttempt(a => a + 1)}>Try again</button></div>}
+ {!manual && !rawgKey && <p className="media-notice">Set your RAWG key in Profile to load details and media.</p>}
+ <section className="synopsis"><h2>Synopsis</h2><p>{info.description || (loading ? 'Loading synopsis…' : 'No synopsis available for this game.')}</p></section>
+ {platforms.length > 0 && <section><h2>Platforms</h2><div className="platform-chips">{platforms.map(p => <span key={p.name}><Icon name="gamepad" />{p.name}{p.released_at && <small>{p.released_at.slice(0, 4)}</small>}</span>)}</div></section>}
  {facts.length > 0 && <dl className="game-facts">{facts.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>}
- {trailers.length > 0 && <section className="trailer-section"><div className="section-heading"><h2>Trailers</h2><Icon name="play" /></div><video key={trailers[clip]?.id || clip} controls playsInline preload="none" poster={safeMediaUrl(trailers[clip]?.preview)} src={safeMediaUrl(trailers[clip]?.data?.max || trailers[clip]?.data?.['480'])} onError={() => setMediaErrors(a => [...new Set([...a, 'Não foi possível reproduzir este trailer.'])])}>Seu navegador não suporta este vídeo.</video>{trailers.length > 1 && <div className="trailer-picker">{trailers.map((t, i) => <button key={t.id || i} className={i === clip ? 'active' : ''} onClick={() => setClip(i)}><Icon name="play" />{t.name || 'Trailer ' + (i + 1)}</button>)}</div>}</section>}
- {screenshots.length > 0 && <section><h2>Galeria</h2><div className="screenshot-grid">{screenshots.map((s, i) => <button key={s.id || i} aria-label={'Ampliar screenshot ' + (i + 1)} onClick={() => setShot(shot === i ? null : i)} aria-expanded={shot === i}><img src={safeMediaUrl(s.image)} alt={'Screenshot ' + (i + 1) + ' de ' + game.name} loading="lazy" /></button>)}</div>{shot !== null && screenshots[shot] && <div className="expanded-shot"><button onClick={() => setShot(null)} aria-label="Fechar imagem">×</button><img src={safeMediaUrl(screenshots[shot].image)} alt={'Screenshot ampliada de ' + game.name} /></div>}</section>}
- {!loading && !problem && !manual && rawgKey && !trailers.length && <p className="media-notice">{mediaErrors.some(e => e.includes('trailers')) ? 'Trailers indisponíveis nesta consulta.' : 'Nenhum trailer disponível no RAWG para este jogo.'}</p>}
- {!loading && mediaErrors.length > 0 && <div className="media-notice" role="status">Alguns conteúdos não puderam ser carregados. <button onClick={() => setAttempt(a => a + 1)}>Recarregar mídia</button></div>}
- {(info.tags || []).length > 0 && <section><h2>Características</h2><div className="tags">{info.tags.map(t => <span key={t}>{t}</span>)}</div></section>}
- {safeMediaUrl(info.website) && <a className="external-game" href={safeMediaUrl(info.website)} target="_blank" rel="noopener noreferrer"><Icon name="explore" />Site oficial</a>}
- <p className="attribution">Dados e mídia: <a href="https://rawg.io" target="_blank" rel="noopener noreferrer">RAWG</a></p>
+ {trailers.length > 0 && <section className="trailer-section"><div className="section-heading"><h2>Trailers</h2><Icon name="play" /></div><video key={trailers[clip]?.id || clip} controls playsInline preload="none" poster={safeMediaUrl(trailers[clip]?.preview)} src={safeMediaUrl(trailers[clip]?.data?.max || trailers[clip]?.data?.['480'])} onError={() => setMediaErrors(a => [...new Set([...a, 'Unable to play this trailer.'])])}>Your browser does not support this video.</video>{trailers.length > 1 && <div className="trailer-picker">{trailers.map((t, i) => <button key={t.id || i} className={i === clip ? 'active' : ''} onClick={() => setClip(i)}><Icon name="play" />{t.name || 'Trailer ' + (i + 1)}</button>)}</div>}</section>}
+ {screenshots.length > 0 && <section><h2>Gallery</h2><div className="screenshot-grid">{screenshots.map((s, i) => <button key={s.id || i} aria-label={'Enlarge screenshot ' + (i + 1)} onClick={() => setShot(shot === i ? null : i)} aria-expanded={shot === i}><img src={safeMediaUrl(s.image)} alt={'Screenshot ' + (i + 1) + ' de ' + game.name} loading="lazy" /></button>)}</div>{shot !== null && screenshots[shot] && <div className="expanded-shot"><button onClick={() => setShot(null)} aria-label="Close image">×</button><img src={safeMediaUrl(screenshots[shot].image)} alt={'Enlarged screenshot of ' + game.name} /></div>}</section>}
+ {!loading && !problem && !manual && rawgKey && !trailers.length && <p className="media-notice">{mediaErrors.some(e => e.includes('trailers')) ? 'Trailers unavailable for this request.' : 'No trailer available on RAWG for this game.'}</p>}
+ {!loading && mediaErrors.length > 0 && <div className="media-notice" role="status">Some media could not be loaded. <button onClick={() => setAttempt(a => a + 1)}>Retry media</button></div>}
+ {(info.tags || []).length > 0 && <section><h2>Features</h2><div className="tags">{info.tags.map(t => <span key={t}>{t}</span>)}</div></section>}
+ {safeMediaUrl(info.website) && <a className="external-game" href={safeMediaUrl(info.website)} target="_blank" rel="noopener noreferrer"><Icon name="explore" />Official website</a>}
+ <p className="attribution">Date and media: <a href="https://rawg.io" target="_blank" rel="noopener noreferrer">RAWG</a></p>
  </div>;
 }

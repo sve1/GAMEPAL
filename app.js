@@ -82,7 +82,7 @@ function GameOverview(_ref) {
         errors: []
       });
     })["catch"](function (e) {
-      if (mounted) setProblem(e.name === 'AbortError' ? 'A consulta demorou demais. Tente novamente.' : e.message);
+      if (mounted) setProblem(e.name === 'AbortError' ? 'Request timed out. Please try again.' : e.message);
     })["finally"](function () {
       clearTimeout(timer);
       if (mounted) setLoading(false);
@@ -105,7 +105,7 @@ function GameOverview(_ref) {
     var _t$data, _t$data2;
     return safeMediaUrl(((_t$data = t.data) === null || _t$data === void 0 ? void 0 : _t$data.max) || ((_t$data2 = t.data) === null || _t$data2 === void 0 ? void 0 : _t$data2['480']));
   });
-  var facts = [['Lançamento', info.releaseDate ? dateLabel(info.releaseDate + 'T12:00:00') : info.released], ['Desenvolvimento', info.developers], ['Publicação', info.publishers], ['Gêneros', info.genres], ['Classificação', info.esrb], ['Metacritic', info.metacritic ? String(info.metacritic) + '/100' : null], ['Nota RAWG', info.rating && info.rating !== 'N/A' ? info.rating + '/5' : null]].filter(function (_ref2) {
+  var facts = [['Release date', info.releaseDate ? dateLabel(info.releaseDate + 'T12:00:00') : info.released], ['Developer', info.developers], ['Publisher', info.publishers], ['Genres', info.genres], ['Age rating', info.esrb], ['Metacritic', info.metacritic ? String(info.metacritic) + '/100' : null], ['Nota RAWG', info.rating && info.rating !== 'N/A' ? info.rating + '/5' : null]].filter(function (_ref2) {
     var _ref3 = _slicedToArray(_ref2, 2),
       v = _ref3[1];
     return v;
@@ -115,7 +115,7 @@ function GameOverview(_ref) {
   }, loading && /*#__PURE__*/React.createElement("div", {
     className: "detail-loading",
     role: "status"
-  }, "Carregando informa\xE7\xF5es do jogo\u2026"), problem && /*#__PURE__*/React.createElement("div", {
+  }, "Loading game details\u2026"), problem && /*#__PURE__*/React.createElement("div", {
     className: "notice",
     role: "alert"
   }, problem, /*#__PURE__*/React.createElement("button", {
@@ -124,11 +124,11 @@ function GameOverview(_ref) {
         return a + 1;
       });
     }
-  }, "Tentar novamente")), !manual && !rawgKey && /*#__PURE__*/React.createElement("p", {
+  }, "Try again")), !manual && !rawgKey && /*#__PURE__*/React.createElement("p", {
     className: "media-notice"
-  }, "Configure a chave RAWG no Perfil para carregar sinopse e m\xEDdia."), /*#__PURE__*/React.createElement("section", {
+  }, "Set your RAWG key in Profile to load details and media."), /*#__PURE__*/React.createElement("section", {
     className: "synopsis"
-  }, /*#__PURE__*/React.createElement("h2", null, "Sinopse"), /*#__PURE__*/React.createElement("p", null, info.description || (loading ? 'Buscando sinopse…' : 'Sinopse não disponível para este jogo.'))), platforms.length > 0 && /*#__PURE__*/React.createElement("section", null, /*#__PURE__*/React.createElement("h2", null, "Plataformas"), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("h2", null, "Synopsis"), /*#__PURE__*/React.createElement("p", null, info.description || (loading ? 'Loading synopsis…' : 'No synopsis available for this game.'))), platforms.length > 0 && /*#__PURE__*/React.createElement("section", null, /*#__PURE__*/React.createElement("h2", null, "Platforms"), /*#__PURE__*/React.createElement("div", {
     className: "platform-chips"
   }, platforms.map(function (p) {
     return /*#__PURE__*/React.createElement("span", {
@@ -160,10 +160,10 @@ function GameOverview(_ref) {
     src: safeMediaUrl(((_trailers$clip3 = trailers[clip]) === null || _trailers$clip3 === void 0 || (_trailers$clip3 = _trailers$clip3.data) === null || _trailers$clip3 === void 0 ? void 0 : _trailers$clip3.max) || ((_trailers$clip4 = trailers[clip]) === null || _trailers$clip4 === void 0 || (_trailers$clip4 = _trailers$clip4.data) === null || _trailers$clip4 === void 0 ? void 0 : _trailers$clip4['480'])),
     onError: function onError() {
       return setMediaErrors(function (a) {
-        return _toConsumableArray(new Set([].concat(_toConsumableArray(a), ['Não foi possível reproduzir este trailer.'])));
+        return _toConsumableArray(new Set([].concat(_toConsumableArray(a), ['Unable to play this trailer.'])));
       });
     }
-  }, "Seu navegador n\xE3o suporta este v\xEDdeo."), trailers.length > 1 && /*#__PURE__*/React.createElement("div", {
+  }, "Your browser does not support this video."), trailers.length > 1 && /*#__PURE__*/React.createElement("div", {
     className: "trailer-picker"
   }, trailers.map(function (t, i) {
     return /*#__PURE__*/React.createElement("button", {
@@ -175,12 +175,12 @@ function GameOverview(_ref) {
     }, /*#__PURE__*/React.createElement(Icon, {
       name: "play"
     }), t.name || 'Trailer ' + (i + 1));
-  }))), screenshots.length > 0 && /*#__PURE__*/React.createElement("section", null, /*#__PURE__*/React.createElement("h2", null, "Galeria"), /*#__PURE__*/React.createElement("div", {
+  }))), screenshots.length > 0 && /*#__PURE__*/React.createElement("section", null, /*#__PURE__*/React.createElement("h2", null, "Gallery"), /*#__PURE__*/React.createElement("div", {
     className: "screenshot-grid"
   }, screenshots.map(function (s, i) {
     return /*#__PURE__*/React.createElement("button", {
       key: s.id || i,
-      "aria-label": 'Ampliar screenshot ' + (i + 1),
+      "aria-label": 'Enlarge screenshot ' + (i + 1),
       onClick: function onClick() {
         return setShot(shot === i ? null : i);
       },
@@ -196,24 +196,24 @@ function GameOverview(_ref) {
     onClick: function onClick() {
       return setShot(null);
     },
-    "aria-label": "Fechar imagem"
+    "aria-label": "Close image"
   }, "\xD7"), /*#__PURE__*/React.createElement("img", {
     src: safeMediaUrl(screenshots[shot].image),
-    alt: 'Screenshot ampliada de ' + game.name
+    alt: 'Enlarged screenshot of ' + game.name
   }))), !loading && !problem && !manual && rawgKey && !trailers.length && /*#__PURE__*/React.createElement("p", {
     className: "media-notice"
   }, mediaErrors.some(function (e) {
     return e.includes('trailers');
-  }) ? 'Trailers indisponíveis nesta consulta.' : 'Nenhum trailer disponível no RAWG para este jogo.'), !loading && mediaErrors.length > 0 && /*#__PURE__*/React.createElement("div", {
+  }) ? 'Trailers unavailable for this request.' : 'No trailer available on RAWG for this game.'), !loading && mediaErrors.length > 0 && /*#__PURE__*/React.createElement("div", {
     className: "media-notice",
     role: "status"
-  }, "Alguns conte\xFAdos n\xE3o puderam ser carregados. ", /*#__PURE__*/React.createElement("button", {
+  }, "Some media could not be loaded. ", /*#__PURE__*/React.createElement("button", {
     onClick: function onClick() {
       return setAttempt(function (a) {
         return a + 1;
       });
     }
-  }, "Recarregar m\xEDdia")), (info.tags || []).length > 0 && /*#__PURE__*/React.createElement("section", null, /*#__PURE__*/React.createElement("h2", null, "Caracter\xEDsticas"), /*#__PURE__*/React.createElement("div", {
+  }, "Retry media")), (info.tags || []).length > 0 && /*#__PURE__*/React.createElement("section", null, /*#__PURE__*/React.createElement("h2", null, "Features"), /*#__PURE__*/React.createElement("div", {
     className: "tags"
   }, info.tags.map(function (t) {
     return /*#__PURE__*/React.createElement("span", {
@@ -226,26 +226,26 @@ function GameOverview(_ref) {
     rel: "noopener noreferrer"
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "explore"
-  }), "Site oficial"), /*#__PURE__*/React.createElement("p", {
+  }), "Official website"), /*#__PURE__*/React.createElement("p", {
     className: "attribution"
-  }, "Dados e m\xEDdia: ", /*#__PURE__*/React.createElement("a", {
+  }, "Date and media: ", /*#__PURE__*/React.createElement("a", {
     href: "https://rawg.io",
     target: "_blank",
     rel: "noopener noreferrer"
   }, "RAWG")));
 }
 var STATES = {
-  backlog: 'Quero jogar',
-  playing: 'Jogando',
-  paused: 'Em pausa',
-  finished: 'Concluído',
-  quit: 'Deixei de jogar'
+  backlog: 'Backlog',
+  playing: 'Playing',
+  paused: 'Paused',
+  finished: 'Completed',
+  quit: 'Stopped'
 };
 var nowDate = function nowDate() {
   return new Date().toLocaleDateString('en-CA');
 };
 var dateLabel = function dateLabel(v) {
-  return new Date(v).toLocaleDateString('pt-BR', {
+  return new Date(v).toLocaleDateString('en-US', {
     day: 'numeric',
     month: 'short',
     year: 'numeric'
@@ -292,7 +292,7 @@ function Journey() {
     setSettings = _useState18[1],
     _useState19 = useState(function () {
       return load(USER_KEY, {
-        name: 'Viajante'
+        name: 'Player'
       });
     }),
     _useState20 = _slicedToArray(_useState19, 2),
@@ -378,7 +378,7 @@ function Journey() {
         return (j.sessions || []).map(function (s) {
           return _objectSpread(_objectSpread({}, s), {}, {
             game: e.game,
-            journey: j.title || 'Primeira jornada'
+            journey: j.title || 'First playthrough'
           });
         });
       });
@@ -399,7 +399,7 @@ function Journey() {
       setLibrary(next);
       return true;
     } catch (e) {
-      setToast('Não foi possível salvar. Exporte um backup e libere espaço no dispositivo.');
+      setToast('Unable to save. Export a backup and free up device storage.');
       return false;
     }
   }
@@ -411,7 +411,7 @@ function Journey() {
       updatedAt: Date.now()
     }))))) {
       setUndo(old);
-      setToast('Jornada atualizada.');
+      setToast('Journey updated.');
     }
   }
   function add(game) {
@@ -425,7 +425,7 @@ function Journey() {
       status: 'backlog',
       createdAt: t,
       updatedAt: t
-    })))) setToast('Adicionado à sua biblioteca.');
+    })))) setToast('Added to your library.');
     setSelected(game);
   }
   useEffect(function () {
@@ -511,7 +511,7 @@ function Journey() {
               _context2.next = 8;
               break;
             }
-            throw Error('Adicione sua chave RAWG no Perfil para pesquisar o catálogo. Você também pode cadastrar um jogo manualmente.');
+            throw Error('Set your RAWG key in Profile to search the catalog, or add a game manually.');
           case 8:
             _context2.t0 = setResults;
             _context2.next = 11;
@@ -591,7 +591,7 @@ function Journey() {
               _context3.next = 10;
               break;
             }
-            throw Error('Arquivo de backup inválido.');
+            throw Error('Invalid backup file.');
           case 10:
             setModal({
               type: 'restore',
@@ -649,12 +649,12 @@ function Journey() {
       }
     }, /*#__PURE__*/React.createElement(Icon, {
       name: "gamepad"
-    }), " Adicionar jogo"));
+    }), " Add game"));
   }
   var entry = selected && library[selected.id],
     journeys = (entry === null || entry === void 0 ? void 0 : entry.journeys) || [{
       id: 'original',
-      title: 'Primeira jornada',
+      title: 'First playthrough',
       sessions: (entry === null || entry === void 0 ? void 0 : entry.sessions) || []
     }],
     active = journeys.find(function (j) {
@@ -673,11 +673,11 @@ function Journey() {
     onClick: function onClick() {
       return nav('home');
     },
-    "aria-label": "Journey \u2014 In\xEDcio"
+    "aria-label": "Journey \u2014 Home"
   }, /*#__PURE__*/React.createElement("img", {
-    src: "icons/icon.svg?v=journey-2",
+    src: "icons/icon.svg?v=journey-3",
     alt: ""
-  }), "journey"), /*#__PURE__*/React.createElement("nav", null, [['home', 'Início'], ['library', 'Biblioteca'], ['journal', 'Diário'], ['explore', 'Explorar'], ['profile', 'Perfil']].map(function (_ref7) {
+  }), "journey"), /*#__PURE__*/React.createElement("nav", null, [['home', 'Home'], ['library', 'Library'], ['journal', 'Journal'], ['explore', 'Explore'], ['profile', 'Profile']].map(function (_ref7) {
     var _ref8 = _slicedToArray(_ref7, 2),
       v = _ref8[0],
       label = _ref8[1];
@@ -698,7 +698,7 @@ function Journey() {
       return nav('profile');
     },
     className: "avatar-row"
-  }, /*#__PURE__*/React.createElement("b", null, ((user === null || user === void 0 ? void 0 : user.name) || 'V')[0]), /*#__PURE__*/React.createElement("span", null, (user === null || user === void 0 ? void 0 : user.name) || 'Viajante')))), /*#__PURE__*/React.createElement("main", null, /*#__PURE__*/React.createElement("header", {
+  }, /*#__PURE__*/React.createElement("b", null, ((user === null || user === void 0 ? void 0 : user.name) || 'V')[0]), /*#__PURE__*/React.createElement("span", null, (user === null || user === void 0 ? void 0 : user.name) || 'Player')))), /*#__PURE__*/React.createElement("main", null, /*#__PURE__*/React.createElement("header", {
     className: "mobile-brand"
   }, /*#__PURE__*/React.createElement("a", {
     href: "#home",
@@ -706,12 +706,12 @@ function Journey() {
       return nav('home');
     }
   }, /*#__PURE__*/React.createElement("img", {
-    src: "icons/icon.svg?v=journey-2",
+    src: "icons/icon.svg?v=journey-3",
     alt: ""
   }), "journey")), view === 'home' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "page-title home-title"
-  }, /*#__PURE__*/React.createElement("h1", null, "Seus jogos"), /*#__PURE__*/React.createElement("button", {
-    "aria-label": "Adicionar jogo",
+  }, /*#__PURE__*/React.createElement("h1", null, "Your games"), /*#__PURE__*/React.createElement("button", {
+    "aria-label": "Add game",
     className: "icon-button",
     onClick: function onClick() {
       return nav('explore');
@@ -733,16 +733,16 @@ function Journey() {
     }
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "play"
-  }), hero.status === 'playing' ? 'Continuar jornada' : 'Ver jogo'))) : empty('Sua biblioteca começa aqui', '', /*#__PURE__*/React.createElement("button", {
+  }), hero.status === 'playing' ? 'Continue journey' : 'View game'))) : empty('Your library starts here', '', /*#__PURE__*/React.createElement("button", {
     className: "primary game-action",
     onClick: function onClick() {
       return nav('explore');
     }
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "gamepad"
-  }), "Adicionar jogo")), playing.length > 0 && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  }), "Add game")), playing.length > 0 && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "section-heading"
-  }, /*#__PURE__*/React.createElement("h2", null, "Jogando"), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("h2", null, "Playing"), /*#__PURE__*/React.createElement("button", {
     "aria-label": "Ver biblioteca",
     onClick: function onClick() {
       return nav('library');
@@ -755,7 +755,7 @@ function Journey() {
     return e.status === 'backlog';
   }) && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "section-heading"
-  }, /*#__PURE__*/React.createElement("h2", null, "Quero jogar")), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("h2", null, "Backlog")), /*#__PURE__*/React.createElement("div", {
     className: "grid"
   }, entries.filter(function (e) {
     return e.status === 'backlog';
@@ -763,13 +763,13 @@ function Journey() {
     return e.status === 'finished';
   }) && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "section-heading"
-  }, /*#__PURE__*/React.createElement("h2", null, "Conclu\xEDdos")), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("h2", null, "Completed")), /*#__PURE__*/React.createElement("div", {
     className: "grid"
   }, entries.filter(function (e) {
     return e.status === 'finished';
   }).slice(0, 6).map(card)))), view === 'library' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "page-title"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", null, "Biblioteca"), /*#__PURE__*/React.createElement("p", null, entries.length, " ", entries.length === 1 ? 'jogo' : 'jogos')), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", null, "Library"), /*#__PURE__*/React.createElement("p", null, entries.length, " ", entries.length === 1 ? 'game' : 'games')), /*#__PURE__*/React.createElement("button", {
     className: "primary",
     onClick: function onClick() {
       return setModal({
@@ -778,9 +778,9 @@ function Journey() {
     }
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "plus"
-  }), "Adicionar jogo")), /*#__PURE__*/React.createElement("div", {
+  }), "Add game")), /*#__PURE__*/React.createElement("div", {
     className: "tabs"
-  }, [['all', 'Todos']].concat(_toConsumableArray(Object.entries(STATES))).map(function (_ref9) {
+  }, [['all', 'All']].concat(_toConsumableArray(Object.entries(STATES))).map(function (_ref9) {
     var _ref10 = _slicedToArray(_ref9, 2),
       v = _ref10[0],
       l = _ref10[1];
@@ -796,51 +796,51 @@ function Journey() {
   })), /*#__PURE__*/React.createElement("div", {
     className: "toolbar"
   }, /*#__PURE__*/React.createElement("input", {
-    "aria-label": "Buscar na biblioteca",
-    placeholder: "Buscar nos seus jogos\u2026",
+    "aria-label": "Search library",
+    placeholder: "Search your games\u2026",
     value: query,
     onChange: function onChange(e) {
       return setQuery(e.target.value);
     }
   }), /*#__PURE__*/React.createElement("select", {
-    "aria-label": "Plataforma",
+    "aria-label": "Platform",
     value: platform,
     onChange: function onChange(e) {
       return setPlatform(e.target.value);
     }
   }, /*#__PURE__*/React.createElement("option", {
     value: ""
-  }, "Todas as plataformas"), _toConsumableArray(new Set(entries.map(function (e) {
+  }, "All platforms"), _toConsumableArray(new Set(entries.map(function (e) {
     return e.platform;
   }).filter(Boolean))).map(function (p) {
     return /*#__PURE__*/React.createElement("option", {
       key: p
     }, p);
   })), /*#__PURE__*/React.createElement("select", {
-    "aria-label": "Ordena\xE7\xE3o",
+    "aria-label": "Sort by",
     value: sort,
     onChange: function onChange(e) {
       return setSort(e.target.value);
     }
   }, /*#__PURE__*/React.createElement("option", {
     value: "recent"
-  }, "Recentes"), /*#__PURE__*/React.createElement("option", {
+  }, "Recently updated"), /*#__PURE__*/React.createElement("option", {
     value: "name"
-  }, "Nome A\u2013Z"), /*#__PURE__*/React.createElement("option", {
+  }, "Name A\u2013Z"), /*#__PURE__*/React.createElement("option", {
     value: "rating"
-  }, "Minha nota")), /*#__PURE__*/React.createElement("button", {
+  }, "My rating")), /*#__PURE__*/React.createElement("button", {
     "aria-pressed": list,
     onClick: function onClick() {
       return setList(!list);
     }
-  }, list ? 'Grade' : 'Lista')), /*#__PURE__*/React.createElement("div", {
+  }, list ? 'Grid' : 'List')), /*#__PURE__*/React.createElement("div", {
     className: "collections"
   }, /*#__PURE__*/React.createElement("button", {
     className: !collection ? 'active' : '',
     onClick: function onClick() {
       return setCollection('');
     }
-  }, "Todas as cole\xE7\xF5es"), collections.map(function (c) {
+  }, "All collections"), collections.map(function (c) {
     return /*#__PURE__*/React.createElement("button", {
       key: c,
       className: collection === c ? 'active' : '',
@@ -854,40 +854,40 @@ function Journey() {
         type: 'collection'
       });
     }
-  }, "+ Cole\xE7\xE3o")), filtered.length ? /*#__PURE__*/React.createElement("div", {
+  }, "+ Collection")), filtered.length ? /*#__PURE__*/React.createElement("div", {
     className: 'grid ' + (list ? 'list' : '')
-  }, filtered.map(card)) : empty('Um espaço para suas histórias', 'Adicione seu primeiro jogo ou ajuste os filtros.')), view === 'journal' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  }, filtered.map(card)) : empty('A space for your games', 'Add a game or adjust your filters.')), view === 'journal' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "page-title"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", null, "Di\xE1rio", /*#__PURE__*/React.createElement("span", null, ".")))), sessions.length ? /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", null, "Journal", /*#__PURE__*/React.createElement("span", null, ".")))), sessions.length ? /*#__PURE__*/React.createElement("div", {
     className: "timeline"
   }, sessions.map(function (s, i) {
     return /*#__PURE__*/React.createElement("article", {
       className: "memory",
       key: s.id + '-' + i
-    }, /*#__PURE__*/React.createElement("small", null, dateLabel(s.date + 'T12:00:00'), " \xB7 ", s.minutes ? s.minutes + ' min' : 'Sem duração', " \xB7 ", s.journey), /*#__PURE__*/React.createElement("button", {
+    }, /*#__PURE__*/React.createElement("small", null, dateLabel(s.date + 'T12:00:00'), " \xB7 ", s.minutes ? s.minutes + ' min' : 'No duration', " \xB7 ", s.journey), /*#__PURE__*/React.createElement("button", {
       onClick: function onClick() {
         return setSelected(s.game);
       }
     }, /*#__PURE__*/React.createElement("h2", null, s.game.name)), s.text && /*#__PURE__*/React.createElement("p", null, s.text), s.image && /*#__PURE__*/React.createElement("img", {
       src: s.image,
-      alt: 'Memória de ' + s.game.name
+      alt: 'Memory of ' + s.game.name
     }));
-  })) : empty('Sua história merece ser lembrada', 'Abra um jogo da biblioteca e registre sua primeira sessão.')), view === 'explore' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  })) : empty('Your story starts here', 'Open a game to log your first session.')), view === 'explore' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "page-title"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", null, "Explorar", /*#__PURE__*/React.createElement("span", null, "."))), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", null, "Explore", /*#__PURE__*/React.createElement("span", null, "."))), /*#__PURE__*/React.createElement("button", {
     onClick: function onClick() {
       return setModal({
         type: 'manual'
       });
     }
-  }, "Cadastrar manualmente")), /*#__PURE__*/React.createElement("form", {
+  }, "Add manually")), /*#__PURE__*/React.createElement("form", {
     className: "searchbar",
     onSubmit: search
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "explore"
   }), /*#__PURE__*/React.createElement("input", {
-    "aria-label": "Nome do jogo",
-    placeholder: "Busque um jogo, uma nova hist\xF3ria\u2026",
+    "aria-label": "Game title",
+    placeholder: "Search for a game\u2026",
     value: query,
     onChange: function onChange(e) {
       return setQuery(e.target.value);
@@ -895,12 +895,12 @@ function Journey() {
   }), /*#__PURE__*/React.createElement("button", {
     className: "primary",
     disabled: busy
-  }, busy ? 'Buscando…' : 'Buscar')), error && /*#__PURE__*/React.createElement("p", {
+  }, busy ? 'Searching…' : 'Search')), error && /*#__PURE__*/React.createElement("p", {
     className: "notice",
     role: "alert"
   }, error), results.length ? /*#__PURE__*/React.createElement("div", {
     className: "grid"
-  }, results.map(card)) : !busy && empty('Há um mundo para cada momento', 'Pesquise pelo nome de um jogo ou registre um título manualmente.', /*#__PURE__*/React.createElement("button", {
+  }, results.map(card)) : !busy && empty('Find your next game', 'Search by title or add a game manually.', /*#__PURE__*/React.createElement("button", {
     onClick: function onClick() {
       return setModal({
         type: 'manual'
@@ -908,17 +908,17 @@ function Journey() {
     }
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "plus"
-  }), "Cadastrar jogo")), /*#__PURE__*/React.createElement("p", {
+  }), "Add game")), /*#__PURE__*/React.createElement("p", {
     className: "attribution"
-  }, "Cat\xE1logo e imagens: RAWG. Registros pessoais ficam neste dispositivo.")), view === 'profile' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  }, "Catalog and images: RAWG. Your entries stay on this device.")), view === 'profile' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "page-title"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", null, (user === null || user === void 0 ? void 0 : user.name) || 'Viajante', /*#__PURE__*/React.createElement("span", null, ".")))), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", null, (user === null || user === void 0 ? void 0 : user.name) || 'Player', /*#__PURE__*/React.createElement("span", null, ".")))), /*#__PURE__*/React.createElement("div", {
     className: "stats"
-  }, [[entries.length, 'na biblioteca'], [entries.filter(function (e) {
+  }, [[entries.length, 'in library'], [entries.filter(function (e) {
     return e.status === 'finished';
-  }).length, 'concluídos'], [sessions.length, 'memórias'], [(sessions.reduce(function (n, s) {
+  }).length, 'completed'], [sessions.length, 'memories'], [(sessions.reduce(function (n, s) {
     return n + (+s.minutes || 0);
-  }, 0) / 60).toFixed(1) + 'h', 'registradas']].map(function (_ref11) {
+  }, 0) / 60).toFixed(1) + 'h', 'logged']].map(function (_ref11) {
     var _ref12 = _slicedToArray(_ref11, 2),
       n = _ref12[0],
       l = _ref12[1];
@@ -932,9 +932,9 @@ function Journey() {
     className: "panel form",
     onSubmit: function onSubmit(e) {
       e.preventDefault();
-      var f = new FormData(e.currentTarget);
+      var f = new FormDate(e.currentTarget);
       var u = _objectSpread(_objectSpread({}, user), {}, {
-          name: f.get('name').trim() || 'Viajante'
+          name: f.get('name').trim() || 'Player'
         }),
         s = _objectSpread(_objectSpread({}, settings), {}, {
           rawgKey: f.get('rawg').trim()
@@ -946,32 +946,32 @@ function Journey() {
         localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
         setUser(u);
         setSettings(s);
-        setToast('Preferências salvas.');
+        setToast('Settings saved.');
       } catch (e) {
-        setToast('Não foi possível salvar as preferências.');
+        setToast('Unable to save settings.');
       }
     }
-  }, /*#__PURE__*/React.createElement("h2", null, "Seu espa\xE7o"), /*#__PURE__*/React.createElement("label", null, "Como podemos chamar voc\xEA?", /*#__PURE__*/React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("h2", null, "Settings"), /*#__PURE__*/React.createElement("label", null, "Display name", /*#__PURE__*/React.createElement("input", {
     name: "name",
     defaultValue: user === null || user === void 0 ? void 0 : user.name,
     maxLength: "80"
-  })), /*#__PURE__*/React.createElement("label", null, "Chave RAWG \xB7 cat\xE1logo", /*#__PURE__*/React.createElement("input", {
+  })), /*#__PURE__*/React.createElement("label", null, "RAWG API key", /*#__PURE__*/React.createElement("input", {
     name: "rawg",
     type: "password",
     autoComplete: "off",
     defaultValue: settings.rawgKey
-  })), /*#__PURE__*/React.createElement("p", null, "A chave RAWG fica neste navegador e \xE9 usada apenas para consultar o cat\xE1logo."), /*#__PURE__*/React.createElement("button", {
+  })), /*#__PURE__*/React.createElement("p", null, "Your RAWG key stays in this browser and is used only for catalog requests."), /*#__PURE__*/React.createElement("button", {
     className: "primary"
-  }, "Salvar prefer\xEAncias")), /*#__PURE__*/React.createElement("div", {
+  }, "Save settings")), /*#__PURE__*/React.createElement("div", {
     className: "panel"
-  }, /*#__PURE__*/React.createElement("h2", null, "Suas mem\xF3rias, com voc\xEA."), /*#__PURE__*/React.createElement("p", null, "Exporte um backup antes de trocar de aparelho ou limpar os dados do navegador. O arquivo inclui biblioteca, jornadas, imagens e cole\xE7\xF5es; n\xE3o inclui chaves de API."), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("h2", null, "Your memories, backed up."), /*#__PURE__*/React.createElement("p", null, "Export a backup before switching devices or clearing browser data. Includes games, playthroughs, images and collections. API keys are excluded."), /*#__PURE__*/React.createElement("button", {
     className: "primary",
     onClick: backup
-  }, "Exportar backup"), /*#__PURE__*/React.createElement("button", {
+  }, "Export backup"), /*#__PURE__*/React.createElement("button", {
     onClick: function onClick() {
       return restoreRef.current.click();
     }
-  }, "Importar backup"), /*#__PURE__*/React.createElement("input", {
+  }, "Import backup"), /*#__PURE__*/React.createElement("input", {
     ref: restoreRef,
     type: "file",
     accept: "application/json",
@@ -979,11 +979,11 @@ function Journey() {
     onChange: function onChange(e) {
       return restore(e.target.files[0]);
     }
-  }), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement("h2", null, "Seu ano em jogos"), /*#__PURE__*/React.createElement("p", null, entries.filter(function (e) {
+  }), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement("h2", null, "Your year in games"), /*#__PURE__*/React.createElement("p", null, entries.filter(function (e) {
     return e.status === 'finished' && new Date(e.updatedAt).getFullYear() === new Date().getFullYear();
-  }).length, " jogos conclu\xEDdos ou atualizados como conclu\xEDdos neste ano."), /*#__PURE__*/React.createElement("p", null, "G\xEAneros na sua biblioteca: ", _toConsumableArray(new Set(entries.flatMap(function (e) {
+  }).length, " games marked or updated as completed this year."), /*#__PURE__*/React.createElement("p", null, "Library genres: ", _toConsumableArray(new Set(entries.flatMap(function (e) {
     return (e.game.genres || '').split(', ').filter(Boolean);
-  }))).slice(0, 6).join(' · ') || 'Suas preferências começam a aparecer conforme você adiciona jogos.'), /*#__PURE__*/React.createElement("small", null, "Journey \xB7 suas hist\xF3rias nos jogos"))))), selected && /*#__PURE__*/React.createElement("div", {
+  }))).slice(0, 6).join(' · ') || 'Add games to discover your favorite genres.'), /*#__PURE__*/React.createElement("small", null, "Journey \xB7 your stories in games"))))), selected && !modal && /*#__PURE__*/React.createElement("div", {
     className: "backdrop",
     onClick: function onClick(e) {
       return e.target === e.currentTarget && setSelected(null);
@@ -995,7 +995,7 @@ function Journey() {
     "aria-label": selected.name
   }, /*#__PURE__*/React.createElement("button", {
     className: "close",
-    "aria-label": "Fechar jogo",
+    "aria-label": "Close game",
     onClick: function onClick() {
       return setSelected(null);
     }
@@ -1008,7 +1008,7 @@ function Journey() {
     className: "detail-body"
   }, /*#__PURE__*/React.createElement("div", {
     className: "tabs"
-  }, [['about', 'Visão geral']].concat(_toConsumableArray(entry ? [['journey', 'Minha jornada'], ['memories', 'Memórias']] : [])).map(function (_ref13) {
+  }, [['about', 'Overview']].concat(_toConsumableArray(entry ? [['journey', 'My journey'], ['memories', 'Memories']] : [])).map(function (_ref13) {
     var _ref14 = _slicedToArray(_ref13, 2),
       v = _ref14[0],
       l = _ref14[1];
@@ -1026,10 +1026,10 @@ function Journey() {
     }
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "plus"
-  }), "Adicionar \xE0 biblioteca"), /*#__PURE__*/React.createElement(React.Fragment, null, tab === 'journey' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  }), "Add to library"), /*#__PURE__*/React.createElement(React.Fragment, null, tab === 'journey' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "toolbar"
   }, /*#__PURE__*/React.createElement("select", {
-    "aria-label": "Status da jornada",
+    "aria-label": "Play status",
     value: entry.status,
     onChange: function onChange(e) {
       return change(selected.id, {
@@ -1055,12 +1055,12 @@ function Journey() {
     }
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "play"
-  }), "Registrar sess\xE3o")), /*#__PURE__*/React.createElement("form", {
+  }), "Log session")), /*#__PURE__*/React.createElement("form", {
     key: selected.id + '-' + entry.updatedAt,
     className: "form",
     onSubmit: function onSubmit(e) {
       e.preventDefault();
-      var f = new FormData(e.currentTarget);
+      var f = new FormDate(e.currentTarget);
       change(selected.id, {
         platform: f.get('platform'),
         access: f.get('access'),
@@ -1073,11 +1073,11 @@ function Journey() {
         collections: f.getAll('collections')
       });
     }
-  }, /*#__PURE__*/React.createElement("label", null, "Onde voc\xEA est\xE1 jogando?", /*#__PURE__*/React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("label", null, "Your platform", /*#__PURE__*/React.createElement("input", {
     name: "platform",
     list: "platforms",
     defaultValue: entry.platform || '',
-    placeholder: "Escolha ou digite sua plataforma"
+    placeholder: "Choose or enter a platform"
   }), /*#__PURE__*/React.createElement("datalist", {
     id: "platforms"
   }, PLATFORMS_LIST.map(function (p) {
@@ -1086,50 +1086,50 @@ function Journey() {
     }, p);
   }))), /*#__PURE__*/React.createElement("div", {
     className: "two-col"
-  }, /*#__PURE__*/React.createElement("label", null, "Acesso", /*#__PURE__*/React.createElement("select", {
+  }, /*#__PURE__*/React.createElement("label", null, "Access", /*#__PURE__*/React.createElement("select", {
     name: "access",
-    defaultValue: entry.access || 'Tenho'
-  }, ['Tenho', 'Assinatura', 'Emprestado', 'Desejo comprar'].map(function (x) {
+    defaultValue: entry.access || 'Owned'
+  }, ['Owned', 'Subscription', 'Borrowed', 'Want to buy'].map(function (x) {
     return /*#__PURE__*/React.createElement("option", {
       key: x
     }, x);
-  }))), /*#__PURE__*/React.createElement("label", null, "Conclus\xE3o", /*#__PURE__*/React.createElement("select", {
+  }))), /*#__PURE__*/React.createElement("label", null, "Completion", /*#__PURE__*/React.createElement("select", {
     name: "completion",
     defaultValue: entry.completion || ''
   }, /*#__PURE__*/React.createElement("option", {
     value: ""
-  }, "Ainda em jornada"), ['História concluída', '100%', 'Platinado', 'Jogo contínuo'].map(function (x) {
+  }, "In progress"), ['Story completed', '100%', 'Platinum', 'Ongoing game'].map(function (x) {
     return /*#__PURE__*/React.createElement("option", {
       key: x
     }, x);
-  })))), /*#__PURE__*/React.createElement("label", null, "Onde parei", /*#__PURE__*/React.createElement("textarea", {
+  })))), /*#__PURE__*/React.createElement("label", null, "Where I left off", /*#__PURE__*/React.createElement("textarea", {
     name: "where",
     defaultValue: entry.where || '',
-    placeholder: "Deixe uma pista para quando voltar\u2026",
+    placeholder: "Leave a note for next time\u2026",
     maxLength: "4000"
   })), /*#__PURE__*/React.createElement("div", {
     className: "two-col"
-  }, /*#__PURE__*/React.createElement("label", null, "Comecei em", /*#__PURE__*/React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("label", null, "Started on", /*#__PURE__*/React.createElement("input", {
     type: "date",
     name: "start",
     defaultValue: entry.startDate || ''
-  })), /*#__PURE__*/React.createElement("label", null, "Terminei em", /*#__PURE__*/React.createElement("input", {
+  })), /*#__PURE__*/React.createElement("label", null, "Finished on", /*#__PURE__*/React.createElement("input", {
     type: "date",
     name: "end",
     defaultValue: entry.endDate || ''
-  }))), /*#__PURE__*/React.createElement("label", null, "Minha nota \xB7 0 a 10", /*#__PURE__*/React.createElement("input", {
+  }))), /*#__PURE__*/React.createElement("label", null, "My rating \xB7 0 a 10", /*#__PURE__*/React.createElement("input", {
     name: "rating",
     type: "number",
     min: "0",
     max: "10",
     step: "0.5",
     defaultValue: (_entry$rating = entry.rating) !== null && _entry$rating !== void 0 ? _entry$rating : ''
-  })), /*#__PURE__*/React.createElement("label", null, "O que ficou comigo", /*#__PURE__*/React.createElement("textarea", {
+  })), /*#__PURE__*/React.createElement("label", null, "My thoughts", /*#__PURE__*/React.createElement("textarea", {
     name: "note",
     defaultValue: entry.note || '',
-    placeholder: "Sua impress\xE3o, momento favorito ou vontade de voltar\u2026",
+    placeholder: "Your thoughts, favorite moment, or reason to return\u2026",
     maxLength: "8000"
-  })), collections.length > 0 && /*#__PURE__*/React.createElement("fieldset", null, /*#__PURE__*/React.createElement("legend", null, "Cole\xE7\xF5es"), collections.map(function (c) {
+  })), collections.length > 0 && /*#__PURE__*/React.createElement("fieldset", null, /*#__PURE__*/React.createElement("legend", null, "Collections"), collections.map(function (c) {
     return /*#__PURE__*/React.createElement("label", {
       className: "check",
       key: c
@@ -1141,10 +1141,10 @@ function Journey() {
     }), c);
   })), /*#__PURE__*/React.createElement("button", {
     className: "primary"
-  }, "Salvar minha jornada")), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement("div", {
+  }, "Save journey")), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement("div", {
     className: "toolbar"
   }, /*#__PURE__*/React.createElement("select", {
-    "aria-label": "Selecionar campanha",
+    "aria-label": "Select playthrough",
     value: active.id,
     onChange: function onChange(e) {
       return change(selected.id, {
@@ -1163,7 +1163,7 @@ function Journey() {
         id: selected.id
       });
     }
-  }, "+ Nova campanha / replay"))), tab === 'about' && /*#__PURE__*/React.createElement(GameOverview, {
+  }, "+ New playthrough"))), tab === 'about' && /*#__PURE__*/React.createElement(GameOverview, {
     key: selected.id,
     game: selected,
     rawgKey: settings.rawgKey
@@ -1177,7 +1177,7 @@ function Journey() {
       key: i
     }, /*#__PURE__*/React.createElement("small", null, dateLabel(s.date + 'T12:00:00'), " \xB7 ", s.journey, " \xB7 ", s.minutes || 0, " min"), /*#__PURE__*/React.createElement("p", null, s.text), s.image && /*#__PURE__*/React.createElement("img", {
       src: s.image,
-      alt: "Mem\xF3ria do jogo"
+      alt: "Game memory"
     }), /*#__PURE__*/React.createElement("button", {
       onClick: function onClick() {
         var _journeys$find;
@@ -1192,25 +1192,25 @@ function Journey() {
           session: s
         });
       }
-    }, "Editar registro"));
+    }, "Edit entry"));
   }) : /*#__PURE__*/React.createElement("p", {
     className: "empty"
-  }, "Registre sua primeira sess\xE3o para guardar uma mem\xF3ria.")))))), modal && /*#__PURE__*/React.createElement("div", {
+  }, "Log your first session to save a memory.")))))), modal && /*#__PURE__*/React.createElement("div", {
     className: "backdrop top"
   }, /*#__PURE__*/React.createElement("section", {
     className: "dialog compact",
     role: "dialog",
     "aria-modal": "true",
-    "aria-label": "Registrar no Journey"
+    "aria-label": "Save to Journey"
   }, /*#__PURE__*/React.createElement("button", {
     className: "close",
-    "aria-label": "Fechar registro",
+    "aria-label": "Close form",
     onClick: function onClick() {
       return setModal(null);
     }
-  }, "\xD7"), modal.type === 'restore' ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h2", null, "Importar suas jornadas?"), /*#__PURE__*/React.createElement("p", null, "Os jogos do arquivo ser\xE3o mesclados com a biblioteca. Em jogos com o mesmo identificador, prevalece o backup. Exporte seus dados atuais antes de continuar."), /*#__PURE__*/React.createElement("button", {
+  }, "\xD7"), modal.type === 'restore' ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h2", null, "Import your journeys?"), /*#__PURE__*/React.createElement("p", null, "Games will be merged into your library. For matching IDs, the backup takes priority. Export your current data first."), /*#__PURE__*/React.createElement("button", {
     onClick: backup
-  }, "Exportar dados atuais"), /*#__PURE__*/React.createElement("button", {
+  }, "Export current data"), /*#__PURE__*/React.createElement("button", {
     className: "primary",
     onClick: function onClick() {
       if (persist(_objectSpread(_objectSpread({}, library), modal.data.library))) {
@@ -1220,10 +1220,10 @@ function Journey() {
         setCollections(c);
         save('journey_collections_v1', c);
         setModal(null);
-        setToast('Backup importado.');
+        setToast('Backup imported.');
       }
     }
-  }, "Importar e mesclar")) : /*#__PURE__*/React.createElement("form", {
+  }, "Import and merge")) : /*#__PURE__*/React.createElement("form", {
     className: "form",
     onSubmit: ( /*#__PURE__*/function () {
       var _ref17 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(e) {
@@ -1232,7 +1232,7 @@ function Journey() {
           while (1) switch (_context.prev = _context.next) {
             case 0:
               e.preventDefault();
-              f = new FormData(e.currentTarget);
+              f = new FormDate(e.currentTarget);
               if (!(modal.type === 'manual')) {
                 _context.next = 8;
                 break;
@@ -1271,13 +1271,13 @@ function Journey() {
                 setCollections(next);
                 setModal(null);
               } catch (e) {
-                setToast('Não foi possível salvar.');
+                setToast('Unable to save.');
               }
             case 14:
               if (modal.type === 'replay') {
                 en = library[modal.id], js = en.journeys || [{
                   id: 'original',
-                  title: 'Primeira jornada',
+                  title: 'First playthrough',
                   sessions: en.sessions || []
                 }], j = {
                   id: String(Date.now()),
@@ -1304,7 +1304,7 @@ function Journey() {
                 _context.next = 22;
                 break;
               }
-              setToast('Escolha uma imagem JPG, PNG ou WebP de até 1,5 MB.');
+              setToast('Choose a JPG, PNG or WebP image up to 1.5 MB.');
               return _context.abrupt("return");
             case 22:
               _context.next = 24;
@@ -1314,14 +1314,14 @@ function Journey() {
                   return resolve(r.result);
                 };
                 r.onerror = reject;
-                r.readAsDataURL(file);
+                r.readAsDateURL(file);
               });
             case 24:
               image = _context.sent;
             case 25:
               _en = library[modal.id], _js = _en.journeys || [{
                 id: 'original',
-                title: 'Primeira jornada',
+                title: 'First playthrough',
                 sessions: _en.sessions || []
               }];
               session = {
@@ -1342,7 +1342,7 @@ function Journey() {
                 })
               }))))) {
                 setModal(null);
-                setToast('Memória guardada.');
+                setToast('Memory saved.');
               }
             case 28:
             case "end":
@@ -1355,54 +1355,54 @@ function Journey() {
       };
     }())
   }, /*#__PURE__*/React.createElement("h2", null, {
-    manual: 'Adicionar um mundo',
-    collection: 'Nova coleção',
-    replay: 'Uma nova jornada',
-    session: 'Guardar uma memória'
-  }[modal.type]), modal.type === 'session' ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("label", null, "Data", /*#__PURE__*/React.createElement("input", {
+    manual: 'Add a game',
+    collection: 'New collection',
+    replay: 'New playthrough',
+    session: 'Log a session'
+  }[modal.type]), modal.type === 'session' ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("label", null, "Date", /*#__PURE__*/React.createElement("input", {
     name: "date",
     type: "date",
     defaultValue: ((_modal$session3 = modal.session) === null || _modal$session3 === void 0 ? void 0 : _modal$session3.date) || nowDate(),
     required: true
-  })), /*#__PURE__*/React.createElement("label", null, "Tempo jogado \xB7 minutos", /*#__PURE__*/React.createElement("input", {
+  })), /*#__PURE__*/React.createElement("label", null, "Time played \xB7 minutes", /*#__PURE__*/React.createElement("input", {
     name: "minutes",
     type: "number",
     min: "0",
     max: "1440",
     defaultValue: ((_modal$session4 = modal.session) === null || _modal$session4 === void 0 ? void 0 : _modal$session4.minutes) || ''
-  })), /*#__PURE__*/React.createElement("label", null, "O que aconteceu?", /*#__PURE__*/React.createElement("textarea", {
+  })), /*#__PURE__*/React.createElement("label", null, "What happened?", /*#__PURE__*/React.createElement("textarea", {
     name: "text",
     maxLength: "8000",
     defaultValue: ((_modal$session5 = modal.session) === null || _modal$session5 === void 0 ? void 0 : _modal$session5.text) || '',
-    placeholder: "Uma descoberta, um desafio ou como voc\xEA se sentiu\u2026"
-  })), /*#__PURE__*/React.createElement("label", null, "Screenshot \xB7 opcional", /*#__PURE__*/React.createElement("input", {
+    placeholder: "A discovery, a challenge, or how you felt\u2026"
+  })), /*#__PURE__*/React.createElement("label", null, "Screenshot \xB7 optional", /*#__PURE__*/React.createElement("input", {
     ref: fileRef,
     type: "file",
     accept: "image/png,image/jpeg,image/webp"
-  })), /*#__PURE__*/React.createElement("p", null, "At\xE9 1,5 MB por imagem. Exporte backups para preservar suas mem\xF3rias.")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("label", null, "Nome", /*#__PURE__*/React.createElement("input", {
+  })), /*#__PURE__*/React.createElement("p", null, "Up to 1.5 MB per image. Export backups to preserve your memories.")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("label", null, "Name", /*#__PURE__*/React.createElement("input", {
     name: "name",
     required: true,
     maxLength: "160",
     autoFocus: true,
-    placeholder: modal.type === 'collection' ? 'Favoritos da vida' : modal.type === 'replay' ? 'Segunda campanha · PC' : 'Nome do jogo'
-  })), modal.type === 'manual' && /*#__PURE__*/React.createElement("label", null, "G\xEAnero \xB7 opcional", /*#__PURE__*/React.createElement("input", {
+    placeholder: modal.type === 'collection' ? 'Favoritos da vida' : modal.type === 'replay' ? 'Segunda campanha · PC' : 'Game title'
+  })), modal.type === 'manual' && /*#__PURE__*/React.createElement("label", null, "Genre \xB7 optional", /*#__PURE__*/React.createElement("input", {
     name: "genre",
     maxLength: "100",
     placeholder: "RPG, aventura\u2026"
   }))), /*#__PURE__*/React.createElement("button", {
     className: "primary"
-  }, modal.type === 'session' ? 'Guardar memória' : 'Salvar')))), toast && /*#__PURE__*/React.createElement("div", {
+  }, modal.type === 'session' ? 'Save memory' : 'Save')))), toast && /*#__PURE__*/React.createElement("div", {
     className: "toast",
     role: "status"
   }, toast, undo && /*#__PURE__*/React.createElement("button", {
     onClick: function onClick() {
       if (persist(undo)) {
         setUndo(null);
-        setToast('Alteração desfeita.');
+        setToast('Change undone.');
       }
     }
-  }, "Desfazer"), /*#__PURE__*/React.createElement("button", {
-    "aria-label": "Dispensar mensagem",
+  }, "Undo"), /*#__PURE__*/React.createElement("button", {
+    "aria-label": "Dismiss message",
     onClick: function onClick() {
       return setToast('');
     }

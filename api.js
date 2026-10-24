@@ -106,7 +106,7 @@ async function rawgFetch(params, rawgKey) {
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, String(v)));
   if (rawgKey) url.searchParams.set('key', rawgKey);
   const res = await fetch(url.toString());
-  if (!res.ok) throw new Error(res.status === 401 || res.status === 403 ? 'Chave RAWG inválida ou sem permissão. Verifique no Perfil.' : 'O catálogo está indisponível. Tente novamente.');
+  if (!res.ok) throw new Error(res.status === 401 || res.status === 403 ? 'Invalid RAWG key or access denied. Check Profile.' : 'Catalog unavailable. Please try again.');
   const data = await res.json();
   return data.results || [];
 }
@@ -233,7 +233,7 @@ async function fetchGameOverview(id,key,signal) {
     const url=new URL('https://api.rawg.io/api/games/'+encodeURIComponent(id)+suffix);
     url.searchParams.set('key',key);
     const res=await fetch(url.toString(),{signal});
-    if(!res.ok)throw Error(res.status===401||res.status===403?'Verifique sua chave RAWG no Perfil.':'Não foi possível consultar o RAWG. Tente novamente.');
+    if(!res.ok)throw Error(res.status===401||res.status===403?'Check your RAWG key in Profile.':'Unable to reach RAWG. Please try again.');
     return res.json();
   }
   const [core,shots,movies]=await Promise.allSettled([request(),request('/screenshots'),request('/movies')]);
