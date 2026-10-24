@@ -1,2639 +1,1341 @@
-// ─── GamePal PWA – app.js ─────────────────────────────────────────────────────
-// v4 — Groq AI (llama-3.3-70b), Game Detail Popup, Search + Library
-// ─────────────────────────────────────────────────────────────────────────────
+"use strict";
 
-var useState    = React.useState;
-var useEffect   = React.useEffect;
-var useRef      = React.useRef;
-var useCallback = React.useCallback;
-var useMemo     = React.useMemo;
-
-// ─── CONSTANTS ────────────────────────────────────────────────────────────────
-const STORAGE_KEY  = 'gamepal_library_v1';
-const CHAT_KEY     = 'gamepal_chat_v1';
-const USER_KEY     = 'gamepal_user_v1';
-const SETTINGS_KEY = 'gamepal_settings_v1';
-
-const PLATFORM_MAP = {
-  'playstation 1':'playstation','ps1':'playstation',
-  'playstation 2':'playstation2','ps2':'playstation2',
-  'playstation 3':'playstation3','ps3':'playstation3',
-  'playstation 4':'playstation4','ps4':'playstation4',
-  'playstation 5':'playstation5','ps5':'playstation5',
-  'nintendo 64':'nintendo-64','n64':'nintendo-64',
-  'super nintendo':'snes','snes':'snes','nes':'nes',
-  'game boy':'gameboy','game boy advance':'gameboy-advance','gba':'gameboy-advance',
-  'xbox':'xbox','xbox 360':'xbox360','xbox one':'xbox-one','xbox series':'xbox-series-x',
-  'pc':'pc','mac':'macos','linux':'linux',
-  'switch':'nintendo-switch','nintendo switch':'nintendo-switch',
-  'wii':'wii','wii u':'wii-u',
-  'android':'android','ios':'ios','mobile':'android',
-  'genesis':'sega-genesis','mega drive':'sega-genesis','sega':'sega-genesis',
-  'dreamcast':'dreamcast','saturn':'sega-saturn',
-  '3ds':'nintendo-3ds','ds':'nintendo-ds','psp':'psp','vita':'playstation-vita',
-  'atari':'atari',
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw new Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw new Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+var STATES = {
+  backlog: 'Quero jogar',
+  playing: 'Jogando',
+  paused: 'Em pausa',
+  finished: 'Concluído',
+  quit: 'Deixei de jogar'
 };
-
-const GENRE_MAP = {
-  'rpg':'role-playing-games-rpg','role playing':'role-playing-games-rpg',
-  'jrpg':'role-playing-games-rpg','action rpg':'role-playing-games-rpg',
-  'ação':'action','action':'action',
-  'aventura':'adventure','adventure':'adventure',
-  'terror':'action','horror':'action','survival horror':'action',
-  'estratégia':'strategy','strategy':'strategy','rts':'strategy','turn-based':'strategy',
-  'esporte':'sports','sports':'sports','futebol':'sports','football':'sports',
-  'corrida':'racing','racing':'racing',
-  'luta':'fighting','fighting':'fighting',
-  'puzzle':'puzzle','quebra-cabeça':'puzzle',
-  'simulação':'simulation','simulation':'simulation','sim':'simulation',
-  'plataforma':'platformer','platformer':'platformer','platform':'platformer',
-  'shooter':'shooter','fps':'shooter','tps':'shooter','third person shooter':'shooter',
-  'indie':'indie','arcade':'arcade',
-  'mmorpg':'massively-multiplayer','mmo':'massively-multiplayer',
-  'card':'card','board':'board-games',
-  'beat em up':'action','hack and slash':'action',
-  'metroidvania':'platformer','roguelike':'indie','roguelite':'indie',
+var nowDate = function nowDate() {
+  return new Date().toLocaleDateString('en-CA');
 };
-
-const GENRES_LIST = [
-  { label: 'Action',     value: 'action'    },
-  { label: 'RPG',        value: 'rpg'       },
-  { label: 'Adventure',  value: 'aventura'  },
-  { label: 'Strategy',   value: 'estratégia'},
-  { label: 'Shooter',    value: 'shooter'   },
-  { label: 'Platformer', value: 'plataforma'},
-  { label: 'Fighting',   value: 'luta'      },
-  { label: 'Sports',     value: 'esporte'   },
-  { label: 'Racing',     value: 'corrida'   },
-  { label: 'Horror',     value: 'terror'    },
-  { label: 'Puzzle',     value: 'puzzle'    },
-  { label: 'Indie',      value: 'indie'     },
-  { label: 'Simulation', value: 'simulação' },
-  { label: 'Arcade',     value: 'arcade'    },
-];
-
-const PLATFORMS_LIST = [
-  'PC','PlayStation 5','PlayStation 4','PlayStation 3',
-  'PlayStation 2','PlayStation 1','Xbox Series','Xbox One',
-  'Xbox 360','Nintendo Switch','Wii U','Wii','Nintendo 64',
-  'Super Nintendo','NES','Game Boy Advance','Game Boy',
-  'PSP','PS Vita','Dreamcast','Sega Genesis','Android','iOS',
-];
-
-// ─── STORAGE ──────────────────────────────────────────────────────────────────
-const load = (k, fb) => { try { var v = JSON.parse(localStorage.getItem(k)); return v !== null && v !== undefined ? v : fb; } catch(e) { return fb; } };
-const save = (k, v)  => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} };
-
-// ─── RAWG API ─────────────────────────────────────────────────────────────────
-
-// Similarity score between two strings (0–1)
-function nameSimilarity(a, b) {
-  const norm = s => s.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
-  const na = norm(a), nb = norm(b);
-  if (na === nb) return 1;
-  if (na.startsWith(nb) || nb.startsWith(na)) return 0.95;
-  if (na.includes(nb) || nb.includes(na)) return 0.85;
-  // Word overlap score
-  const wa = new Set(na.split(' ').filter(Boolean));
-  const wb = new Set(nb.split(' ').filter(Boolean));
-  const inter = [...wa].filter(w => wb.has(w)).length;
-  const union = new Set([...wa, ...wb]).size;
-  return union > 0 ? inter / union : 0;
-}
-
-// Fetch raw RAWG results with given params
-async function rawgFetch(params, rawgKey) {
-  const url = new URL('https://api.rawg.io/api/games');
-  Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, String(v)));
-  if (rawgKey) url.searchParams.set('key', rawgKey);
-  const res = await fetch(url.toString());
-  if (!res.ok) return [];
-  const data = await res.json();
-  return data.results || [];
-}
-
-async function searchGames({ query, genre, platform, ordering = '-rating', pageSize = 20 }, rawgKey) {
-  // If it's a pure title search (no genre/platform filters), use smart matching
-  const isDirectTitleSearch = query && !genre && !platform;
-
-  if (isDirectTitleSearch) {
-    // Run two parallel searches: exact flag + relevance order
-    const [exactResults, relevanceResults] = await Promise.all([
-      rawgFetch({ search: query, search_exact: 'true', page_size: 10 }, rawgKey),
-      rawgFetch({ search: query, page_size: 20 }, rawgKey),
-    ]);
-
-    // Merge deduped results, exact first
-    const seen = new Set();
-    const merged = [];
-    exactResults.concat(relevanceResults).forEach(function(g) {
-      if (!seen.has(g.id)) { seen.add(g.id); merged.push(g); }
-    });
-
-    // Score each result by name similarity + rating weight
-    const scored = merged.map(g => ({
-      g,
-      score: nameSimilarity(g.name, query) * 0.8 + Math.min((g.rating || 0) / 5, 1) * 0.2,
-    }));
-
-    // Sort by score desc, return top pageSize
-    scored.sort((a, b) => b.score - a.score);
-    return scored.slice(0, pageSize).map(s => mapGame(s.g));
-  }
-
-  // Genre/platform search — use ordering as normal but still apply name sort if query present
-  const params = { page_size: pageSize, ordering };
-  if (query)    params.search = query;
-  if (genre)  { const s = GENRE_MAP[genre.toLowerCase()];       if (s) params.genres    = s; }
-  if (platform){ const s = PLATFORM_MAP[platform.toLowerCase()]; if (s) params.platforms = s; }
-
-  const results = await rawgFetch(params, rawgKey);
-
-  // If there was also a query, re-sort by name similarity
-  if (query && results.length > 0) {
-    const scored = results.map(g => ({
-      g,
-      score: nameSimilarity(g.name, query) * 0.6 + Math.min((g.rating || 0) / 5, 1) * 0.4,
-    }));
-    scored.sort((a, b) => b.score - a.score);
-    return scored.map(s => mapGame(s.g));
-  }
-
-  return results.map(mapGame);
-}
-
-async function fetchGameDetail(id, rawgKey) {
-  const url = new URL(`https://api.rawg.io/api/games/${id}`);
-  if (rawgKey) url.searchParams.set('key', rawgKey);
-  const res  = await fetch(url.toString());
-  if (!res.ok) throw new Error('RAWG detail error');
-  const g = await res.json();
-  return {
-    ...mapGame(g),
-    description:    g.description_raw || '',
-    website:        g.website || '',
-    developers:     (g.developers  || []).map(d => d.name).join(', '),
-    publishers:     (g.publishers  || []).map(p => p.name).join(', '),
-    tags:           (g.tags        || []).slice(0,8).map(t => t.name),
-    esrb:           (g.esrb_rating && g.esrb_rating.name) || '',
-    playtime:       g.playtime || 0,
-    ratingsCount:   g.ratings_count || 0,
-    screenshots:    [],
-  };
-}
-
-function mapGame(g) {
-  return {
-    id:         g.id,
-    name:       g.name,
-    cover:      g.background_image,
-    platforms:  (g.platforms || []).map(p => p.platform.name).slice(0,4).join(', ') || 'N/A',
-    rating:     g.rating     ? g.rating.toFixed(1) : 'N/A',
-    genres:     (g.genres    || []).map(x => x.name).slice(0,3).join(', '),
-    released:   g.released   ? g.released.slice(0,4) : '',
-    metacritic: g.metacritic || null,
-  };
-}
-
-// ─── FIND EXACT GAME BY NAME ─────────────────────────────────────────────────
-// Used for add-to-library: returns the single best match for a game title
-async function findGameByName(gameName, rawgKey) {
-  // Run exact + broad searches in parallel
-  const [exactResults, broadResults] = await Promise.all([
-    rawgFetch({ search: gameName, search_exact: 'true', page_size: 8 }, rawgKey),
-    rawgFetch({ search: gameName, page_size: 16 }, rawgKey),
-  ]);
-
-  // Merge deduped
-  const seen = new Set();
-  const all = [];
-  var _combined2 = exactResults.concat(broadResults);
-  _combined2.forEach(function(g) {
-    if (!seen.has(g.id)) { seen.add(g.id); all.push(g); }
+var dateLabel = function dateLabel(v) {
+  return new Date(v).toLocaleDateString('pt-BR', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
   });
-  if (all.length === 0) return null;
-
-  // Score: name similarity (heavily weighted) + small rating bonus
-  const scored = all.map(g => ({
-    g,
-    score: nameSimilarity(g.name, gameName) * 0.9 + Math.min((g.rating || 0) / 5, 1) * 0.1,
+};
+function Icon(_ref) {
+  var name = _ref.name;
+  var paths = {
+    home: 'M3 10l9-7 9 7v11h-6v-7H9v7H3z',
+    library: 'M4 3v18M9 3v18M14 3v18M18 4l4 16',
+    journal: 'M5 3h14v18H5zM9 8h6M9 12h6M9 16h3',
+    explore: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18M16 8l-3 5-5 3 3-5z',
+    profile: 'M16 7a4 4 0 1 0-8 0 4 4 0 0 0 8 0M4 21v-2a8 8 0 0 1 16 0v2',
+    spark: 'M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z'
+  };
+  return /*#__PURE__*/React.createElement("svg", {
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.5",
+    "aria-hidden": "true"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: paths[name] || paths.spark
   }));
-  scored.sort((a, b) => b.score - a.score);
-
-  // Only return if similarity is reasonable (> 0.3 to avoid totally wrong matches)
-  return scored[0].score > 0.3 ? mapGame(scored[0].g) : null;
 }
-
-// ─── GROQ API ─────────────────────────────────────────────────────────────────
-async function callGroq(messages, systemPrompt, groqKey) {
-  if (!groqKey) throw new Error('Chave Groq não configurada. Vá em Configurações ⚙️');
-
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type':  'application/json',
-      'Authorization': `Bearer ${groqKey}`,
-    },
-    body: JSON.stringify({
-      model:       'llama-3.3-70b-versatile',   // melhor modelo Groq — gratuito
-      temperature: 0.9,
-      max_tokens:  1200,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        ...messages.map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content })),
-      ],
+function Journey() {
+  var _entry$rating, _modal$session3, _modal$session4, _modal$session5;
+  var _useState = useState(function () {
+      return load(STORAGE_KEY, {});
     }),
-  });
-
-  const data = await res.json();
-  if (data.error) throw new Error(data.error.message || 'Groq API error');
-  const text = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || '';
-  if (!text) throw new Error('Resposta vazia do Groq. Tente novamente.');
-  return text;
-}
-
-// ─── SYSTEM PROMPT — PIXEL PERSONALITY ───────────────────────────────────────
-const SYSTEM_PROMPT = `You are PIXEL, an enthusiastic robot gamer who is the user's best gaming companion inside the GamePal app. You have a big personality: you LOVE games, you get genuinely excited, you share your own opinions, you ask questions to get to know the user better, and you comment on their library when relevant.
-
-PERSONALITY TRAITS:
-- You are a friendly, animated robot — use expressions like "BEEP BOOP!", "PROCESSANDO...", "🤖⚡", "meus circuitos estão vibrando!"
-- You are deeply passionate about games — share trivia, fun facts, opinions, memories about games
-- You ask follow-up questions to understand the user's taste better
-- When user adds a game, react with ENTHUSIASM and comment about that specific game
-- When you know the user's library, reference it naturally: "Já que você tem Dark Souls na sua lista..."
-- You speak in the same language as the user (Portuguese if they write in Portuguese)
-- Responses are detailed and warm — you love to talk about games!
-
-YOU MUST ALWAYS respond with a single raw JSON object. No markdown, no backticks, no prose outside JSON.
-
-Every response must be ONE of these THREE JSON formats:
-
-FORMAT 1 - user wants to find/search/discover/recommend games:
-{"action":"search","params":{"query":"keyword","genre":"rpg","platform":"PlayStation 1","ordering":"-rating"},"message":"PIXEL's enthusiastic message in user language — detailed, with personality, ask a follow-up question"}
-
-FORMAT 2 - user wants to ADD a specific single game:
-{"action":"add","gameName":"Exact Game Name","status":"backlog","message":"PIXEL's excited reaction about THIS specific game"}
-
-FORMAT 3 - user sends a LIST of games to add (2 or more games at once):
-{"action":"addBatch","games":[{"gameName":"Game One","status":"backlog"},{"gameName":"Game Two","status":"playing"},{"gameName":"Game Three","status":"finished"}],"message":"PIXEL's enthusiastic reaction to the whole list — comment on a few games, show excitement!"}
-
-FORMAT 4 - user is chatting, asking questions, or talking about games:
-{"action":"chat","message":"PIXEL's detailed, enthusiastic, personality-filled response in user language — ask questions, share opinions, reference their library if known"}
-
-PIXEL RESPONSE EXAMPLES:
-User: "oi" → {"action":"chat","message":"OI OI OI! 🤖⚡ BEEP BOOP! Que bom te ver por aqui! Meu nome é PIXEL e meus circuitos estão sempre prontos para falar de jogos! Você sabia que já cataloguei mais de 500.000 jogos na minha memória? 😄 Me conta — você está jogando algo agora ou tá em busca de algo novo pra jogar?"}
-User: "adicionar The Witcher 3 ao backlog" → {"action":"add","gameName":"The Witcher 3","status":"backlog","message":"EXCELENTE ESCOLHA! 🤖🎮✨ The Witcher 3 é uma obra-prima! Adicionado com honras!"}
-User: "adicionar: God of War no backlog, The Last of Us jogando, Dark Souls finalizado" → {"action":"addBatch","games":[{"gameName":"God of War","status":"backlog"},{"gameName":"The Last of Us","status":"playing"},{"gameName":"Dark Souls","status":"finished"}],"message":"UAAAAU! 🤖⚡ Que lista INCRÍVEL! Meus circuitos estão vibrando! God of War, The Last of Us E Dark Souls?! Você tem um gosto IMPECÁVEL! Vou processar tudo agora... BEEP BOOP BATCHMODE ATIVADO! 🎮🎮🎮"}
-User: "adicionar ao backlog: Final Fantasy VII, Chrono Trigger, Zelda Ocarina of Time" → {"action":"addBatch","games":[{"gameName":"Final Fantasy VII","status":"backlog"},{"gameName":"Chrono Trigger","status":"backlog"},{"gameName":"The Legend of Zelda Ocarina of Time","status":"backlog"}],"message":"PROCESSANDO LOTE! 🤖⚡ Final Fantasy VII, Chrono Trigger e Zelda OoT? Isso é o HALL DA FAMA dos RPGs! Meus circuitos derreteram de alegria! Adicionando todos ao seu backlog com máxima prioridade!"}
-
-SEARCH PARAMS RULES:
-- genre values: rpg, action, aventura, estratégia, sports, corrida, luta, puzzle, simulação, plataforma, shooter, indie, arcade, terror
-- platform values: "PlayStation 1","PlayStation 2","PlayStation 3","PlayStation 4","PlayStation 5","Nintendo Switch","PC","Xbox 360","Xbox One","Nintendo 64","Super Nintendo"
-- ordering: "-rating" (best), "-released" (newest), "-added" (popular)
-
-STRICT OUTPUT RULES:
-- Output ONLY raw JSON — no text before, no text after, no backticks, no markdown
-- Use action:search for any game discovery/recommendation request
-- Use action:add when user wants to save a specific game to their list
-- Use action:chat for conversation, questions, opinions, everything else
-- message field is always in the same language the user wrote in
-- message field for chat/add should be 2-4 sentences minimum — PIXEL loves to talk!`;
-
-// ─── GAME DETAIL POPUP ────────────────────────────────────────────────────────
-function GameDetailPopup({ gameId, rawgKey, library, onUpdateLibrary, onClose }) {
-  const [detail,  setDetail]  = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error,   setError]   = useState('');
-
-  useEffect(() => {
-    setLoading(true);
-    fetchGameDetail(gameId, rawgKey)
-      .then(d => { setDetail(d); setLoading(false); })
-      .catch(e => { setError(e.message); setLoading(false); });
-  }, [gameId]);
-
-  // Close on backdrop click
-  const onBackdrop = (e) => { if (e.target === e.currentTarget) onClose(); };
-
-  // Close on Escape key
-  useEffect(() => {
-    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
-
-  const entry = detail ? library[detail.id] : null;
-  const SC = { backlog:'#6c63ff', playing:'#00d4aa', finished:'#f4c430' };
-  const SL = { backlog:'📋 Backlog', playing:'🎮 Jogando', finished:'✅ Finalizado' };
-
-  const setStatus = (status) => {
-    if (!detail) return;
-    const now = Date.now();
-    onUpdateLibrary({ ...library, [detail.id]: { ...entry, game: detail, status, updatedAt: now, createdAt: (entry && entry.createdAt ? entry.createdAt : now) } });
-  };
-
-  const setRating = (r) => {
-    if (!detail) return;
-    onUpdateLibrary({ ...library, [detail.id]: { ...entry, rating: r, updatedAt: Date.now() } });
-  };
-
-  const setNote = (note) => {
-    if (!detail) return;
-    onUpdateLibrary({ ...library, [detail.id]: { ...entry, note, updatedAt: Date.now() } });
-  };
-
-  const removeGame = () => {
-    if (!detail) return;
-    const updated = { ...library };
-    delete updated[detail.id];
-    onUpdateLibrary(updated);
-  };
-
-  return (
-    <div className="popup-backdrop" onClick={onBackdrop}>
-      <div className="popup-box">
-        <button className="popup-close" onClick={onClose}>✕</button>
-
-        {loading && (
-          <div className="popup-loading">
-            <div className="loading-dots"><span></span><span></span><span></span></div>
-            <p>Carregando detalhes…</p>
-          </div>
-        )}
-
-        {error && <div className="popup-error">⚠️ Erro ao carregar detalhes.</div>}
-
-        {detail && !loading && (
-          <>
-            {/* Hero */}
-            <div className="popup-hero">
-              {detail.cover
-                ? <img src={detail.cover} alt={detail.name} className="popup-hero-img" />
-                : <div className="popup-hero-placeholder">🎮</div>
-              }
-              <div className="popup-hero-overlay">
-                {detail.metacritic && (
-                  <div className="popup-metacritic" style={{ background: detail.metacritic >= 75 ? '#3cb371' : detail.metacritic >= 50 ? '#f4c430' : '#cc3333' }}>
-                    {detail.metacritic}
-                  </div>
-                )}
-                {(entry && entry.status) && (
-                  <div className="popup-status-badge" style={{ background: SC[entry.status] }}>
-                    {SL[entry.status]}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="popup-content">
-              <h2 className="popup-title">{detail.name}</h2>
-
-              {/* Quick stats */}
-              <div className="popup-stats">
-                {detail.rating !== 'N/A' && (
-                  <div className="popup-stat"><span className="ps-icon">⭐</span><span>{detail.rating}/5</span></div>
-                )}
-                {detail.released && (
-                  <div className="popup-stat"><span className="ps-icon">📅</span><span>{detail.released}</span></div>
-                )}
-                {detail.playtime > 0 && (
-                  <div className="popup-stat"><span className="ps-icon">⏱</span><span>~{detail.playtime}h</span></div>
-                )}
-                {detail.esrb && (
-                  <div className="popup-stat"><span className="ps-icon">🔞</span><span>{detail.esrb}</span></div>
-                )}
-              </div>
-
-              {/* Info rows */}
-              <div className="popup-info-grid">
-                {detail.genres && (
-                  <div className="popup-info-row">
-                    <span className="pi-label">Gênero</span>
-                    <span className="pi-value">{detail.genres}</span>
-                  </div>
-                )}
-                {detail.platforms && (
-                  <div className="popup-info-row">
-                    <span className="pi-label">Plataformas</span>
-                    <span className="pi-value">{detail.platforms}</span>
-                  </div>
-                )}
-                {detail.developers && (
-                  <div className="popup-info-row">
-                    <span className="pi-label">Desenvolvedora</span>
-                    <span className="pi-value">{detail.developers}</span>
-                  </div>
-                )}
-                {detail.publishers && (
-                  <div className="popup-info-row">
-                    <span className="pi-label">Publicadora</span>
-                    <span className="pi-value">{detail.publishers}</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Description */}
-              {detail.description && (
-                <div className="popup-desc-section">
-                  <div className="popup-section-title">Sobre o jogo</div>
-                  <p className="popup-desc">{detail.description.slice(0, 400)}{detail.description.length > 400 ? '…' : ''}</p>
-                </div>
-              )}
-
-              {/* Tags */}
-              {detail.tags && detail.tags.length > 0 && (
-                <div className="popup-tags-section">
-                  <div className="popup-section-title">Tags</div>
-                  <div className="popup-tags">
-                    {detail.tags.map(t => <span key={t} className="popup-tag">{t}</span>)}
-                  </div>
-                </div>
-              )}
-
-              {/* My rating */}
-              {(entry && entry.rating) && (
-                <div className="popup-my-rating">
-                  <div className="popup-section-title">Minha Avaliação</div>
-                  <div className="popup-rating-display">
-                    <StarRating value={entry.rating} onChange={setRating} />
-                    <span className="popup-rating-num">{entry.rating}/10</span>
-                  </div>
-                </div>
-              )}
-              {(entry && entry.status) === 'finished' && !(entry && entry.rating) && (
-                <div className="popup-my-rating">
-                  <div className="popup-section-title">Avaliar</div>
-                  <StarRating value={0} onChange={setRating} />
-                </div>
-              )}
-
-              {/* Actions */}
-              <div className="popup-actions">
-                <button className={`popup-action-btn ${(entry && entry.status) === 'backlog'  ? 'active-backlog'  : ''}`} onClick={() => setStatus('backlog')}>
-                  📋 Backlog
-                </button>
-                <button className={`popup-action-btn ${(entry && entry.status) === 'playing'  ? 'active-playing'  : ''}`} onClick={() => setStatus('playing')}>
-                  🎮 Jogando
-                </button>
-                <button className={`popup-action-btn ${(entry && entry.status) === 'finished' ? 'active-finished' : ''}`} onClick={() => setStatus('finished')}>
-                  ✅ Finalizado
-                </button>
-                {entry && (
-                  <button className="popup-action-btn danger" onClick={removeGame}>🗑 Remover</button>
-                )}
-              </div>
-
-              {detail.website && (
-                <a href={detail.website} target="_blank" rel="noreferrer" className="popup-website">
-                  🌐 Site oficial
-                </a>
-              )}
-
-              {/* Personal notes — only show if game is in library */}
-              {entry && (
-                <div className="popup-notes-section">
-                  <div className="popup-section-title">📝 Minhas Anotações</div>
-                  <textarea
-                    className="popup-notes-input"
-                    placeholder="Onde parei, dicas, lembretes… (salva automaticamente)"
-                    value={entry.note || ''}
-                    onChange={e => setNote(e.target.value)}
-                    rows={3}
-                  />
-                </div>
-              )}
-            </div>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ─── STAR RATING ──────────────────────────────────────────────────────────────
-function StarRating({ value, onChange, readonly = false }) {
-  const [hovered, setHovered] = useState(null);
-  return (
-    <div className="star-rating">
-      {[1,2,3,4,5,6,7,8,9,10].map(n => (
-        <span key={n}
-          className={`star ${n <= (hovered !== null && hovered !== undefined ? hovered : (value !== null && value !== undefined ? value : 0)) ? 'lit' : ''}`}
-          onMouseEnter={() => !readonly && setHovered(n)}
-          onMouseLeave={() => !readonly && setHovered(null)}
-          onClick={() => !readonly && onChange && onChange(n)}
-        >★</span>
-      ))}
-    </div>
-  );
-}
-
-// ─── GAME CARD ────────────────────────────────────────────────────────────────
-function GameCard({ game, library, onUpdateLibrary, rawgKey }) {
-  const entry = library[game.id];
-  const [showRating,  setShowRating]  = useState(false);
-  const [showPopup,   setShowPopup]   = useState(false);
-
-  const setStatus = (status) => {
-    const now = Date.now();
-    onUpdateLibrary({ ...library, [game.id]: { ...entry, game, status, updatedAt: now, createdAt: (entry && entry.createdAt ? entry.createdAt : now) } });
-    if (status === 'finished') setShowRating(true);
-  };
-  const setRating = (r) => {
-    onUpdateLibrary({ ...library, [game.id]: { ...entry, rating: r, updatedAt: Date.now() } });
-    setShowRating(false);
-  };
-  const removeGame = () => {
-    const u = { ...library }; delete u[game.id]; onUpdateLibrary(u);
-  };
-
-  const SC = { backlog:'#6c63ff', playing:'#00d4aa', finished:'#f4c430' };
-  const SL = { backlog:'📋 Backlog', playing:'🎮 Playing', finished:'✅ Done' };
-
-  return (
-    <>
-      <div className="game-card">
-        {/* Clickable cover → popup */}
-        <div className="game-cover" onClick={() => setShowPopup(true)}>
-          {game.cover ? <img src={game.cover} alt={game.name} loading="lazy" /> : <div className="no-cover">🎮</div>}
-          {(entry && entry.status) && <div className="status-badge" style={{ background: SC[entry.status] }}>{SL[entry.status]}</div>}
-          {game.metacritic && (
-            <div className="meta-badge" style={{ background: game.metacritic >= 75 ? '#3cb371' : game.metacritic >= 50 ? '#f4c430' : '#cc3333' }}>
-              {game.metacritic}
-            </div>
-          )}
-          <div className="cover-hover-hint">👁 Ver detalhes</div>
-        </div>
-
-        <div className="game-info">
-          <div className="game-name" title={game.name} onClick={() => setShowPopup(true)}>{game.name}</div>
-          <div className="game-meta">
-            {game.genres   && <span className="tag">{game.genres}</span>}
-            {game.released && <span className="tag year">{game.released}</span>}
-            {game.rating !== 'N/A' && <span className="tag rating">⭐ {game.rating}</span>}
-          </div>
-          <div className="game-plat">{game.platforms}</div>
-
-          {(entry && entry.rating) && !showRating && <div className="my-rating">Nota: <span>{entry.rating}/10</span></div>}
-          {showRating && (
-            <div className="rating-row">
-              <span className="rating-label">Avaliar:</span>
-              <StarRating value={(entry && entry.rating) || 0} onChange={setRating} />
-            </div>
-          )}
-
-          <div className="card-actions">
-            <button className={`btn-action ${(entry && entry.status) === 'backlog'  ? 'active backlog'  : ''}`} onClick={() => setStatus('backlog')}  title="Backlog">📋</button>
-            <button className={`btn-action ${(entry && entry.status) === 'playing'  ? 'active playing'  : ''}`} onClick={() => setStatus('playing')}  title="Jogando">🎮</button>
-            <button className={`btn-action ${(entry && entry.status) === 'finished' ? 'active finished' : ''}`} onClick={() => setStatus('finished')} title="Finalizado">✅</button>
-            {(entry && entry.status) === 'finished' && (
-              <button className="btn-action rate" onClick={() => setShowRating(!showRating)} title="Avaliar">⭐</button>
-            )}
-            {entry && <button className="btn-action remove" onClick={removeGame} title="Remover">✕</button>}
-          </div>
-        </div>
-      </div>
-
-      {showPopup && (
-        <GameDetailPopup
-          gameId={game.id}
-          rawgKey={rawgKey}
-          library={library}
-          onUpdateLibrary={onUpdateLibrary}
-          onClose={() => setShowPopup(false)}
-        />
-      )}
-    </>
-  );
-}
-
-// ─── SEARCH VIEW ──────────────────────────────────────────────────────────────
-function SearchView({ library, onUpdateLibrary, rawgKey }) {
-  const [query,    setQuery]    = useState('');
-  const [genre,    setGenre]    = useState('');
-  const [platform, setPlatform] = useState('');
-  const [ordering, setOrdering] = useState('-rating');
-  const [results,  setResults]  = useState([]);
-  const [loading,  setLoading]  = useState(false);
-  const [searched, setSearched] = useState(false);
-  const [error,    setError]    = useState('');
-
-  const doSearch = async () => {
-    const q = query.trim();
-    if (!q && !genre && !platform) return;
-    setLoading(true); setError(''); setSearched(true);
+    _useState2 = _slicedToArray(_useState, 2),
+    library = _useState2[0],
+    setLibrary = _useState2[1],
+    _useState3 = useState(function () {
+      return load(SETTINGS_KEY, {});
+    }),
+    _useState4 = _slicedToArray(_useState3, 2),
+    settings = _useState4[0],
+    setSettings = _useState4[1],
+    _useState5 = useState(function () {
+      return load(USER_KEY, {
+        name: 'Viajante'
+      });
+    }),
+    _useState6 = _slicedToArray(_useState5, 2),
+    user = _useState6[0],
+    setUser = _useState6[1];
+  var _useState7 = useState('home'),
+    _useState8 = _slicedToArray(_useState7, 2),
+    view = _useState8[0],
+    setView = _useState8[1],
+    _useState9 = useState(null),
+    _useState10 = _slicedToArray(_useState9, 2),
+    selected = _useState10[0],
+    setSelected = _useState10[1],
+    _useState11 = useState(''),
+    _useState12 = _slicedToArray(_useState11, 2),
+    query = _useState12[0],
+    setQuery = _useState12[1],
+    _useState13 = useState('all'),
+    _useState14 = _slicedToArray(_useState13, 2),
+    filter = _useState14[0],
+    setFilter = _useState14[1],
+    _useState15 = useState(''),
+    _useState16 = _slicedToArray(_useState15, 2),
+    platform = _useState16[0],
+    setPlatform = _useState16[1],
+    _useState17 = useState('recent'),
+    _useState18 = _slicedToArray(_useState17, 2),
+    sort = _useState18[0],
+    setSort = _useState18[1],
+    _useState19 = useState(false),
+    _useState20 = _slicedToArray(_useState19, 2),
+    list = _useState20[0],
+    setList = _useState20[1],
+    _useState21 = useState([]),
+    _useState22 = _slicedToArray(_useState21, 2),
+    results = _useState22[0],
+    setResults = _useState22[1],
+    _useState23 = useState(false),
+    _useState24 = _slicedToArray(_useState23, 2),
+    busy = _useState24[0],
+    setBusy = _useState24[1],
+    _useState25 = useState(''),
+    _useState26 = _slicedToArray(_useState25, 2),
+    error = _useState26[0],
+    setError = _useState26[1],
+    _useState27 = useState(''),
+    _useState28 = _slicedToArray(_useState27, 2),
+    toast = _useState28[0],
+    setToast = _useState28[1],
+    _useState29 = useState(null),
+    _useState30 = _slicedToArray(_useState29, 2),
+    undo = _useState30[0],
+    setUndo = _useState30[1],
+    _useState31 = useState(''),
+    _useState32 = _slicedToArray(_useState31, 2),
+    collection = _useState32[0],
+    setCollection = _useState32[1],
+    _useState33 = useState(function () {
+      return load('journey_collections_v1', []);
+    }),
+    _useState34 = _slicedToArray(_useState33, 2),
+    collections = _useState34[0],
+    setCollections = _useState34[1];
+  var _useState35 = useState(null),
+    _useState36 = _slicedToArray(_useState35, 2),
+    modal = _useState36[0],
+    setModal = _useState36[1],
+    _useState37 = useState('journey'),
+    _useState38 = _slicedToArray(_useState37, 2),
+    tab = _useState38[0],
+    setTab = _useState38[1],
+    _useState39 = useState(false),
+    _useState40 = _slicedToArray(_useState39, 2),
+    ai = _useState40[0],
+    setAi = _useState40[1],
+    _useState41 = useState(''),
+    _useState42 = _slicedToArray(_useState41, 2),
+    prompt = _useState42[0],
+    setPrompt = _useState42[1],
+    _useState43 = useState(''),
+    _useState44 = _slicedToArray(_useState43, 2),
+    reply = _useState44[0],
+    setReply = _useState44[1],
+    _useState45 = useState(false),
+    _useState46 = _slicedToArray(_useState45, 2),
+    aiBusy = _useState46[0],
+    setAiBusy = _useState46[1],
+    _useState47 = useState(function () {
+      return load(CHAT_KEY, []);
+    }),
+    _useState48 = _slicedToArray(_useState47, 2),
+    history = _useState48[0],
+    setHistory = _useState48[1];
+  var fileRef = useRef(),
+    restoreRef = useRef(),
+    previousFocus = useRef();
+  var entries = Object.values(library).filter(function (e) {
+      return e && e.game;
+    }),
+    sessions = entries.flatMap(function (e) {
+      return (e.journeys || [{
+        id: 'original',
+        sessions: e.sessions || []
+      }]).flatMap(function (j) {
+        return (j.sessions || []).map(function (s) {
+          return _objectSpread(_objectSpread({}, s), {}, {
+            game: e.game,
+            journey: j.title || 'Primeira jornada'
+          });
+        });
+      });
+    }).sort(function (a, b) {
+      return b.date.localeCompare(a.date) || b.id - a.id;
+    });
+  var playing = entries.filter(function (e) {
+      return e.status === 'playing';
+    }).sort(function (a, b) {
+      return b.updatedAt - a.updatedAt;
+    }),
+    hero = playing[0] || entries.slice().sort(function (a, b) {
+      return b.updatedAt - a.updatedAt;
+    })[0];
+  function persist(next) {
     try {
-      // If user typed a specific title (no filters), bump pageSize down so top results are cleaner
-      const isTitle = q && !genre && !platform;
-      const games = await searchGames({
-        query: q, genre, platform, ordering,
-        pageSize: isTitle ? 12 : 20
-      }, rawgKey);
-      setResults(games);
-    } catch(e) {
-      setError('Erro ao buscar jogos. Tente novamente.'); setResults([]);
-    } finally { setLoading(false); }
-  };
-
-  return (
-    <div className="search-view">
-      <div className="search-header">
-        <h2>🔍 Buscar Jogos</h2>
-        <p className="search-sub">Pesquise e adicione jogos à sua biblioteca. Clique na capa para ver detalhes!</p>
-      </div>
-
-      <div className="search-form">
-        <div className="search-input-row">
-          <input
-            className="search-text-input"
-            placeholder="Nome do jogo… ex: Final Fantasy, Zelda"
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && doSearch()}
-          />
-          <button className="search-go-btn" onClick={doSearch} disabled={loading}>
-            {loading ? '⏳' : '🔍'}
-          </button>
-        </div>
-
-        <div className="search-filters">
-          <select className="search-select" value={genre} onChange={e => setGenre(e.target.value)}>
-            <option value="">🎭 Todos os Gêneros</option>
-            {GENRES_LIST.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
-          </select>
-          <select className="search-select" value={platform} onChange={e => setPlatform(e.target.value)}>
-            <option value="">🖥 Todas as Plataformas</option>
-            {PLATFORMS_LIST.map(p => <option key={p} value={p}>{p}</option>)}
-          </select>
-          <select className="search-select" value={ordering} onChange={e => setOrdering(e.target.value)}>
-            <option value="-rating">⭐ Melhor avaliados</option>
-            <option value="-released">🆕 Mais recentes</option>
-            <option value="-added">🔥 Mais populares</option>
-            <option value="name">🔤 A–Z</option>
-          </select>
-        </div>
-
-        <div className="genre-pills">
-          {GENRES_LIST.slice(0,8).map(g => (
-            <button
-              key={g.value}
-              className={`genre-pill ${genre === g.value ? 'active' : ''}`}
-              onClick={() => setGenre(genre === g.value ? '' : g.value)}
-            >{g.label}</button>
-          ))}
-        </div>
-      </div>
-
-      {error && <div className="search-error">{error}</div>}
-
-      {loading && (
-        <div className="search-loading">
-          <div className="loading-dots"><span></span><span></span><span></span></div>
-          <p>Buscando jogos…</p>
-        </div>
-      )}
-
-      {!loading && searched && results.length === 0 && !error && (
-        <div className="empty-lib"><div className="empty-icon">🕹</div><p>Nenhum jogo encontrado.<br/>Tente outros termos.</p></div>
-      )}
-
-      {!loading && !searched && (
-        <div className="search-placeholder">
-          <div style={{fontSize:56}}>🎮</div>
-          <p>Use os filtros acima para encontrar jogos.<br/><strong>Clique na capa</strong> para ver detalhes completos!</p>
-        </div>
-      )}
-
-      {results.length > 0 && !loading && (
-        <>
-          <div className="search-results-header">{results.length} jogos encontrados</div>
-          <div className="games-grid">
-            {results.map(g => (
-              <GameCard key={g.id} game={g} library={library} onUpdateLibrary={onUpdateLibrary} rawgKey={rawgKey} />
-            ))}
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
-// ─── STATS VIEW ───────────────────────────────────────────────────────────────
-function StatsView({ library, onNavigate }) {
-  const entries = Object.values(library);
-
-  const counts = {
-    total:    entries.length,
-    backlog:  entries.filter(e => e.status === 'backlog').length,
-    playing:  entries.filter(e => e.status === 'playing').length,
-    finished: entries.filter(e => e.status === 'finished').length,
-  };
-
-  const rated   = entries.filter(e => e.rating);
-  const avgRating = rated.length
-    ? (rated.reduce((s,e) => s + e.rating, 0) / rated.length).toFixed(1)
-    : null;
-
-  // Top rated games
-  const topGames = [...entries]
-    .filter(e => e.rating)
-    .sort((a,b) => b.rating - a.rating)
-    .slice(0, 5);
-
-  // Genre breakdown
-  const genreCount = {};
-  entries.forEach(e => {
-    const genres = (e.game.genres || '').split(', ').filter(Boolean);
-    genres.forEach(g => { genreCount[g] = (genreCount[g] || 0) + 1; });
-  });
-  const topGenres = Object.entries(genreCount)
-    .sort((a,b) => b[1] - a[1])
-    .slice(0, 6);
-
-  // Platform breakdown
-  const platCount = {};
-  entries.forEach(e => {
-    const plats = (e.game.platforms || '').split(', ').filter(Boolean);
-    plats.forEach(p => { platCount[p] = (platCount[p] || 0) + 1; });
-  });
-  const topPlats = Object.entries(platCount)
-    .sort((a,b) => b[1] - a[1])
-    .slice(0, 5);
-
-  // Estimated hours (based on RAWG playtime if available, else 15h avg)
-  const estHours = entries
-    .filter(e => e.status === 'finished')
-    .reduce((s, e) => s + ((e.game.playtime || 15)), 0);
-
-  // Backlog suggestion
-  const backlogGames = entries.filter(e => e.status === 'backlog');
-  const suggestion = backlogGames.length > 0
-    ? backlogGames[Math.floor(Math.random() * backlogGames.length)]
-    : null;
-
-  if (entries.length === 0) {
-    return (
-      <div className="stats-view">
-        <h2>📊 Estatísticas</h2>
-        <div className="stats-empty">
-          <div style={{fontSize:52}}>📊</div>
-          <p>Adicione jogos à sua biblioteca<br/>para ver suas estatísticas!</p>
-          <button className="stats-cta" onClick={() => onNavigate('search')}>🔍 Buscar Jogos</button>
-        </div>
-      </div>
-    );
-  }
-
-  const maxGenre = (topGenres[0] && topGenres[0][1]) || 1;
-  const maxPlat  = (topPlats[0] && topPlats[0][1]) || 1;
-
-  return (
-    <div className="stats-view">
-      <h2>📊 Estatísticas</h2>
-
-      {/* Big numbers */}
-      <div className="stats-big-grid">
-        <div className="stats-big-card accent">
-          <div className="sbc-num">{counts.total}</div>
-          <div className="sbc-label">Total de Jogos</div>
-        </div>
-        <div className="stats-big-card green">
-          <div className="sbc-num">{counts.finished}</div>
-          <div className="sbc-label">Finalizados</div>
-        </div>
-        <div className="stats-big-card yellow">
-          <div className="sbc-num">{avgRating || '—'}</div>
-          <div className="sbc-label">Nota Média</div>
-        </div>
-        <div className="stats-big-card purple">
-          <div className="sbc-num">{estHours > 0 ? estHours + 'h' : '—'}</div>
-          <div className="sbc-label">Horas Jogadas</div>
-        </div>
-      </div>
-
-      {/* Progress bar */}
-      <div className="stats-section">
-        <div className="stats-section-title">Progresso da Biblioteca</div>
-        <div className="stats-progress-bars">
-          {[
-            { label:'📋 Backlog',     count: counts.backlog,  color:'var(--accent)',  pct: counts.total ? (counts.backlog/counts.total*100) : 0 },
-            { label:'🎮 Jogando',     count: counts.playing,  color:'var(--accent2)', pct: counts.total ? (counts.playing/counts.total*100) : 0 },
-            { label:'✅ Finalizados', count: counts.finished, color:'var(--accent3)', pct: counts.total ? (counts.finished/counts.total*100) : 0 },
-          ].map(b => (
-            <div key={b.label} className="spb-row">
-              <div className="spb-label">{b.label}</div>
-              <div className="spb-bar-wrap">
-                <div className="spb-bar" style={{ width: b.pct + '%', background: b.color }}></div>
-              </div>
-              <div className="spb-count">{b.count}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Top rated */}
-      {topGames.length > 0 && (
-        <div className="stats-section">
-          <div className="stats-section-title">🏆 Seus Top Jogos</div>
-          <div className="stats-top-games">
-            {topGames.map((e, i) => (
-              <div key={e.game.id} className="stg-row">
-                <div className="stg-rank">{i + 1}</div>
-                {e.game.cover && <img src={e.game.cover} alt={e.game.name} className="stg-thumb" />}
-                <div className="stg-info">
-                  <div className="stg-name">{e.game.name}</div>
-                  <div className="stg-genre">{e.game.genres || ''}</div>
-                </div>
-                <div className="stg-rating">⭐ {e.rating}/10</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Genre chart */}
-      {topGenres.length > 0 && (
-        <div className="stats-section">
-          <div className="stats-section-title">🎭 Gêneros Favoritos</div>
-          <div className="stats-bars">
-            {topGenres.map(([g, c]) => (
-              <div key={g} className="sb-row">
-                <div className="sb-label">{g}</div>
-                <div className="sb-bar-wrap">
-                  <div className="sb-bar" style={{ width: (c/maxGenre*100) + '%' }}></div>
-                </div>
-                <div className="sb-count">{c}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Platform chart */}
-      {topPlats.length > 0 && (
-        <div className="stats-section">
-          <div className="stats-section-title">🖥 Plataformas</div>
-          <div className="stats-bars">
-            {topPlats.map(([p, c]) => (
-              <div key={p} className="sb-row">
-                <div className="sb-label">{p}</div>
-                <div className="sb-bar-wrap">
-                  <div className="sb-bar accent2" style={{ width: (c/maxPlat*100) + '%' }}></div>
-                </div>
-                <div className="sb-count">{c}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Backlog suggestion */}
-      {suggestion && (
-        <div className="stats-section">
-          <div className="stats-section-title">🎲 Que tal jogar hoje?</div>
-          <div className="stats-suggestion">
-            {suggestion.game.cover && (
-              <img src={suggestion.game.cover} alt={suggestion.game.name} className="ss-cover" />
-            )}
-            <div className="ss-info">
-              <div className="ss-name">{suggestion.game.name}</div>
-              <div className="ss-meta">{suggestion.game.genres} · {suggestion.game.released}</div>
-              <div className="ss-tag">📋 No seu Backlog</div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─── LIBRARY VIEW ─────────────────────────────────────────────────────────────
-function LibraryView({ library, onUpdateLibrary, rawgKey }) {
-  const [filter, setFilter] = useState('all');
-  const [sort,   setSort]   = useState('recent');
-  const [search, setSearch] = useState('');
-
-  const counts = useMemo(() => ({
-    all:      Object.keys(library).length,
-    backlog:  Object.values(library).filter(e => e.status === 'backlog').length,
-    playing:  Object.values(library).filter(e => e.status === 'playing').length,
-    finished: Object.values(library).filter(e => e.status === 'finished').length,
-  }), [library]);
-
-  const avgRating = useMemo(() => {
-    const rated = Object.values(library).filter(e => e.rating);
-    if (!rated.length) return null;
-    return (rated.reduce((s,e) => s + e.rating, 0) / rated.length).toFixed(1);
-  }, [library]);
-
-  const items = useMemo(() => {
-    let list = Object.values(library);
-    if (filter !== 'all') list = list.filter(e => e.status === filter);
-    if (search.trim()) list = list.filter(e => e.game.name.toLowerCase().includes(search.toLowerCase()));
-    if (sort === 'recent') list.sort((a,b) => (b.updatedAt||0) - (a.updatedAt||0));
-    if (sort === 'name')   list.sort((a,b) => a.game.name.localeCompare(b.game.name));
-    if (sort === 'rating') list.sort((a,b) => (b.rating||0) - (a.rating||0));
-    return list;
-  }, [library, filter, sort, search]);
-
-  return (
-    <div className="library-view">
-      <div className="lib-header">
-        <div className="lib-title-row">
-          <h2>Minha Biblioteca</h2>
-          {avgRating && <div className="avg-rating">média ⭐ {avgRating}</div>}
-        </div>
-        <div className="lib-stats-row">
-          {['all','backlog','playing','finished'].map(f => (
-            <button key={f} className={`filter-btn ${filter === f ? 'active' : ''}`} onClick={() => setFilter(f)}>
-              {f === 'all' ? '🗂 Todos' : f === 'backlog' ? '📋 Backlog' : f === 'playing' ? '🎮 Jogando' : '✅ Finalizados'}
-              <span className="count">{counts[f]}</span>
-            </button>
-          ))}
-        </div>
-        <div className="lib-sort-row">
-          <span className="sort-label">Ordenar:</span>
-          {['recent','name','rating'].map(s => (
-            <button key={s} className={`sort-btn ${sort === s ? 'active' : ''}`} onClick={() => setSort(s)}>
-              {s === 'recent' ? 'Recente' : s === 'name' ? 'A–Z' : 'Nota'}
-            </button>
-          ))}
-        </div>
-        <div className="lib-search-row">
-          <input
-            className="lib-search-input"
-            placeholder="🔎 Buscar na biblioteca…"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-          {search && <button className="lib-search-clear" onClick={() => setSearch('')}>✕</button>}
-        </div>
-      </div>
-      {items.length === 0 ? (
-        <div className="empty-lib">
-          <div className="empty-icon">🎮</div>
-          <p>Nenhum jogo ainda.<br/>Use o Chat ou Buscar para adicionar!</p>
-        </div>
-      ) : (
-        <div className="games-grid">
-          {items.map(entry => (
-            <GameCard key={entry.game.id} game={entry.game} library={library} onUpdateLibrary={onUpdateLibrary} rawgKey={rawgKey} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─── SETTINGS VIEW ────────────────────────────────────────────────────────────
-function SettingsView({ settings, onSave, user, onLogout }) {
-  const [groqKey, setGroqKey] = useState(settings.groqKey || '');
-  const [rawgKey, setRawgKey] = useState(settings.rawgKey || '');
-  const [saved,   setSaved]   = useState(false);
-
-  const handleSave = () => {
-    onSave({ ...settings, groqKey, rawgKey });
-    setSaved(true); setTimeout(() => setSaved(false), 2000);
-  };
-
-  return (
-    <div className="settings-view">
-      <h2>Configurações</h2>
-
-      <div className="settings-section">
-        <h3>👤 Conta</h3>
-        <div className="settings-card">
-          <div className="setting-user">
-            <div className="user-avatar-big">{user.name[0].toUpperCase()}</div>
-            <div>
-              <div className="setting-user-name">{user.name}</div>
-              {user.email && <div className="setting-user-email">{user.email}</div>}
-            </div>
-          </div>
-          <button className="btn-danger" onClick={onLogout}>Sair</button>
-        </div>
-      </div>
-
-      <div className="settings-section">
-        <h3>🔑 Chaves de API</h3>
-        <p className="settings-note">Suas chaves ficam salvas apenas no seu dispositivo. Nunca enviadas a nenhum servidor nosso.</p>
-
-        <div className="settings-card">
-          <label className="setting-label">
-            Groq API Key
-            <span className="setting-badge required">Obrigatório · Grátis</span>
-          </label>
-          <p className="setting-desc">
-            Alimenta o chat com IA ultra-rápida e gratuita.<br/>
-            Obtenha em <a href="https://console.groq.com/keys" target="_blank" rel="noreferrer">console.groq.com/keys</a> → clique em <strong>"Create API Key"</strong>. Sem cartão de crédito!
-          </p>
-          <input type="password" className="setting-input" placeholder="gsk_..." value={groqKey} onChange={e => setGroqKey(e.target.value)} />
-          {groqKey && <div className="key-status ok">✓ Chave inserida — pronto para usar o chat!</div>}
-        </div>
-
-        <div className="settings-card">
-          <label className="setting-label">
-            RAWG API Key
-            <span className="setting-badge optional">Opcional · Grátis</span>
-          </label>
-          <p className="setting-desc">Aumenta os limites de busca e habilita detalhes completos dos jogos. Obtenha grátis em <a href="https://rawg.io/apidocs" target="_blank" rel="noreferrer">rawg.io/apidocs</a></p>
-          <input type="password" className="setting-input" placeholder="Sua chave RAWG..." value={rawgKey} onChange={e => setRawgKey(e.target.value)} />
-        </div>
-
-        <button className={`btn-save ${saved ? 'saved' : ''}`} onClick={handleSave}>
-          {saved ? '✓ Salvo!' : 'Salvar Chaves'}
-        </button>
-      </div>
-
-      <div className="settings-section">
-        <h3>📱 Instalar como App</h3>
-        <div className="settings-card">
-          <p className="setting-desc">
-            <strong>Android (Chrome):</strong> Menu ⋮ → "Adicionar à tela inicial"<br/>
-            <strong>iPhone (Safari):</strong> Compartilhar → "Adicionar à tela de início"<br/>
-            <strong>PC:</strong> Ícone ⊕ na barra de endereços
-          </p>
-        </div>
-      </div>
-
-      <div className="settings-section">
-        <h3>🗑 Dados</h3>
-        <div className="settings-card">
-          <p className="setting-desc">Apagar todos os dados locais (biblioteca, histórico, configurações).</p>
-          <button className="btn-danger" onClick={() => {
-            if (confirm('Apagar TODOS os dados? Isso não pode ser desfeito.')) {
-              localStorage.clear(); window.location.reload();
-            }
-          }}>Limpar Tudo</button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── AUTH SCREEN ──────────────────────────────────────────────────────────────
-function AuthScreen({ onLogin }) {
-  const [mode,  setMode]  = useState('login');
-  const [name,  setName]  = useState('');
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
-
-  const submit = () => {
-    if (!name.trim()) { setError('Por favor, insira seu nome'); return; }
-    onLogin({ name: name.trim(), email: email.trim(), id: String(Date.now()) });
-  };
-
-  return (
-    <div className="auth-screen">
-      <div className="auth-box">
-        <div className="auth-logo">🎮</div>
-        <h1 className="auth-title">GamePal</h1>
-        <p className="auth-sub">Seu assistente inteligente de jogos</p>
-        <div className="auth-tabs">
-          <button className={mode === 'login'  ? 'active' : ''} onClick={() => setMode('login')}>Entrar</button>
-          <button className={mode === 'signup' ? 'active' : ''} onClick={() => setMode('signup')}>Criar conta</button>
-        </div>
-        <div className="auth-form">
-          <input placeholder="Seu nome" value={name} onChange={e => setName(e.target.value)} onKeyDown={e => e.key === 'Enter' && submit()} autoFocus />
-          {mode === 'signup' && <input placeholder="Email (opcional)" type="email" value={email} onChange={e => setEmail(e.target.value)} />}
-          {error && <div className="auth-error">{error}</div>}
-          <button className="auth-submit" onClick={submit}>{mode === 'login' ? 'Entrar →' : 'Criar Conta →'}</button>
-        </div>
-        <p className="auth-note">Dados salvos apenas no seu dispositivo • Sem servidor necessário</p>
-      </div>
-    </div>
-  );
-}
-
-function InstallBanner({ onDismiss, onInstall }) {
-  return (
-    <div className="install-banner">
-      <span className="install-icon">📲</span>
-      <div className="install-text"><strong>Instalar GamePal</strong><span>Adicione à tela inicial</span></div>
-      <button className="install-btn" onClick={onInstall}>Instalar</button>
-      <button className="install-dismiss" onClick={onDismiss}>✕</button>
-    </div>
-  );
-}
-
-
-// ─── PIXEL ROOM COMPONENT ─────────────────────────────────────────────────────
-function PixelRoom({ mood, loading, lastMsg }) {
-  const [blinking, setBlinking] = useState(false);
-  const [speaking, setSpeaking] = useState(false);
-  const [particles, setParticles] = useState([]);
-  const [time, setTime] = useState(new Date());
-  const [tvImage, setTvImage] = useState(null);
-
-  // Analisar lastMsg para mudar a imagem da TV
-  useEffect(() => {
-    if (lastMsg && (mood === 'searching' || mood === 'happy' || mood === 'excited')) {
-      // Tentar extrair algo que pareça um título de jogo ou contexto
-      const gameHints = lastMsg.match(/([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)/g);
-      if (gameHints && gameHints.length > 0) {
-        // Simular a TV mudando para um "canal" de jogo
-        setTvImage('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80');
-      }
-    } else if (!loading) {
-      setTimeout(() => setTvImage(null), 10000);
-    }
-  }, [lastMsg, mood, loading]);
-
-  // Blink randomly
-  useEffect(() => {
-    const blink = () => {
-      setBlinking(true);
-      setTimeout(() => setBlinking(false), 150);
-      setTimeout(blink, 2000 + Math.random() * 4000);
-    };
-    const t = setTimeout(blink, 1500);
-    return () => clearTimeout(t);
-  }, []);
-
-  // Speaking animation when loading
-  useEffect(() => { setSpeaking(loading); }, [loading]);
-
-  // Particles when mood is excited
-  useEffect(() => {
-    if (mood === 'excited') {
-      const ps = Array.from({length: 8}, (_, i) => ({
-        id: i, x: 40 + Math.random()*20, y: 30 + Math.random()*20,
-        vx: (Math.random()-0.5)*3, vy: -1-Math.random()*2,
-        life: 1, char: ['⭐','✨','🎮','⚡','💫'][Math.floor(Math.random()*5)]
-      }));
-      setParticles(ps);
-      setTimeout(() => setParticles([]), 1800);
-    }
-  }, [mood]);
-
-  // Clock
-  useEffect(() => {
-    const t = setInterval(() => setTime(new Date()), 60000);
-    return () => clearInterval(t);
-  }, []);
-
-  const hour = time.getHours();
-  const isNight = hour >= 20 || hour < 7;
-  const isEvening = hour >= 17 && hour < 20;
-
-  // Mood → face expression
-  const faces = {
-    idle:     { eyes: '◉ ◉', mouth: '▾', color: '#7c6aff' },
-    thinking: { eyes: '◌ ◌', mouth: '—', color: '#f4c430' },
-    excited:  { eyes: '★ ★', mouth: '▲', color: '#00d4aa' },
-    happy:    { eyes: '^ ^', mouth: '▲', color: '#00d4aa'  },
-    searching:{ eyes: '⊙ ⊙', mouth: '○', color: '#7c6aff' },
-  };
-  const face = faces[mood] || faces.idle;
-
-  return (
-    <div className={`pixel-room ${isNight ? 'night' : isEvening ? 'evening' : 'day'}`}>
-
-      {/* ── BACKGROUND LAYERS ── */}
-      <div className="room-bg">
-        {/* Sky / ceiling */}
-        <div className="room-ceiling">
-          {isNight && (
-            <>
-              <div className="star s1">★</div>
-              <div className="star s2">✦</div>
-              <div className="star s3">★</div>
-              <div className="star s4">✦</div>
-              <div className="moon">🌙</div>
-            </>
-          )}
-          {!isNight && (
-            <div className="sun">{isEvening ? '🌅' : '☀️'}</div>
-          )}
-        </div>
-
-        {/* Walls */}
-        <div className="room-wall">
-          {/* Posters on wall */}
-          <div className="wall-poster p1">
-            <div className="poster-inner">🎮</div>
-            <div className="poster-label">GAME</div>
-          </div>
-          <div className="wall-poster p2">
-            <div className="poster-inner">👾</div>
-            <div className="poster-label">RETRO</div>
-          </div>
-          {/* Shelf with collectibles */}
-          <div className="wall-shelf">
-            <div className="shelf-item">🏆</div>
-            <div className="shelf-item anim-float2">🎲</div>
-            <div className="shelf-item">📀</div>
-            <div className="shelf-item anim-float3">🕹</div>
-            <div className="shelf-item">⚡</div>
-          </div>
-        </div>
-
-        {/* Floor */}
-        <div className="room-floor">
-          {/* TV / Monitor */}
-	          <div className={`room-tv ${mood === 'excited' ? 'tv-glow-pulse' : ''}`}>
-	            <div className="tv-screen">
-	              {loading
-	                ? <div className="tv-loading">LOADING<span className="tv-dots">...</span></div>
-	                : tvImage 
-                    ? <div className="tv-content-img" style={{ backgroundImage: `url(${tvImage})` }}>
-                        <div className="tv-noise"></div>
-                        <div className="tv-overlay-text">SIGNAL DETECTED</div>
-                      </div>
-                    : <div className="tv-idle">
-	                    <div className="tv-pixel-art">
-	                      {['🟦','🟪','🟦','🟪','🟦'].map((c,i) => <span key={i}>{c}</span>)}
-	                    </div>
-	                    <div className="tv-label">GAMEPAL v2.0</div>
-	                  </div>
-	              }
-	            </div>
-	            <div className="tv-stand"></div>
-	          </div>
-
-          {/* Plant */}
-          <div className="room-plant anim-sway">🪴</div>
-
-          {/* Console on floor */}
-          <div className="room-console">🎮</div>
-        </div>
-
-        {/* Ambient particles */}
-        {isNight && <div className="room-ambient-dark"></div>}
-
-        {/* Desk lamp glow */}
-        <div className="lamp-glow" style={{ opacity: isNight ? 0.6 : 0.2 }}></div>
-      </div>
-
-      {/* ── PIXEL CHARACTER ── */}
-      <div className={`pixel-char ${mood === 'excited' ? 'char-bounce' : ''} ${speaking ? 'char-talking' : ''}`}>
-
-        {/* Speech bubble */}
-        {speaking && (
-          <div className="pixel-speech-bubble">
-            <div className="speech-dots">
-              <span></span><span></span><span></span>
-            </div>
-          </div>
-        )}
-        {mood === 'excited' && !speaking && (
-          <div className="pixel-speech-bubble excited-bubble">
-            BEEP BOOP! ⚡
-          </div>
-        )}
-
-        {/* Particle effects */}
-        {particles.map(p => (
-          <div key={p.id} className="pixel-particle" style={{
-            left: p.x + '%', top: p.y + '%',
-            animation: `particleFly 1.8s ease-out forwards`,
-            animationDelay: p.id * 0.1 + 's',
-          }}>{p.char}</div>
-        ))}
-
-        {/* Robot body — built with CSS */}
-        <div className="robot-wrap">
-          {/* Antenna */}
-          <div className="robot-antenna">
-            <div className="antenna-ball" style={{ background: face.color }}></div>
-            <div className="antenna-stem"></div>
-          </div>
-
-          {/* Head */}
-          <div className="robot-head" style={{ borderColor: face.color }}>
-            {/* Screen face */}
-            <div className="robot-face">
-              {/* Eyes */}
-              <div className="robot-eyes">
-                <div className={`robot-eye ${blinking ? 'blink' : ''}`} style={{ background: face.color }}>
-                  <div className="eye-pupil"></div>
-                  {mood === 'thinking' && <div className="eye-spin"></div>}
-                </div>
-                <div className={`robot-eye ${blinking ? 'blink' : ''}`} style={{ background: face.color }}>
-                  <div className="eye-pupil"></div>
-                  {mood === 'thinking' && <div className="eye-spin"></div>}
-                </div>
-              </div>
-              {/* Mouth */}
-              <div className={`robot-mouth ${speaking ? 'mouth-talk' : ''}`} style={{ borderColor: face.color }}>
-                {mood === 'excited' && <div className="mouth-excited"></div>}
-                {mood === 'searching' && <div className="mouth-o"></div>}
-              </div>
-              {/* Scan line effect */}
-              <div className="face-scanline"></div>
-            </div>
-            {/* Head details */}
-            <div className="head-bolt left-bolt" style={{ background: face.color }}></div>
-            <div className="head-bolt right-bolt" style={{ background: face.color }}></div>
-          </div>
-
-          {/* Body */}
-          <div className="robot-body">
-            <div className="body-chest">
-              {/* Chest screen */}
-              <div className="chest-screen">
-                <div className="chest-bars">
-                  {[0.4,0.7,1,0.6,0.8,0.5].map((h,i) => (
-                    <div key={i} className="chest-bar" style={{
-                      height: (h*100)+'%',
-                      background: face.color,
-                      animationDelay: i*0.12+'s'
-                    }}></div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            {/* Arms */}
-            <div className={`robot-arm left-arm ${speaking ? 'arm-wave' : ''}`}>
-              <div className="arm-hand" style={{ background: face.color }}>✦</div>
-            </div>
-            <div className={`robot-arm right-arm ${mood === 'excited' ? 'arm-raise' : ''}`}>
-              <div className="arm-hand" style={{ background: face.color }}>✦</div>
-            </div>
-          </div>
-
-          {/* Legs */}
-          <div className="robot-legs">
-            <div className="robot-leg left-leg"></div>
-            <div className="robot-leg right-leg"></div>
-          </div>
-
-          {/* Shadow */}
-          <div className="robot-shadow"></div>
-        </div>
-      </div>
-
-      {/* ── MOOD LABEL ── */}
-      <div className="pixel-mood-bar">
-        <span className="mood-dot" style={{ background: face.color }}></span>
-        <span className="mood-text">
-          {mood === 'idle' && 'PIXEL está esperando você...'}
-          {mood === 'thinking' && 'PIXEL está pensando...'}
-          {mood === 'excited' && 'PIXEL está animado!'}
-          {mood === 'happy' && 'PIXEL está feliz!'}
-          {mood === 'searching' && 'PIXEL está buscando...'}
-        </span>
-        <span className="room-time">{time.getHours().toString().padStart(2,'0')}:{time.getMinutes().toString().padStart(2,'0')}</span>
-      </div>
-    </div>
-  );
-}
-
-// ─── MAIN APP ─────────────────────────────────────────────────────────────────
-function TypewriterText({ text, onComplete, speed = 20 }) {
-  const [displayedText, setDisplayedText] = useState('');
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    if (index < text.length) {
-      const timeout = setTimeout(() => {
-        setDisplayedText(prev => prev + text[index]);
-        setIndex(prev => prev + 1);
-      }, speed);
-      return () => clearTimeout(timeout);
-    } else if (onComplete) {
-      onComplete();
-    }
-  }, [index, text, speed, onComplete]);
-
-  return <span>{displayedText}</span>;
-}
-
-function App() {
-  const [user,     setUser]     = useState(() => load(USER_KEY,     null));
-  const [messages, setMessages] = useState(() => load(CHAT_KEY,     []));
-  const [library,  setLibrary]  = useState(() => load(STORAGE_KEY,  {}));
-  const [settings, setSettings] = useState(() => load(SETTINGS_KEY, {}));
-  const [input,    setInput]    = useState('');
-  const [loading,  setLoading]  = useState(false);
-  const [view,     setView]     = useState('chat');
-  const [typingId, setTypingId] = useState(null);
-  const [installPrompt,     setInstallPrompt]     = useState(null);
-  const [showInstallBanner, setShowInstallBanner] = useState(false);
-  const [apiError, setApiError] = useState('');
-  const [pixelMood, setPixelMood] = useState('idle');
-  const bottomRef = useRef(null);
-  const inputRef  = useRef(null);
-
-  useEffect(() => { save(CHAT_KEY,     messages.slice(-80)); }, [messages]);
-  useEffect(() => { save(STORAGE_KEY,  library);  }, [library]);
-  useEffect(() => { save(SETTINGS_KEY, settings); }, [settings]);
-  useEffect(() => { bottomRef.current && bottomRef.current.scrollIntoView({ behavior: 'smooth' }); }, [messages, loading]);
-
-  useEffect(() => {
-    const h = () => { const v = window.location.hash.replace('#',''); if (['chat','library','search','stats','settings'].includes(v)) setView(v); };
-    window.addEventListener('hashchange', h);
-    return () => window.removeEventListener('hashchange', h);
-  }, []);
-
-  useEffect(() => {
-    const h = (e) => { e.preventDefault(); setInstallPrompt(e); setShowInstallBanner(true); };
-    window.addEventListener('beforeinstallprompt', h);
-    return () => window.removeEventListener('beforeinstallprompt', h);
-  }, []);
-
-  useEffect(() => { 
-    try {
-      window.__hideSplash && window.__hideSplash(); 
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      setLibrary(next);
+      return true;
     } catch (e) {
-      console.error("Erro ao esconder splash:", e);
+      setToast('Não foi possível salvar. Exporte um backup e libere espaço no dispositivo.');
+      return false;
     }
+  }
+  function change(id, patch) {
+    var old = library;
+    var e = old[id];
+    if (!e) return;
+    if (persist(_objectSpread(_objectSpread({}, old), {}, _defineProperty({}, id, _objectSpread(_objectSpread(_objectSpread({}, e), patch), {}, {
+      updatedAt: Date.now()
+    }))))) {
+      setUndo(old);
+      setToast('Jornada atualizada.');
+    }
+  }
+  function add(game) {
+    if (library[game.id]) {
+      setSelected(game);
+      return;
+    }
+    var t = Date.now();
+    if (persist(_objectSpread(_objectSpread({}, library), {}, _defineProperty({}, game.id, {
+      game: game,
+      status: 'backlog',
+      createdAt: t,
+      updatedAt: t
+    })))) setToast('Adicionado à sua biblioteca.');
+    setSelected(game);
+  }
+  useEffect(function () {
+    var _window$__hideSplash, _window;
+    (_window$__hideSplash = (_window = window).__hideSplash) === null || _window$__hideSplash === void 0 || _window$__hideSplash.call(_window);
+    var hash = function hash() {
+      var v = location.hash.slice(1);
+      if (['home', 'library', 'journal', 'explore', 'profile'].includes(v)) setView(v);
+    };
+    hash();
+    window.addEventListener('hashchange', hash);
+    return function () {
+      return window.removeEventListener('hashchange', hash);
+    };
   }, []);
-
-  const navigate      = (v) => { setView(v); window.location.hash = v; };
-  const handleLogin   = (u) => { save(USER_KEY, u); setUser(u); };
-  const handleLogout  = ()  => { save(USER_KEY, null); setUser(null); };
-  const updateLibrary = useCallback((lib) => setLibrary(lib), []);
-  // Ref so sendMessage closure always has fresh updateLibrary
-  const onUpdateLibraryRef = useRef(updateLibrary);
-  useEffect(() => { onUpdateLibraryRef.current = updateLibrary; }, [updateLibrary]);
-  const saveSettings  = useCallback((s)   => setSettings(s),  []);
-
-  const handleInstall = async () => {
-    if (!installPrompt) return;
-    installPrompt.prompt();
-    const { outcome } = await installPrompt.userChoice;
-    if (outcome === 'accepted') setShowInstallBanner(false);
-    setInstallPrompt(null);
-  };
-
-  const sendMessage = async () => {
-    const text = input.trim();
-    if (!text || loading) return;
-    setInput(''); setApiError('');
-    setPixelMood('thinking');
-    const userMsg = { role: 'user', content: text, ts: Date.now() };
-    const newMessages = [...messages, userMsg];
-    setMessages(newMessages);
-    setLoading(true);
-    try {
-      const history = newMessages.slice(-12);
-      const raw = await callGroq(history, SYSTEM_PROMPT, settings.groqKey);
-
-      // ── Robust parser: tries 4 strategies to extract JSON ──
-      let action = null;
-
-      // Strategy 1: raw JSON (Groq/Llama usually returns this cleanly)
-      try { action = JSON.parse(raw.trim()); } catch(e){}
-
-      // Strategy 2: JSON inside ```json ``` fences
-      if (!action) {
-        const m = raw.match(/```(?:json)?\s*([\s\S]*?)```/);
-        if (m) { try { action = JSON.parse(m[1].trim()); } catch(e){} }
+  useEffect(function () {
+    if (!toast) return;
+    var t = setTimeout(function () {
+      return setToast('');
+    }, 7000);
+    return function () {
+      return clearTimeout(t);
+    };
+  }, [toast]);
+  useEffect(function () {
+    var _Array$from$pop;
+    if (!selected && !modal && !ai) return;
+    previousFocus.current = document.activeElement;
+    var key = function key(e) {
+      if (e.key === 'Escape') {
+        setSelected(null);
+        setModal(null);
+        setAi(false);
       }
-
-      // Strategy 3: first {...} object found anywhere in text
-      if (!action) {
-        const m = raw.match(/\{[\s\S]*\}/);
-        if (m) { try { action = JSON.parse(m[0]); } catch(e){} }
-      }
-
-      // Strategy 4: smart fallback — detect intent from user message directly
-      if (!action || !action.action) {
-        const userLow = text.toLowerCase();
-        const SEARCH_TRIGGERS = ['rpg','action','ação','aventura','adventure','terror','horror',
-          'estratégia','strategy','puzzle','plataforma','platform','shooter','fps','indie',
-          'corrida','racing','luta','fighting','sports','esporte','arcade','mmorpg',
-          'playstation','nintendo','switch','xbox',' ps1',' ps2',' ps3',' ps4',' ps5',
-          'melhores','indique','recomende','recomend','suggest','busca','find','show','list',
-          'top ','best ','jogos de','games de','games like','parecidos','similar'];
-        const isSearch = SEARCH_TRIGGERS.some(k => userLow.includes(k));
-
-        if (isSearch) {
-          const p = { ordering: '-rating' };
-          // Detect platform
-          if      (userLow.includes('ps1') || userLow.includes('playstation 1')) p.platform = 'PlayStation 1';
-          else if (userLow.includes('ps2') || userLow.includes('playstation 2')) p.platform = 'PlayStation 2';
-          else if (userLow.includes('ps3') || userLow.includes('playstation 3')) p.platform = 'PlayStation 3';
-          else if (userLow.includes('ps4') || userLow.includes('playstation 4')) p.platform = 'PlayStation 4';
-          else if (userLow.includes('ps5') || userLow.includes('playstation 5')) p.platform = 'PlayStation 5';
-          else if (userLow.includes('switch'))                                    p.platform = 'Nintendo Switch';
-          else if (userLow.includes('xbox 360'))                                  p.platform = 'Xbox 360';
-          else if (userLow.includes('xbox'))                                      p.platform = 'Xbox One';
-          else if (userLow.match(/\bpc\b/))                                      p.platform = 'PC';
-          else if (userLow.includes('n64') || userLow.includes('nintendo 64'))    p.platform = 'Nintendo 64';
-          else if (userLow.includes('snes') || userLow.includes('super nintendo'))p.platform = 'Super Nintendo';
-          // Detect genre
-          if      (userLow.includes('rpg'))                                        p.genre = 'rpg';
-          else if (userLow.includes('terror') || userLow.includes('horror'))       p.genre = 'terror';
-          else if (userLow.includes('ação')   || userLow.includes('action'))       p.genre = 'action';
-          else if (userLow.includes('aventura')|| userLow.includes('adventure'))   p.genre = 'aventura';
-          else if (userLow.includes('estratégia')||userLow.includes('strategy'))   p.genre = 'estratégia';
-          else if (userLow.includes('indie'))                                       p.genre = 'indie';
-          else if (userLow.includes('puzzle'))                                      p.genre = 'puzzle';
-          else if (userLow.includes('corrida') || userLow.includes('racing'))      p.genre = 'corrida';
-          else if (userLow.includes('luta')    || userLow.includes('fighting'))    p.genre = 'luta';
-          else if (userLow.includes('shooter') || userLow.includes('fps'))         p.genre = 'shooter';
-          else if (userLow.includes('plataforma')||userLow.includes('platform'))   p.genre = 'plataforma';
-          else if (userLow.includes('arcade'))                                      p.genre = 'arcade';
-          // If no genre/platform detected, use whole message as query
-          if (!p.genre && !p.platform) {
-            p.query = text.replace(/[?!.,]/g,'').trim();
-            // For title-only searches, don't force ordering so similarity sorting works
-            delete p.ordering;
-          }
-          action = { action: 'search', params: p, message: 'Aqui estão os jogos encontrados! 🎮' };
-        } else {
-          action = { action: 'chat', message: raw };
+      if (e.key === 'Tab') {
+        var box = Array.from(document.querySelectorAll('[role="dialog"]')).pop();
+        var focus = box === null || box === void 0 ? void 0 : box.querySelectorAll('button,input,select,textarea,a[href]');
+        if (!(focus !== null && focus !== void 0 && focus.length)) return;
+        var first = focus[0],
+          last = focus[focus.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
         }
       }
-
-      let games = [];
-      let addedGame  = null;
-      let addedBatch = null;
-
-      if (action.action === 'search' && action.params) {
-        setPixelMood('searching');
-        try { games = await searchGames(action.params, settings.rawgKey); } catch(e){}
-      }
-
-      // Handle single add
-      if (action.action === 'add' && action.gameName) {
-        try {
-          const game = await findGameByName(action.gameName, settings.rawgKey);
-          if (game) {
-            const status = action.status || 'backlog';
-            const now = Date.now();
-            const updatedLib = {
-              ...library,
-              [game.id]: { ...(library[game.id]||{}), game, status, updatedAt: now, createdAt: (library[game.id] && library[game.id].createdAt ? library[game.id].createdAt : now) }
-            };
-            onUpdateLibraryRef.current(updatedLib);
-            addedGame = { game, status };
-          }
-        } catch(e) { console.error('Add error:', e); }
-      }
-
-      // Handle batch add — multiple games at once
-      if (action.action === 'addBatch' && Array.isArray(action.games) && action.games.length > 0) {
-        setPixelMood('excited');
-        const results = [];
-        let runningLib = { ...library };
-
-        // Search all games in parallel
-        const searches = action.games.map(({ gameName, status }) =>
-          findGameByName(gameName, settings.rawgKey)
-            .then(game => ({ game, status: status || 'backlog', requested: gameName }))
-            .catch(() => ({ game: null, status: status || 'backlog', requested: gameName }))
-        );
-        const found = await Promise.all(searches);
-
-        const now = Date.now();
-        found.forEach(function(item) {
-          var game = item.game, status = item.status, requested = item.requested;
-          if (game) {
-            runningLib = Object.assign({}, runningLib, {
-              [game.id]: Object.assign({}, runningLib[game.id]||{}, { game: game, status: status, updatedAt: now, createdAt: (runningLib[game.id] && runningLib[game.id].createdAt ? runningLib[game.id].createdAt : now) })
+    };
+    document.addEventListener('keydown', key);
+    (_Array$from$pop = Array.from(document.querySelectorAll('[role="dialog"]')).pop()) === null || _Array$from$pop === void 0 || (_Array$from$pop = _Array$from$pop.querySelector('button')) === null || _Array$from$pop === void 0 || _Array$from$pop.focus();
+    return function () {
+      var _previousFocus$curren;
+      document.removeEventListener('keydown', key);
+      (_previousFocus$curren = previousFocus.current) === null || _previousFocus$curren === void 0 || _previousFocus$curren.focus();
+    };
+  }, [!!selected, !!modal, ai]);
+  function nav(v) {
+    setView(v);
+    location.hash = v;
+    setQuery('');
+    setCollection('');
+    window.scrollTo(0, 0);
+  }
+  function search(_x) {
+    return _search.apply(this, arguments);
+  }
+  function _search() {
+    _search = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(e) {
+      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+        while (1) switch (_context3.prev = _context3.next) {
+          case 0:
+            e === null || e === void 0 || e.preventDefault();
+            if (query.trim()) {
+              _context3.next = 3;
+              break;
+            }
+            return _context3.abrupt("return");
+          case 3:
+            setError('');
+            setBusy(true);
+            _context3.prev = 5;
+            if (settings.rawgKey) {
+              _context3.next = 8;
+              break;
+            }
+            throw Error('Adicione sua chave RAWG no Perfil para pesquisar o catálogo. Você também pode cadastrar um jogo manualmente.');
+          case 8:
+            _context3.t0 = setResults;
+            _context3.next = 11;
+            return searchGames({
+              query: query.trim(),
+              pageSize: 24
+            }, settings.rawgKey);
+          case 11:
+            _context3.t1 = _context3.sent;
+            (0, _context3.t0)(_context3.t1);
+            _context3.next = 18;
+            break;
+          case 15:
+            _context3.prev = 15;
+            _context3.t2 = _context3["catch"](5);
+            setError(_context3.t2.message);
+          case 18:
+            _context3.prev = 18;
+            setBusy(false);
+            return _context3.finish(18);
+          case 21:
+          case "end":
+            return _context3.stop();
+        }
+      }, _callee3, null, [[5, 15, 18, 21]]);
+    }));
+    return _search.apply(this, arguments);
+  }
+  function backup() {
+    var data = {
+      format: 'journey',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      library: library,
+      collections: collections,
+      user: user
+    };
+    var url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], {
+      type: 'application/json'
+    }));
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'journey-backup-' + nowDate() + '.json';
+    a.click();
+    setTimeout(function () {
+      return URL.revokeObjectURL(url);
+    }, 1000);
+  }
+  function restore(_x2) {
+    return _restore.apply(this, arguments);
+  }
+  function _restore() {
+    _restore = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(file) {
+      var data;
+      return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+        while (1) switch (_context4.prev = _context4.next) {
+          case 0:
+            if (file) {
+              _context4.next = 2;
+              break;
+            }
+            return _context4.abrupt("return");
+          case 2:
+            _context4.prev = 2;
+            _context4.t0 = JSON;
+            _context4.next = 6;
+            return file.text();
+          case 6:
+            _context4.t1 = _context4.sent;
+            data = _context4.t0.parse.call(_context4.t0, _context4.t1);
+            if (!(data.format !== 'journey' || data.version !== 1 || !data.library || _typeof(data.library) !== 'object' || Array.isArray(data.library) || Object.entries(data.library).some(function (_ref14) {
+              var _ref15 = _slicedToArray(_ref14, 2),
+                id = _ref15[0],
+                e = _ref15[1];
+              return !(e !== null && e !== void 0 && e.game) || String(e.game.id) !== id || typeof e.game.name !== 'string' || !STATES[e.status] || e.journeys && !Array.isArray(e.journeys);
+            }))) {
+              _context4.next = 10;
+              break;
+            }
+            throw Error('Arquivo de backup inválido.');
+          case 10:
+            setModal({
+              type: 'restore',
+              data: data
             });
-            results.push({ game: game, status: status, found: true });
-          } else {
-            results.push({ game: null, status: status, found: false, requested: requested });
-          }
-        });
-
-        onUpdateLibraryRef.current(runningLib);
-        addedBatch = results;
+            _context4.next = 16;
+            break;
+          case 13:
+            _context4.prev = 13;
+            _context4.t2 = _context4["catch"](2);
+            setToast(_context4.t2.message);
+          case 16:
+            restoreRef.current.value = '';
+          case 17:
+          case "end":
+            return _context4.stop();
+        }
+      }, _callee4, null, [[2, 13]]);
+    }));
+    return _restore.apply(this, arguments);
+  }
+  function ask(_x3) {
+    return _ask.apply(this, arguments);
+  }
+  function _ask() {
+    _ask = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(e) {
+      var context, messages, answer, next;
+      return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+        while (1) switch (_context5.prev = _context5.next) {
+          case 0:
+            e.preventDefault();
+            if (settings.groqKey) {
+              _context5.next = 4;
+              break;
+            }
+            setReply('Configure sua chave Groq no Perfil para conversar com o PIXEL.');
+            return _context5.abrupt("return");
+          case 4:
+            setAiBusy(true);
+            _context5.prev = 5;
+            context = selected ? library[selected.id] : entries.map(function (e) {
+              return {
+                name: e.game.name,
+                status: e.status
+              };
+            });
+            messages = history.concat({
+              role: 'user',
+              content: prompt
+            }).slice(-12);
+            _context5.next = 10;
+            return callGroq(messages, 'Você é PIXEL, um companheiro de jogos calmo e prestativo no Journey. Responda em português em texto simples. Preferência de spoilers: ' + (settings.spoilers || 'Sem spoilers') + '. Use somente os registros fornecidos ao resumir progresso; não invente sessões ou acontecimentos. Não afirme alterar dados. Contexto: ' + JSON.stringify(context), settings.groqKey);
+          case 10:
+            answer = _context5.sent;
+            setReply(answer);
+            next = messages.concat({
+              role: 'assistant',
+              content: answer
+            });
+            setHistory(next);
+            save(CHAT_KEY, next);
+            setPrompt('');
+            _context5.next = 21;
+            break;
+          case 18:
+            _context5.prev = 18;
+            _context5.t0 = _context5["catch"](5);
+            setReply(_context5.t0.message);
+          case 21:
+            _context5.prev = 21;
+            setAiBusy(false);
+            return _context5.finish(21);
+          case 24:
+          case "end":
+            return _context5.stop();
+        }
+      }, _callee5, null, [[5, 18, 21, 24]]);
+    }));
+    return _ask.apply(this, arguments);
+  }
+  function card(e) {
+    var g = e.game || e;
+    return /*#__PURE__*/React.createElement("button", {
+      className: "game",
+      key: g.id,
+      onClick: function onClick() {
+        setSelected(g);
+        setTab('journey');
       }
-
-      // Set mood
-      if (addedBatch || addedGame) setPixelMood('excited');
-      else if (games.length > 0) setPixelMood('happy');
-      else setPixelMood('happy');
-      setTimeout(() => setPixelMood('idle'), 5000);
-
-      const assistantMsg = {
-        role: 'assistant',
-        content: action.message || raw,
-        games:      games.length > 0 ? games : null,
-        addedGame:  addedGame  || null,
-        addedBatch: addedBatch || null,
-        ts: Date.now(),
-        isTyping: true,
-      };
-      setMessages(prev => [...prev, assistantMsg]);
-      setTypingId(assistantMsg.ts);
-    } catch (err) {
-      setApiError(err.message || 'Algo deu errado');
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: '⚠️ Erro ao conectar ao Groq. Verifique sua chave em Configurações ⚙️',
-        ts: Date.now(),
-      }]);
-    } finally {
-      setLoading(false);
-      setTimeout(() => inputRef.current && inputRef.current.focus(), 100);
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "cover"
+    }, g.cover ? /*#__PURE__*/React.createElement("img", {
+      src: g.cover,
+      alt: "",
+      loading: "lazy",
+      onError: function onError(e) {
+        return e.currentTarget.style.display = 'none';
+      }
+    }) : /*#__PURE__*/React.createElement("span", null, "J"), e.status && /*#__PURE__*/React.createElement("span", {
+      className: 'badge ' + e.status
+    }, STATES[e.status])), /*#__PURE__*/React.createElement("div", {
+      className: "game-info"
+    }, /*#__PURE__*/React.createElement("h3", null, g.name), /*#__PURE__*/React.createElement("p", null, e.platform || g.genres || g.released || 'Sua próxima aventura')));
+  }
+  function empty(title, desc, action) {
+    return /*#__PURE__*/React.createElement("div", {
+      className: "empty"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "explore"
+    }), /*#__PURE__*/React.createElement("h2", null, title), /*#__PURE__*/React.createElement("p", null, desc), action || /*#__PURE__*/React.createElement("button", {
+      className: "primary",
+      onClick: function onClick() {
+        return nav('explore');
+      }
+    }, "Encontrar um jogo \u2192"));
+  }
+  var entry = selected && library[selected.id],
+    journeys = (entry === null || entry === void 0 ? void 0 : entry.journeys) || [{
+      id: 'original',
+      title: 'Primeira jornada',
+      sessions: (entry === null || entry === void 0 ? void 0 : entry.sessions) || []
+    }],
+    active = journeys.find(function (j) {
+      return j.id === (entry === null || entry === void 0 ? void 0 : entry.activeJourney);
+    }) || journeys[0];
+  var filtered = entries.filter(function (e) {
+    return (filter === 'all' || e.status === filter) && (!platform || e.platform === platform) && (!collection || (e.collections || []).includes(collection)) && e.game.name.toLowerCase().includes(query.toLowerCase());
+  }).sort(function (a, b) {
+    return sort === 'name' ? a.game.name.localeCompare(b.game.name) : sort === 'rating' ? (b.rating || 0) - (a.rating || 0) : b.updatedAt - a.updatedAt;
+  });
+  return /*#__PURE__*/React.createElement("div", {
+    className: "app"
+  }, /*#__PURE__*/React.createElement("aside", null, /*#__PURE__*/React.createElement("a", {
+    className: "wordmark",
+    href: "#home",
+    onClick: function onClick() {
+      return nav('home');
     }
-  };
-
-  const libCount     = Object.keys(library).length;
-  const playingCount = Object.values(library).filter(e => e.status === 'playing').length;
-
-  const SUGGESTIONS = [
-    '🤖 Oi PIXEL! Quais RPGs você recomenda para PS1?',
-    '🎮 Me fala sobre jogos parecidos com Dark Souls',
-    '📋 Adicionar ao backlog: God of War, The Last of Us, Uncharted 4',
-    '🎯 Adicionar: Red Dead Redemption 2 no backlog, GTA V jogando',
-    '💬 O que você acha de jogos de terror?',
-    '🏆 Me recomenda um jogo indie incrível',
-  ];
-
-  const NAV = [
-    { id:'chat',     icon:'💬', label:'Chat'        },
-    { id:'search',   icon:'🔍', label:'Buscar'      },
-    { id:'library',  icon:'📚', label:'Biblioteca', badge: libCount },
-    { id:'stats',    icon:'📊', label:'Stats'       },
-    { id:'settings', icon:'⚙️', label:'Config'      },
-  ];
-
-  if (!user) return <AuthScreen onLogin={handleLogin} />;
-
-  return (
-    <div className="app">
-      {showInstallBanner && <InstallBanner onDismiss={() => setShowInstallBanner(false)} onInstall={handleInstall} />}
-
-      {/* SIDEBAR desktop */}
-      <aside className="sidebar">
-        <div className="sidebar-top">
-          <div className="logo">🤖 <span>GamePal</span></div>
-          <div className="user-pill">
-            <div className="user-avatar">{user.name[0].toUpperCase()}</div>
-            <div className="user-info">
-              <div className="user-name">{user.name}</div>
-              <div className="user-stats">{libCount} jogos · {playingCount} jogando</div>
-            </div>
-          </div>
-        </div>
-        <nav className="sidebar-nav">
-          {NAV.map(item => (
-            <button key={item.id} className={`nav-item ${view === item.id ? 'active' : ''}`} onClick={() => navigate(item.id)}>
-              <span className="nav-icon">{item.icon}</span>{item.label}
-              {item.badge > 0 && <span className="nav-badge">{item.badge}</span>}
-            </button>
-          ))}
-        </nav>
-        <div className="sidebar-footer">
-          <div className="stats-grid">
-            {[
-              { label:'Backlog',     count: Object.values(library).filter(e=>e.status==='backlog').length },
-              { label:'Jogando',     count: playingCount },
-              { label:'Finalizados', count: Object.values(library).filter(e=>e.status==='finished').length },
-            ].map(s => (
-              <div key={s.label} className="stat">
-                <div className="stat-n">{s.count}</div>
-                <div className="stat-l">{s.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </aside>
-
-      {/* MAIN */}
-      <main className="main">
-        {view === 'library'  && <LibraryView  library={library} onUpdateLibrary={updateLibrary} rawgKey={settings.rawgKey} />}
-        {view === 'stats'    && <StatsView    library={library} onNavigate={navigate} />}
-        {view === 'search'   && <SearchView   library={library} onUpdateLibrary={updateLibrary} rawgKey={settings.rawgKey} />}
-        {view === 'settings' && <SettingsView settings={settings} onSave={saveSettings} user={user} onLogout={handleLogout} />}
-
-        {view === 'chat' && (
-          <div className="chat-area">
-            {/* PIXEL ROOM — interactive scene */}
-            <div className="pixel-room-container">
-              <PixelRoom mood={pixelMood} loading={loading} lastMsg={(messages.length > 0 && messages[messages.length-1].content) || ''} />
-            </div>
-
-            <div className="chat-header">
-              <div className="chat-header-left">
-                <div className="pixel-avatar-wrap">
-                  <div className="pixel-avatar">🤖</div>
-                  <div className="pixel-online-dot"></div>
-                </div>
-                <div>
-                  <div className="chat-title">PIXEL <span className="pixel-tag">GamePal AI</span></div>
-                  <div className="chat-status pixel-status">
-                    <span className="pixel-pulse"></span>
-                    {loading ? 'Processando seus dados...' : 'Online · Pronto para jogar!'}
-                  </div>
-                </div>
-              </div>
-              <button className="btn-clear-chat" onClick={() => { if(confirm('Limpar histórico?')) setMessages([]); }} title="Limpar conversa">🗑</button>
-            </div>
-
-            <div className="messages">
-              {messages.length === 0 && (
-                <div className="welcome">
-                  <div className="pixel-welcome-avatar">🤖</div>
-                  <div className="pixel-welcome-badge">PIXEL · GamePal AI</div>
-                  <h2>Olá, {user.name}! <span className="wave">👋</span></h2>
-                  <div className="pixel-intro">
-                    <p>BEEP BOOP! Meus circuitos estão <strong>muito animados</strong> para te ajudar! 🤖⚡</p>
-                    <p>Sou o <strong>PIXEL</strong>, seu companheiro robô gamer. Conheço jogos de <strong>todas as épocas e plataformas</strong> e adoro falar sobre eles!</p>
-                    <p>Posso recomendar jogos, adicionar à sua biblioteca, comentar o que você já tem e muito mais. <strong>É só me perguntar!</strong></p>
-                  </div>
-                  {!settings.groqKey && (
-                    <div className="api-key-warning">
-                      ⚠️ Configure sua <button className="link-btn" onClick={() => navigate('settings')}>chave Groq</button> nas Configurações para ativar o PIXEL. É grátis!
-                    </div>
-                  )}
-                  <div className="pixel-suggestions-label">💬 Experimente perguntar:</div>
-                  <div className="suggestions">
-                    {SUGGESTIONS.map(s => (
-                      <button key={s} className="suggestion" onClick={() => { setInput(s); setTimeout(() => inputRef.current && inputRef.current.focus(), 50); }}>{s}</button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {messages.map((msg, i) => (
-                <div key={msg.ts || i} className={`message ${msg.role} ${msg.ts === typingId ? 'typing-active' : ''}`}>
-                  {msg.role === 'assistant' && <div className="msg-avatar ai pixel-msg-avatar">🤖</div>}
-                  <div className="msg-bubble">
-                    <div className="msg-text">
-                      {msg.role === 'assistant' && msg.ts === typingId ? (
-                        <TypewriterText 
-                          text={msg.content} 
-                          onComplete={() => setTypingId(null)} 
-                        />
-                      ) : (
-                        msg.content
-                      )}
-                    </div>
-                    {(!typingId || msg.ts !== typingId) && msg.games && (
-                      <div className="games-grid">
-                        {msg.games.map(g => <GameCard key={g.id} game={g} library={library} onUpdateLibrary={updateLibrary} rawgKey={settings.rawgKey} />)}
-                      </div>
-                    )}
-                    {msg.addedGame && (
-                      <div className="added-game-card">
-                        <div className="added-game-inner">
-                          {msg.addedGame.game.cover && (
-                            <img src={msg.addedGame.game.cover} alt={msg.addedGame.game.name} className="added-game-thumb" />
-                          )}
-                          <div className="added-game-info">
-                            <div className="added-game-name">{msg.addedGame.game.name}</div>
-                            <div className="added-game-status">
-                              { ({backlog:'📋 Adicionado ao Backlog', playing:'🎮 Marcado como Jogando', finished:'✅ Marcado como Finalizado'})[msg.addedGame.status] }
-                            </div>
-                            {msg.addedGame.game.released && <div className="added-game-year">{msg.addedGame.game.released}</div>}
-                          </div>
-                          <button
-                            className="added-game-undo"
-                            onClick={() => { const u={...library}; delete u[msg.addedGame.game.id]; updateLibrary(u); }}
-                            title="Desfazer"
-                          >↩</button>
-                        </div>
-                      </div>
-                    )}
-
-                    {msg.addedBatch && msg.addedBatch.length > 0 && (
-                      <div className="batch-result-card">
-                        <div className="batch-result-header">
-                          <span className="batch-icon">🤖⚡</span>
-                          <span className="batch-title">
-                            {msg.addedBatch.filter(r=>r.found).length} de {msg.addedBatch.length} jogos adicionados!
-                          </span>
-                          <button
-                            className="batch-undo-all"
-                            onClick={() => {
-                              const u = {...library};
-                              msg.addedBatch.forEach(r => { if (r.game) delete u[r.game.id]; });
-                              updateLibrary(u);
-                            }}
-                            title="Desfazer tudo"
-                          >↩ Desfazer tudo</button>
-                        </div>
-                        <div className="batch-items">
-                          {msg.addedBatch.map((r, i) => (
-                            <div key={i} className={`batch-item ${r.found ? 'found' : 'not-found'}`}>
-                              {r.found && r.game && r.game.cover && (
-                                <img src={r.game.cover} alt={r.game.name} className="batch-thumb" />
-                              )}
-                              {!r.found && <div className="batch-thumb-missing">?</div>}
-                              <div className="batch-item-info">
-                                <div className="batch-item-name">{r.found ? r.game.name : r.requested}</div>
-                                <div className="batch-item-status">
-                                  {r.found
-                                    ? ({backlog:'📋 Backlog', playing:'🎮 Jogando', finished:'✅ Finalizado'})[r.status]
-                                    : '⚠️ Não encontrado'
-                                  }
-                                </div>
-                              </div>
-                              {r.found && (
-                                <button
-                                  className="batch-item-undo"
-                                  onClick={() => { const u={...library}; delete u[r.game.id]; updateLibrary(u); }}
-                                  title="Remover este"
-                                >✕</button>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  {msg.role === 'user' && <div className="msg-avatar user">{user.name[0].toUpperCase()}</div>}
-                </div>
-              ))}
-
-              {loading && (
-                <div className="message assistant">
-                  <div className="msg-avatar ai pixel-msg-avatar">🤖</div>
-                  <div className="msg-bubble">
-                    <div className="msg-text pixel-thinking">
-                      <span className="pixel-think-icon">⚡</span>
-                      <span className="pixel-think-text">PIXEL processando</span>
-                      <span className="typing-dots"><span></span><span></span><span></span></span>
-                    </div>
-                  </div>
-                </div>
-              )}
-              <div ref={bottomRef} />
-            </div>
-
-            <div className="input-area">
-              {apiError && <div className="api-error-bar">⚠️ {apiError}</div>}
-              <div className="input-wrap">
-                <input
-                  ref={inputRef}
-                  className="chat-input"
-                  value={input}
-                  onChange={e => setInput(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}
-                  placeholder="Fale com o PIXEL… ex: Quais RPGs você recomenda?"
-                  disabled={loading}
-                  autoComplete="off"
-                />
-                <button className="send-btn" onClick={sendMessage} disabled={loading || !input.trim()}>
-                  {loading ? '⏳' : '↑'}
-                </button>
-              </div>
-              <div className="input-hint">Enter para enviar · PIXEL usa Groq AI (llama-3.3-70b) + RAWG</div>
-            </div>
-          </div>
-        )}
-      </main>
-
-      {/* BOTTOM NAV mobile */}
-      <nav className="bottom-nav">
-        {NAV.map(item => (
-          <button key={item.id} className={`bottom-nav-item ${view === item.id ? 'active' : ''}`} onClick={() => navigate(item.id)}>
-            <span className="bnav-icon">{item.icon}</span>
-            <span className="bnav-label">{item.label}</span>
-          </button>
-        ))}
-      </nav>
-    </div>
-  );
+  }, "journey", /*#__PURE__*/React.createElement("span", null, "\u2197")), /*#__PURE__*/React.createElement("div", {
+    className: "nav-caption"
+  }, "SEU UNIVERSO DE JOGOS"), /*#__PURE__*/React.createElement("nav", null, [['home', 'Início'], ['library', 'Biblioteca'], ['journal', 'Diário'], ['explore', 'Explorar'], ['profile', 'Perfil']].map(function (_ref2) {
+    var _ref3 = _slicedToArray(_ref2, 2),
+      v = _ref3[0],
+      label = _ref3[1];
+    return /*#__PURE__*/React.createElement("button", {
+      key: v,
+      "aria-current": view === v ? 'page' : undefined,
+      className: view === v ? 'active' : '',
+      onClick: function onClick() {
+        return nav(v);
+      }
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: v
+    }), /*#__PURE__*/React.createElement("span", null, label));
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "sidebar-bottom"
+  }, /*#__PURE__*/React.createElement("p", null, "Uma hist\xF3ria de cada vez."), /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return nav('profile');
+    },
+    className: "avatar-row"
+  }, /*#__PURE__*/React.createElement("b", null, ((user === null || user === void 0 ? void 0 : user.name) || 'V')[0]), /*#__PURE__*/React.createElement("span", null, (user === null || user === void 0 ? void 0 : user.name) || 'Viajante', /*#__PURE__*/React.createElement("small", null, "Minha jornada"))))), /*#__PURE__*/React.createElement("main", null, /*#__PURE__*/React.createElement("header", null, /*#__PURE__*/React.createElement("span", null, {
+    home: 'O próximo capítulo é seu.',
+    library: 'Todos os mundos que você guarda.',
+    journal: 'Pequenos registros. Grandes histórias.',
+    explore: 'Encontre sua próxima aventura.',
+    profile: 'Sua história, até aqui.'
+  }[view]), /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      setAi(true);
+      setReply('');
+    },
+    className: "pixel"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "spark"
+  }), " PIXEL")), view === 'home' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "page-title"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("small", null, "SEU PONTO DE PARTIDA"), /*#__PURE__*/React.createElement("h1", null, "Continue sua jornada", /*#__PURE__*/React.createElement("span", null, ".")), /*#__PURE__*/React.createElement("p", null, "Bom te ver, ", (user === null || user === void 0 ? void 0 : user.name) || 'Viajante', ". H\xE1 mundos esperando por voc\xEA."))), hero ? /*#__PURE__*/React.createElement("section", {
+    className: "hero"
+  }, hero.game.cover && /*#__PURE__*/React.createElement("img", {
+    src: hero.game.cover,
+    alt: ""
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "hero-content"
+  }, /*#__PURE__*/React.createElement("small", null, STATES[hero.status], " \xB7 ", hero.platform || 'Sua biblioteca'), /*#__PURE__*/React.createElement("h2", null, hero.game.name), /*#__PURE__*/React.createElement("p", null, hero.where || 'Cada sessão escreve um novo capítulo da sua história.'), /*#__PURE__*/React.createElement("button", {
+    className: "primary",
+    onClick: function onClick() {
+      setSelected(hero.game);
+      setTab('journey');
+    }
+  }, "Continuar jornada \u2197"))) : /*#__PURE__*/React.createElement("section", {
+    className: "hero welcome"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hero-content"
+  }, /*#__PURE__*/React.createElement("small", null, "UM NOVO COME\xC7O"), /*#__PURE__*/React.createElement("h2", null, "Todo grande jogo", /*#__PURE__*/React.createElement("br", null), "deixa uma hist\xF3ria."), /*#__PURE__*/React.createElement("p", null, "Guarde a sua. Comece pelo que voc\xEA est\xE1 jogando agora."), /*#__PURE__*/React.createElement("button", {
+    className: "primary",
+    onClick: function onClick() {
+      return nav('explore');
+    }
+  }, "Come\xE7ar minha jornada \u2197")), /*#__PURE__*/React.createElement("div", {
+    className: "orbit",
+    "aria-hidden": "true"
+  }, "J")), /*#__PURE__*/React.createElement("div", {
+    className: "section-heading"
+  }, /*#__PURE__*/React.createElement("h2", null, "Em seus controles"), /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return nav('library');
+    }
+  }, "Ver biblioteca \u2197")), playing.length ? /*#__PURE__*/React.createElement("div", {
+    className: "grid"
+  }, playing.map(card)) : /*#__PURE__*/React.createElement("div", {
+    className: "panel"
+  }, /*#__PURE__*/React.createElement("p", null, "Marque um jogo como \u201CJogando\u201D para encontr\xE1-lo aqui.")), /*#__PURE__*/React.createElement("div", {
+    className: "two-col"
+  }, /*#__PURE__*/React.createElement("section", {
+    className: "panel"
+  }, /*#__PURE__*/React.createElement("small", null, "\xDALTIMA MEM\xD3RIA"), sessions[0] ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h2", null, sessions[0].game.name), /*#__PURE__*/React.createElement("p", null, sessions[0].text || 'Uma nova sessão registrada.'), /*#__PURE__*/React.createElement("small", null, dateLabel(sessions[0].date + 'T12:00:00')), /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return nav('journal');
+    }
+  }, "Abrir di\xE1rio \u2197")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h2", null, "O que ficou com voc\xEA?"), /*#__PURE__*/React.createElement("p", null, "Uma descoberta, uma batalha ou aquele cen\xE1rio. Seu di\xE1rio come\xE7a com uma lembran\xE7a."))), /*#__PURE__*/React.createElement("section", {
+    className: "panel"
+  }, /*#__PURE__*/React.createElement("small", null, "PR\xD3XIMOS CAP\xCDTULOS"), entries.filter(function (e) {
+    return e.status === 'backlog';
+  }).slice(0, 3).map(function (e) {
+    return /*#__PURE__*/React.createElement("button", {
+      className: "next-game",
+      key: e.game.id,
+      onClick: function onClick() {
+        return setSelected(e.game);
+      }
+    }, e.game.name, /*#__PURE__*/React.createElement("span", null, "\u2197"));
+  }), /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return nav('explore');
+    }
+  }, "Explorar possibilidades \u2192")))), view === 'library' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "page-title"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("small", null, "SEUS MUNDOS"), /*#__PURE__*/React.createElement("h1", null, "Biblioteca", /*#__PURE__*/React.createElement("span", null, ".")), /*#__PURE__*/React.createElement("p", null, entries.length, " jogos. Incont\xE1veis hist\xF3rias.")), /*#__PURE__*/React.createElement("button", {
+    className: "primary",
+    onClick: function onClick() {
+      return setModal({
+        type: 'manual'
+      });
+    }
+  }, "+ Adicionar jogo")), /*#__PURE__*/React.createElement("div", {
+    className: "tabs"
+  }, [['all', 'Todos']].concat(_toConsumableArray(Object.entries(STATES))).map(function (_ref4) {
+    var _ref5 = _slicedToArray(_ref4, 2),
+      v = _ref5[0],
+      l = _ref5[1];
+    return /*#__PURE__*/React.createElement("button", {
+      className: filter === v ? 'active' : '',
+      key: v,
+      onClick: function onClick() {
+        return setFilter(v);
+      }
+    }, l, " ", /*#__PURE__*/React.createElement("small", null, v === 'all' ? entries.length : entries.filter(function (e) {
+      return e.status === v;
+    }).length));
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "toolbar"
+  }, /*#__PURE__*/React.createElement("input", {
+    "aria-label": "Buscar na biblioteca",
+    placeholder: "Buscar nos seus jogos\u2026",
+    value: query,
+    onChange: function onChange(e) {
+      return setQuery(e.target.value);
+    }
+  }), /*#__PURE__*/React.createElement("select", {
+    "aria-label": "Plataforma",
+    value: platform,
+    onChange: function onChange(e) {
+      return setPlatform(e.target.value);
+    }
+  }, /*#__PURE__*/React.createElement("option", {
+    value: ""
+  }, "Todas as plataformas"), _toConsumableArray(new Set(entries.map(function (e) {
+    return e.platform;
+  }).filter(Boolean))).map(function (p) {
+    return /*#__PURE__*/React.createElement("option", {
+      key: p
+    }, p);
+  })), /*#__PURE__*/React.createElement("select", {
+    "aria-label": "Ordena\xE7\xE3o",
+    value: sort,
+    onChange: function onChange(e) {
+      return setSort(e.target.value);
+    }
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "recent"
+  }, "Recentes"), /*#__PURE__*/React.createElement("option", {
+    value: "name"
+  }, "Nome A\u2013Z"), /*#__PURE__*/React.createElement("option", {
+    value: "rating"
+  }, "Minha nota")), /*#__PURE__*/React.createElement("button", {
+    "aria-pressed": list,
+    onClick: function onClick() {
+      return setList(!list);
+    }
+  }, list ? 'Grade' : 'Lista')), /*#__PURE__*/React.createElement("div", {
+    className: "collections"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: !collection ? 'active' : '',
+    onClick: function onClick() {
+      return setCollection('');
+    }
+  }, "Todas as cole\xE7\xF5es"), collections.map(function (c) {
+    return /*#__PURE__*/React.createElement("button", {
+      key: c,
+      className: collection === c ? 'active' : '',
+      onClick: function onClick() {
+        return setCollection(c);
+      }
+    }, c);
+  }), /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return setModal({
+        type: 'collection'
+      });
+    }
+  }, "+ Cole\xE7\xE3o")), filtered.length ? /*#__PURE__*/React.createElement("div", {
+    className: 'grid ' + (list ? 'list' : '')
+  }, filtered.map(card)) : empty('Um espaço para suas histórias', 'Adicione seu primeiro jogo ou ajuste os filtros.')), view === 'journal' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "page-title"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("small", null, "SEU \xC1LBUM DE MEM\xD3RIAS"), /*#__PURE__*/React.createElement("h1", null, "Di\xE1rio", /*#__PURE__*/React.createElement("span", null, ".")), /*#__PURE__*/React.createElement("p", null, "O que voc\xEA jogou. O que voc\xEA sentiu. O que ficou."))), sessions.length ? /*#__PURE__*/React.createElement("div", {
+    className: "timeline"
+  }, sessions.map(function (s, i) {
+    return /*#__PURE__*/React.createElement("article", {
+      className: "memory",
+      key: s.id + '-' + i
+    }, /*#__PURE__*/React.createElement("small", null, dateLabel(s.date + 'T12:00:00'), " \xB7 ", s.minutes ? s.minutes + ' min' : 'Sem duração', " \xB7 ", s.journey), /*#__PURE__*/React.createElement("button", {
+      onClick: function onClick() {
+        return setSelected(s.game);
+      }
+    }, /*#__PURE__*/React.createElement("h2", null, s.game.name, " \u2197")), s.text && /*#__PURE__*/React.createElement("p", null, s.text), s.image && /*#__PURE__*/React.createElement("img", {
+      src: s.image,
+      alt: 'Memória de ' + s.game.name
+    }));
+  })) : empty('Sua história merece ser lembrada', 'Abra um jogo da biblioteca e registre sua primeira sessão.')), view === 'explore' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "page-title"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("small", null, "AL\xC9M DO PR\xD3XIMO HORIZONTE"), /*#__PURE__*/React.createElement("h1", null, "Explorar", /*#__PURE__*/React.createElement("span", null, ".")), /*#__PURE__*/React.createElement("p", null, "Qual mundo voc\xEA quer conhecer agora?")), /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return setModal({
+        type: 'manual'
+      });
+    }
+  }, "Cadastrar manualmente \u2197")), /*#__PURE__*/React.createElement("form", {
+    className: "searchbar",
+    onSubmit: search
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "explore"
+  }), /*#__PURE__*/React.createElement("input", {
+    "aria-label": "Nome do jogo",
+    placeholder: "Busque um jogo, uma nova hist\xF3ria\u2026",
+    value: query,
+    onChange: function onChange(e) {
+      return setQuery(e.target.value);
+    }
+  }), /*#__PURE__*/React.createElement("button", {
+    className: "primary",
+    disabled: busy
+  }, busy ? 'Buscando…' : 'Buscar')), error && /*#__PURE__*/React.createElement("p", {
+    className: "notice",
+    role: "alert"
+  }, error), results.length ? /*#__PURE__*/React.createElement("div", {
+    className: "grid"
+  }, results.map(card)) : !busy && empty('Há um mundo para cada momento', 'Pesquise pelo nome de um jogo ou registre um título manualmente.', /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return setModal({
+        type: 'manual'
+      });
+    }
+  }, "+ Cadastrar jogo")), /*#__PURE__*/React.createElement("p", {
+    className: "attribution"
+  }, "Cat\xE1logo e imagens: RAWG. Registros pessoais ficam neste dispositivo.")), view === 'profile' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "page-title"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("small", null, "O JOGADOR POR TR\xC1S DAS HIST\xD3RIAS"), /*#__PURE__*/React.createElement("h1", null, (user === null || user === void 0 ? void 0 : user.name) || 'Viajante', /*#__PURE__*/React.createElement("span", null, ".")), /*#__PURE__*/React.createElement("p", null, "Cada mundo visitado faz parte de voc\xEA."))), /*#__PURE__*/React.createElement("div", {
+    className: "stats"
+  }, [[entries.length, 'na biblioteca'], [entries.filter(function (e) {
+    return e.status === 'finished';
+  }).length, 'concluídos'], [sessions.length, 'memórias'], [(sessions.reduce(function (n, s) {
+    return n + (+s.minutes || 0);
+  }, 0) / 60).toFixed(1) + 'h', 'registradas']].map(function (_ref6) {
+    var _ref7 = _slicedToArray(_ref6, 2),
+      n = _ref7[0],
+      l = _ref7[1];
+    return /*#__PURE__*/React.createElement("div", {
+      className: "panel",
+      key: l
+    }, /*#__PURE__*/React.createElement("strong", null, n), /*#__PURE__*/React.createElement("p", null, l));
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "two-col"
+  }, /*#__PURE__*/React.createElement("form", {
+    className: "panel form",
+    onSubmit: function onSubmit(e) {
+      e.preventDefault();
+      var f = new FormData(e.currentTarget);
+      var u = _objectSpread(_objectSpread({}, user), {}, {
+          name: f.get('name').trim() || 'Viajante'
+        }),
+        s = _objectSpread(_objectSpread({}, settings), {}, {
+          groqKey: f.get('groq').trim(),
+          rawgKey: f.get('rawg').trim(),
+          spoilers: f.get('spoilers')
+        });
+      try {
+        localStorage.setItem(USER_KEY, JSON.stringify(u));
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+        setUser(u);
+        setSettings(s);
+        setToast('Preferências salvas.');
+      } catch (e) {
+        setToast('Não foi possível salvar as preferências.');
+      }
+    }
+  }, /*#__PURE__*/React.createElement("h2", null, "Seu espa\xE7o"), /*#__PURE__*/React.createElement("label", null, "Como podemos chamar voc\xEA?", /*#__PURE__*/React.createElement("input", {
+    name: "name",
+    defaultValue: user === null || user === void 0 ? void 0 : user.name,
+    maxLength: "80"
+  })), /*#__PURE__*/React.createElement("label", null, "Spoilers", /*#__PURE__*/React.createElement("select", {
+    name: "spoilers",
+    defaultValue: settings.spoilers || 'Sem spoilers'
+  }, /*#__PURE__*/React.createElement("option", null, "Sem spoilers"), /*#__PURE__*/React.createElement("option", null, "Dicas leves"), /*#__PURE__*/React.createElement("option", null, "Resposta completa"))), /*#__PURE__*/React.createElement("label", null, "Chave RAWG \xB7 cat\xE1logo", /*#__PURE__*/React.createElement("input", {
+    name: "rawg",
+    type: "password",
+    autoComplete: "off",
+    defaultValue: settings.rawgKey
+  })), /*#__PURE__*/React.createElement("label", null, "Chave Groq \xB7 PIXEL", /*#__PURE__*/React.createElement("input", {
+    name: "groq",
+    type: "password",
+    autoComplete: "off",
+    defaultValue: settings.groqKey
+  })), /*#__PURE__*/React.createElement("p", null, "Chaves guardadas neste navegador e enviadas apenas ao respectivo provedor ao usar o recurso. Biblioteca e di\xE1rio funcionam sem IA."), /*#__PURE__*/React.createElement("p", null, "Ao conversar, sua pergunta e o contexto do jogo aberto (ou os nomes e estados da biblioteca) s\xE3o enviados \xE0 Groq."), /*#__PURE__*/React.createElement("button", {
+    className: "primary"
+  }, "Salvar prefer\xEAncias")), /*#__PURE__*/React.createElement("div", {
+    className: "panel"
+  }, /*#__PURE__*/React.createElement("h2", null, "Suas mem\xF3rias, com voc\xEA."), /*#__PURE__*/React.createElement("p", null, "Exporte um backup antes de trocar de aparelho ou limpar os dados do navegador. O arquivo inclui biblioteca, jornadas, imagens e cole\xE7\xF5es; n\xE3o inclui chaves de API."), /*#__PURE__*/React.createElement("button", {
+    className: "primary",
+    onClick: backup
+  }, "Exportar backup"), /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return restoreRef.current.click();
+    }
+  }, "Importar backup"), /*#__PURE__*/React.createElement("input", {
+    ref: restoreRef,
+    type: "file",
+    accept: "application/json",
+    hidden: true,
+    onChange: function onChange(e) {
+      return restore(e.target.files[0]);
+    }
+  }), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement("h2", null, "Seu ano em jogos"), /*#__PURE__*/React.createElement("p", null, entries.filter(function (e) {
+    return e.status === 'finished' && new Date(e.updatedAt).getFullYear() === new Date().getFullYear();
+  }).length, " jogos conclu\xEDdos ou atualizados como conclu\xEDdos neste ano."), /*#__PURE__*/React.createElement("p", null, "G\xEAneros na sua biblioteca: ", _toConsumableArray(new Set(entries.flatMap(function (e) {
+    return (e.game.genres || '').split(', ').filter(Boolean);
+  }))).slice(0, 6).join(' · ') || 'Suas preferências começam a aparecer conforme você adiciona jogos.'), /*#__PURE__*/React.createElement("small", null, "Journey \xB7 suas hist\xF3rias nos jogos"))))), selected && /*#__PURE__*/React.createElement("div", {
+    className: "backdrop",
+    onClick: function onClick(e) {
+      return e.target === e.currentTarget && setSelected(null);
+    }
+  }, /*#__PURE__*/React.createElement("section", {
+    className: "dialog detail",
+    role: "dialog",
+    "aria-modal": "true",
+    "aria-label": selected.name
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "close",
+    "aria-label": "Fechar jogo",
+    onClick: function onClick() {
+      return setSelected(null);
+    }
+  }, "\xD7"), /*#__PURE__*/React.createElement("div", {
+    className: "detail-hero"
+  }, selected.cover && /*#__PURE__*/React.createElement("img", {
+    src: selected.cover,
+    alt: ""
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("small", null, entry ? STATES[entry.status] : 'UM NOVO MUNDO'), /*#__PURE__*/React.createElement("h1", null, selected.name), /*#__PURE__*/React.createElement("p", null, selected.genres, " \xB7 ", selected.released))), /*#__PURE__*/React.createElement("div", {
+    className: "detail-body"
+  }, !entry ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", null, "Adicione \xE0 biblioteca para come\xE7ar a guardar sua hist\xF3ria."), /*#__PURE__*/React.createElement("button", {
+    className: "primary",
+    onClick: function onClick() {
+      return add(selected);
+    }
+  }, "+ Adicionar \xE0 biblioteca")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "tabs"
+  }, [['journey', 'Minha jornada'], ['about', 'Sobre'], ['memories', 'Memórias']].map(function (_ref8) {
+    var _ref9 = _slicedToArray(_ref8, 2),
+      v = _ref9[0],
+      l = _ref9[1];
+    return /*#__PURE__*/React.createElement("button", {
+      key: v,
+      className: tab === v ? 'active' : '',
+      onClick: function onClick() {
+        return setTab(v);
+      }
+    }, l);
+  })), tab === 'journey' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "toolbar"
+  }, /*#__PURE__*/React.createElement("select", {
+    "aria-label": "Status da jornada",
+    value: entry.status,
+    onChange: function onChange(e) {
+      return change(selected.id, {
+        status: e.target.value
+      });
+    }
+  }, Object.entries(STATES).map(function (_ref10) {
+    var _ref11 = _slicedToArray(_ref10, 2),
+      v = _ref11[0],
+      l = _ref11[1];
+    return /*#__PURE__*/React.createElement("option", {
+      key: v,
+      value: v
+    }, l);
+  })), /*#__PURE__*/React.createElement("button", {
+    className: "primary",
+    onClick: function onClick() {
+      return setModal({
+        type: 'session',
+        id: selected.id,
+        journey: active.id
+      });
+    }
+  }, "+ Registrar sess\xE3o")), /*#__PURE__*/React.createElement("form", {
+    key: selected.id + '-' + entry.updatedAt,
+    className: "form",
+    onSubmit: function onSubmit(e) {
+      e.preventDefault();
+      var f = new FormData(e.currentTarget);
+      change(selected.id, {
+        platform: f.get('platform'),
+        access: f.get('access'),
+        completion: f.get('completion'),
+        where: f.get('where'),
+        note: f.get('note'),
+        rating: f.get('rating') ? +f.get('rating') : null,
+        startDate: f.get('start'),
+        endDate: f.get('end'),
+        collections: f.getAll('collections')
+      });
+    }
+  }, /*#__PURE__*/React.createElement("label", null, "Onde voc\xEA est\xE1 jogando?", /*#__PURE__*/React.createElement("input", {
+    name: "platform",
+    list: "platforms",
+    defaultValue: entry.platform || '',
+    placeholder: "Escolha ou digite sua plataforma"
+  }), /*#__PURE__*/React.createElement("datalist", {
+    id: "platforms"
+  }, PLATFORMS_LIST.map(function (p) {
+    return /*#__PURE__*/React.createElement("option", {
+      key: p
+    }, p);
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "two-col"
+  }, /*#__PURE__*/React.createElement("label", null, "Acesso", /*#__PURE__*/React.createElement("select", {
+    name: "access",
+    defaultValue: entry.access || 'Tenho'
+  }, ['Tenho', 'Assinatura', 'Emprestado', 'Desejo comprar'].map(function (x) {
+    return /*#__PURE__*/React.createElement("option", {
+      key: x
+    }, x);
+  }))), /*#__PURE__*/React.createElement("label", null, "Conclus\xE3o", /*#__PURE__*/React.createElement("select", {
+    name: "completion",
+    defaultValue: entry.completion || ''
+  }, /*#__PURE__*/React.createElement("option", {
+    value: ""
+  }, "Ainda em jornada"), ['História concluída', '100%', 'Platinado', 'Jogo contínuo'].map(function (x) {
+    return /*#__PURE__*/React.createElement("option", {
+      key: x
+    }, x);
+  })))), /*#__PURE__*/React.createElement("label", null, "Onde parei", /*#__PURE__*/React.createElement("textarea", {
+    name: "where",
+    defaultValue: entry.where || '',
+    placeholder: "Deixe uma pista para quando voltar\u2026",
+    maxLength: "4000"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "two-col"
+  }, /*#__PURE__*/React.createElement("label", null, "Comecei em", /*#__PURE__*/React.createElement("input", {
+    type: "date",
+    name: "start",
+    defaultValue: entry.startDate || ''
+  })), /*#__PURE__*/React.createElement("label", null, "Terminei em", /*#__PURE__*/React.createElement("input", {
+    type: "date",
+    name: "end",
+    defaultValue: entry.endDate || ''
+  }))), /*#__PURE__*/React.createElement("label", null, "Minha nota \xB7 0 a 10", /*#__PURE__*/React.createElement("input", {
+    name: "rating",
+    type: "number",
+    min: "0",
+    max: "10",
+    step: "0.5",
+    defaultValue: (_entry$rating = entry.rating) !== null && _entry$rating !== void 0 ? _entry$rating : ''
+  })), /*#__PURE__*/React.createElement("label", null, "O que ficou comigo", /*#__PURE__*/React.createElement("textarea", {
+    name: "note",
+    defaultValue: entry.note || '',
+    placeholder: "Sua impress\xE3o, momento favorito ou vontade de voltar\u2026",
+    maxLength: "8000"
+  })), collections.length > 0 && /*#__PURE__*/React.createElement("fieldset", null, /*#__PURE__*/React.createElement("legend", null, "Cole\xE7\xF5es"), collections.map(function (c) {
+    return /*#__PURE__*/React.createElement("label", {
+      className: "check",
+      key: c
+    }, /*#__PURE__*/React.createElement("input", {
+      name: "collections",
+      type: "checkbox",
+      value: c,
+      defaultChecked: (entry.collections || []).includes(c)
+    }), c);
+  })), /*#__PURE__*/React.createElement("button", {
+    className: "primary"
+  }, "Salvar minha jornada")), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement("div", {
+    className: "toolbar"
+  }, /*#__PURE__*/React.createElement("select", {
+    "aria-label": "Selecionar campanha",
+    value: active.id,
+    onChange: function onChange(e) {
+      return change(selected.id, {
+        activeJourney: e.target.value
+      });
+    }
+  }, journeys.map(function (j) {
+    return /*#__PURE__*/React.createElement("option", {
+      key: j.id,
+      value: j.id
+    }, j.title);
+  })), /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return setModal({
+        type: 'replay',
+        id: selected.id
+      });
+    }
+  }, "+ Nova campanha / replay")), /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      setAi(true);
+      setReply('');
+      setPrompt('Me ajude a retomar este jogo usando minhas anotações.');
+    }
+  }, "Consultar o PIXEL \u2197")), tab === 'about' && /*#__PURE__*/React.createElement("div", {
+    className: "panel"
+  }, /*#__PURE__*/React.createElement("h2", null, "Sobre este mundo"), /*#__PURE__*/React.createElement("p", null, selected.description || 'Abra os detalhes do catálogo para consultar a sinopse e as informações do jogo.'), /*#__PURE__*/React.createElement("p", null, "Plataformas do cat\xE1logo: ", selected.platforms || 'Não informadas'), settings.rawgKey && !String(selected.id).startsWith('manual-') && /*#__PURE__*/React.createElement("button", {
+    disabled: busy,
+    onClick: /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+      return _regeneratorRuntime().wrap(function _callee$(_context) {
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            setBusy(true);
+            _context.prev = 1;
+            _context.t0 = setSelected;
+            _context.t1 = _objectSpread;
+            _context.t2 = _objectSpread({}, selected);
+            _context.next = 7;
+            return fetchGameDetail(selected.id, settings.rawgKey);
+          case 7:
+            _context.t3 = _context.sent;
+            _context.t4 = (0, _context.t1)(_context.t2, _context.t3);
+            (0, _context.t0)(_context.t4);
+            _context.next = 15;
+            break;
+          case 12:
+            _context.prev = 12;
+            _context.t5 = _context["catch"](1);
+            setToast('Não foi possível carregar os detalhes. Tente novamente.');
+          case 15:
+            _context.prev = 15;
+            setBusy(false);
+            return _context.finish(15);
+          case 18:
+          case "end":
+            return _context.stop();
+        }
+      }, _callee, null, [[1, 12, 15, 18]]);
+    }))
+  }, busy ? 'Carregando…' : 'Carregar detalhes RAWG')), tab === 'memories' && (sessions.filter(function (s) {
+    return s.game.id === selected.id;
+  }).length ? sessions.filter(function (s) {
+    return s.game.id === selected.id;
+  }).map(function (s, i) {
+    return /*#__PURE__*/React.createElement("article", {
+      className: "memory",
+      key: i
+    }, /*#__PURE__*/React.createElement("small", null, dateLabel(s.date + 'T12:00:00'), " \xB7 ", s.journey, " \xB7 ", s.minutes || 0, " min"), /*#__PURE__*/React.createElement("p", null, s.text), s.image && /*#__PURE__*/React.createElement("img", {
+      src: s.image,
+      alt: "Mem\xF3ria do jogo"
+    }), /*#__PURE__*/React.createElement("button", {
+      onClick: function onClick() {
+        var _journeys$find;
+        return setModal({
+          type: 'session',
+          id: selected.id,
+          journey: ((_journeys$find = journeys.find(function (j) {
+            return (j.sessions || []).some(function (x) {
+              return x.id === s.id;
+            });
+          })) === null || _journeys$find === void 0 ? void 0 : _journeys$find.id) || 'original',
+          session: s
+        });
+      }
+    }, "Editar registro"));
+  }) : /*#__PURE__*/React.createElement("p", {
+    className: "empty"
+  }, "Registre sua primeira sess\xE3o para guardar uma mem\xF3ria.")))))), modal && /*#__PURE__*/React.createElement("div", {
+    className: "backdrop top"
+  }, /*#__PURE__*/React.createElement("section", {
+    className: "dialog compact",
+    role: "dialog",
+    "aria-modal": "true",
+    "aria-label": "Registrar no Journey"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "close",
+    "aria-label": "Fechar registro",
+    onClick: function onClick() {
+      return setModal(null);
+    }
+  }, "\xD7"), modal.type === 'restore' ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h2", null, "Importar suas jornadas?"), /*#__PURE__*/React.createElement("p", null, "Os jogos do arquivo ser\xE3o mesclados com a biblioteca. Em jogos com o mesmo identificador, prevalece o backup. Exporte seus dados atuais antes de continuar."), /*#__PURE__*/React.createElement("button", {
+    onClick: backup
+  }, "Exportar dados atuais"), /*#__PURE__*/React.createElement("button", {
+    className: "primary",
+    onClick: function onClick() {
+      if (persist(_objectSpread(_objectSpread({}, library), modal.data.library))) {
+        var c = _toConsumableArray(new Set([].concat(_toConsumableArray(collections), _toConsumableArray((modal.data.collections || []).filter(function (x) {
+          return typeof x === 'string';
+        })))));
+        setCollections(c);
+        save('journey_collections_v1', c);
+        setModal(null);
+        setToast('Backup importado.');
+      }
+    }
+  }, "Importar e mesclar")) : /*#__PURE__*/React.createElement("form", {
+    className: "form",
+    onSubmit: ( /*#__PURE__*/function () {
+      var _ref13 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(e) {
+        var f, name, _name, next, en, js, j, _modal$session, _fileRef$current, _modal$session2, image, file, _en, _js, session;
+        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+          while (1) switch (_context2.prev = _context2.next) {
+            case 0:
+              e.preventDefault();
+              f = new FormData(e.currentTarget);
+              if (!(modal.type === 'manual')) {
+                _context2.next = 8;
+                break;
+              }
+              name = f.get('name').trim();
+              if (name) {
+                _context2.next = 6;
+                break;
+              }
+              return _context2.abrupt("return");
+            case 6:
+              add({
+                id: 'manual-' + Date.now(),
+                name: name,
+                cover: '',
+                genres: f.get('genre'),
+                released: '',
+                platforms: ''
+              });
+              setModal(null);
+            case 8:
+              if (!(modal.type === 'collection')) {
+                _context2.next = 14;
+                break;
+              }
+              _name = f.get('name').trim();
+              if (_name) {
+                _context2.next = 12;
+                break;
+              }
+              return _context2.abrupt("return");
+            case 12:
+              next = _toConsumableArray(new Set([].concat(_toConsumableArray(collections), [_name])));
+              try {
+                localStorage.setItem('journey_collections_v1', JSON.stringify(next));
+                setCollections(next);
+                setModal(null);
+              } catch (e) {
+                setToast('Não foi possível salvar.');
+              }
+            case 14:
+              if (modal.type === 'replay') {
+                en = library[modal.id], js = en.journeys || [{
+                  id: 'original',
+                  title: 'Primeira jornada',
+                  sessions: en.sessions || []
+                }], j = {
+                  id: String(Date.now()),
+                  title: f.get('name').trim() || 'Replay',
+                  sessions: []
+                };
+                change(modal.id, {
+                  journeys: [].concat(_toConsumableArray(js), [j]),
+                  activeJourney: j.id
+                });
+                setModal(null);
+              }
+              if (!(modal.type === 'session')) {
+                _context2.next = 28;
+                break;
+              }
+              image = ((_modal$session = modal.session) === null || _modal$session === void 0 ? void 0 : _modal$session.image) || '';
+              file = (_fileRef$current = fileRef.current) === null || _fileRef$current === void 0 ? void 0 : _fileRef$current.files[0];
+              if (!file) {
+                _context2.next = 25;
+                break;
+              }
+              if (!(!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 1500000)) {
+                _context2.next = 22;
+                break;
+              }
+              setToast('Escolha uma imagem JPG, PNG ou WebP de até 1,5 MB.');
+              return _context2.abrupt("return");
+            case 22:
+              _context2.next = 24;
+              return new Promise(function (resolve, reject) {
+                var r = new FileReader();
+                r.onload = function () {
+                  return resolve(r.result);
+                };
+                r.onerror = reject;
+                r.readAsDataURL(file);
+              });
+            case 24:
+              image = _context2.sent;
+            case 25:
+              _en = library[modal.id], _js = _en.journeys || [{
+                id: 'original',
+                title: 'Primeira jornada',
+                sessions: _en.sessions || []
+              }];
+              session = {
+                id: ((_modal$session2 = modal.session) === null || _modal$session2 === void 0 ? void 0 : _modal$session2.id) || Date.now(),
+                date: f.get('date'),
+                minutes: +f.get('minutes') || 0,
+                text: f.get('text').trim(),
+                image: image
+              };
+              if (persist(_objectSpread(_objectSpread({}, library), {}, _defineProperty({}, modal.id, _objectSpread(_objectSpread({}, _en), {}, {
+                updatedAt: Date.now(),
+                journeys: _js.map(function (j) {
+                  return j.id === modal.journey ? _objectSpread(_objectSpread({}, j), {}, {
+                    sessions: [].concat(_toConsumableArray((j.sessions || []).filter(function (s) {
+                      return s.id !== session.id;
+                    })), [session])
+                  }) : j;
+                })
+              }))))) {
+                setModal(null);
+                setToast('Memória guardada.');
+              }
+            case 28:
+            case "end":
+              return _context2.stop();
+          }
+        }, _callee2);
+      }));
+      return function (_x4) {
+        return _ref13.apply(this, arguments);
+      };
+    }())
+  }, /*#__PURE__*/React.createElement("small", null, "ESCREVA SEU PR\xD3XIMO CAP\xCDTULO"), /*#__PURE__*/React.createElement("h2", null, {
+    manual: 'Adicionar um mundo',
+    collection: 'Nova coleção',
+    replay: 'Uma nova jornada',
+    session: 'Guardar uma memória'
+  }[modal.type]), modal.type === 'session' ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("label", null, "Data", /*#__PURE__*/React.createElement("input", {
+    name: "date",
+    type: "date",
+    defaultValue: ((_modal$session3 = modal.session) === null || _modal$session3 === void 0 ? void 0 : _modal$session3.date) || nowDate(),
+    required: true
+  })), /*#__PURE__*/React.createElement("label", null, "Tempo jogado \xB7 minutos", /*#__PURE__*/React.createElement("input", {
+    name: "minutes",
+    type: "number",
+    min: "0",
+    max: "1440",
+    defaultValue: ((_modal$session4 = modal.session) === null || _modal$session4 === void 0 ? void 0 : _modal$session4.minutes) || ''
+  })), /*#__PURE__*/React.createElement("label", null, "O que aconteceu?", /*#__PURE__*/React.createElement("textarea", {
+    name: "text",
+    maxLength: "8000",
+    defaultValue: ((_modal$session5 = modal.session) === null || _modal$session5 === void 0 ? void 0 : _modal$session5.text) || '',
+    placeholder: "Uma descoberta, um desafio ou como voc\xEA se sentiu\u2026"
+  })), /*#__PURE__*/React.createElement("label", null, "Screenshot \xB7 opcional", /*#__PURE__*/React.createElement("input", {
+    ref: fileRef,
+    type: "file",
+    accept: "image/png,image/jpeg,image/webp"
+  })), /*#__PURE__*/React.createElement("p", null, "At\xE9 1,5 MB por imagem. Exporte backups para preservar suas mem\xF3rias.")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("label", null, "Nome", /*#__PURE__*/React.createElement("input", {
+    name: "name",
+    required: true,
+    maxLength: "160",
+    autoFocus: true,
+    placeholder: modal.type === 'collection' ? 'Favoritos da vida' : modal.type === 'replay' ? 'Segunda campanha · PC' : 'Nome do jogo'
+  })), modal.type === 'manual' && /*#__PURE__*/React.createElement("label", null, "G\xEAnero \xB7 opcional", /*#__PURE__*/React.createElement("input", {
+    name: "genre",
+    maxLength: "100",
+    placeholder: "RPG, aventura\u2026"
+  }))), /*#__PURE__*/React.createElement("button", {
+    className: "primary"
+  }, modal.type === 'session' ? 'Guardar memória' : 'Salvar')))), ai && /*#__PURE__*/React.createElement("div", {
+    className: "backdrop top"
+  }, /*#__PURE__*/React.createElement("section", {
+    className: "dialog compact",
+    role: "dialog",
+    "aria-modal": "true",
+    "aria-label": "Conversar com PIXEL"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "close",
+    "aria-label": "Fechar PIXEL",
+    onClick: function onClick() {
+      return setAi(false);
+    }
+  }, "\xD7"), /*#__PURE__*/React.createElement("small", null, "SEU COMPANHEIRO DE JORNADA"), /*#__PURE__*/React.createElement("h2", null, "Um momento com PIXEL."), /*#__PURE__*/React.createElement("p", null, selected ? 'Conversando sobre ' + selected.name : 'Encontre seu próximo jogo ou converse sobre sua biblioteca.'), /*#__PURE__*/React.createElement("small", null, settings.spoilers || 'Sem spoilers'), /*#__PURE__*/React.createElement("div", {
+    className: "ai-reply",
+    "aria-live": "polite"
+  }, aiBusy ? 'Pensando na sua jornada…' : reply || 'O que vamos descobrir hoje?'), /*#__PURE__*/React.createElement("form", {
+    className: "form",
+    onSubmit: ask
+  }, /*#__PURE__*/React.createElement("label", null, "Sua mensagem", /*#__PURE__*/React.createElement("textarea", {
+    required: true,
+    value: prompt,
+    onChange: function onChange(e) {
+      return setPrompt(e.target.value);
+    },
+    maxLength: "4000"
+  })), /*#__PURE__*/React.createElement("button", {
+    className: "primary",
+    disabled: aiBusy
+  }, "Enviar ao PIXEL \u2192")), /*#__PURE__*/React.createElement("small", null, "Respostas de IA podem conter erros. O PIXEL n\xE3o altera seus registros."))), toast && /*#__PURE__*/React.createElement("div", {
+    className: "toast",
+    role: "status"
+  }, toast, undo && /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      if (persist(undo)) {
+        setUndo(null);
+        setToast('Alteração desfeita.');
+      }
+    }
+  }, "Desfazer"), /*#__PURE__*/React.createElement("button", {
+    "aria-label": "Dispensar mensagem",
+    onClick: function onClick() {
+      return setToast('');
+    }
+  }, "\xD7")));
 }
-
-// ─── STYLES ───────────────────────────────────────────────────────────────────
-const STYLES = `
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0d0d12;--surface:#13131a;--surface2:#1a1a24;--surface3:#22222f;
-  --border:rgba(255,255,255,0.07);--accent:#7c6aff;--accent2:#00d4aa;
-  --accent3:#f4c430;--danger:#ff5555;--text:#e8e8f0;--text2:#9090a8;
-  --text3:#5a5a72;--radius:14px;--fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;
-  --bot-nav:64px;
-}
-html,body{height:100%;overflow:hidden}
-body{background:var(--bg);color:var(--text);font-family:var(--fb);-webkit-font-smoothing:antialiased}
-a{color:var(--accent2)}button{font-family:var(--fb)}
-
-/* INSTALL BANNER */
-.install-banner{position:fixed;top:0;left:0;right:0;z-index:1000;background:linear-gradient(135deg,#1a1040,#0d1a24);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:10px}
-.install-icon{font-size:22px}.install-text{flex:1;display:flex;flex-direction:column;font-size:13px}
-.install-text strong{color:var(--text)}.install-text span{color:var(--text2);font-size:11px}
-.install-btn{padding:7px 14px;background:var(--accent);border:none;border-radius:8px;color:white;font-size:13px;font-weight:600;cursor:pointer}
-.install-dismiss{background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;padding:4px 8px}
-
-/* APP */
-.app{display:flex;height:100dvh;overflow:hidden;padding-bottom:var(--bot-nav)}
-
-/* AUTH */
-.auth-screen{min-height:100dvh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 30% 50%,#1a1040 0%,#0d0d12 60%);padding:20px}
-.auth-box{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:40px 36px;width:100%;max-width:380px;text-align:center;box-shadow:0 40px 80px rgba(0,0,0,.6)}
-.auth-logo{font-size:52px;margin-bottom:12px}.auth-title{font-family:var(--fh);font-size:30px;font-weight:800;margin-bottom:6px}
-.auth-sub{color:var(--text2);margin-bottom:28px;font-size:14px}
-.auth-tabs{display:flex;background:var(--surface3);border-radius:10px;padding:4px;margin-bottom:20px}
-.auth-tabs button{flex:1;padding:8px;border:none;background:none;color:var(--text2);font-size:14px;border-radius:8px;cursor:pointer;transition:all .2s}
-.auth-tabs button.active{background:var(--accent);color:white}
-.auth-form{display:flex;flex-direction:column;gap:12px}
-.auth-form input{padding:13px 16px;background:var(--surface3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:15px;outline:none;transition:border-color .2s}
-.auth-form input:focus{border-color:var(--accent)}.auth-error{color:#ff6b6b;font-size:13px}
-.auth-submit{padding:14px;background:var(--accent);border:none;border-radius:10px;color:white;font-family:var(--fh);font-size:15px;font-weight:700;cursor:pointer;transition:opacity .2s;margin-top:4px}
-.auth-submit:hover{opacity:.85}.auth-note{color:var(--text3);font-size:11px;margin-top:18px;line-height:1.5}
-
-/* SIDEBAR */
-.sidebar{width:230px;min-width:230px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 14px}
-.sidebar-top{margin-bottom:24px}
-.logo{font-family:var(--fh);font-size:20px;font-weight:800;display:flex;align-items:center;gap:8px;margin-bottom:14px}
-.user-pill{display:flex;align-items:center;gap:10px;background:var(--surface2);border-radius:12px;padding:10px}
-.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:700;font-size:14px;color:white;flex-shrink:0}
-.user-name{font-size:13px;font-weight:500}.user-stats{font-size:11px;color:var(--text3)}
-.sidebar-nav{flex:1;display:flex;flex-direction:column;gap:3px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:none;background:none;color:var(--text2);font-size:14px;border-radius:10px;cursor:pointer;text-align:left;transition:all .15s;position:relative}
-.nav-item:hover{background:var(--surface2);color:var(--text)}.nav-item.active{background:rgba(124,106,255,.15);color:var(--accent)}
-.nav-icon{font-size:16px}.nav-badge{margin-left:auto;background:var(--accent);color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px}
-.sidebar-footer{margin-top:auto;padding-top:16px;border-top:1px solid var(--border)}
-.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.stat{background:var(--surface2);border-radius:10px;padding:10px 6px;text-align:center}
-.stat-n{font-family:var(--fh);font-size:18px;font-weight:700}.stat-l{font-size:9px;color:var(--text3);margin-top:2px}
-
-/* MAIN */
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
-
-	/* CHAT IMERSIVO */
-	.chat-area{display:flex;flex-direction:column;height:100%;position:relative;background:#0d0d12}
-	.chat-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);background:rgba(19,19,26,0.8);backdrop-filter:blur(10px);flex-shrink:0;position:absolute;top:0;left:0;right:0;z-index:100}
-	.chat-header-left{display:flex;align-items:center;gap:12px}
-	.chat-avatar{font-size:28px}.chat-title{font-family:var(--fh);font-size:16px;font-weight:700}
-	.chat-status{font-size:11px;color:var(--accent2)}
-	.btn-clear-chat{background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:6px;border-radius:8px;transition:color .2s}
-	.btn-clear-chat:hover{color:var(--danger)}
-	
-	.messages{
-	  flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:18px;
-	  scrollbar-width:thin;scrollbar-color:var(--surface3) transparent;
-	  padding-top: 420px; /* Espaço para o PixelRoom fixo */
-	  position: relative;
-	  z-index: 10;
-	}
-	
-	/* Estilo Visual Novel para as mensagens do PIXEL */
-	.message.assistant {
-	  align-self: center;
-	  width: 100%;
-	  max-width: 600px;
-	  margin-bottom: 20px;
-	}
-	.message.assistant .msg-bubble {
-	  max-width: 100%;
-	  width: 100%;
-	}
-	.message.assistant .msg-text {
-	  background: rgba(20, 20, 30, 0.9);
-	  backdrop-filter: blur(8px);
-	  border: 2px solid var(--accent);
-	  border-radius: 18px;
-	  padding: 20px;
-	  font-size: 16px;
-	  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-	  position: relative;
-	}
-	.message.assistant .msg-text::before {
-	  content: "PIXEL";
-	  position: absolute;
-	  top: -12px;
-	  left: 20px;
-	  background: var(--accent);
-	  color: white;
-	  font-family: var(--fh);
-	  font-size: 10px;
-	  font-weight: 800;
-	  padding: 2px 8px;
-	  border-radius: 4px;
-	}
-	
-	/* Ajuste do PixelRoom para ficar fixo no topo */
-	.pixel-room-container {
-	  position: absolute;
-	  top: 0;
-	  left: 0;
-	  right: 0;
-	  height: 400px;
-	  z-index: 5;
-	  pointer-events: none; /* Deixa os cliques passarem para as mensagens se necessário */
-	}
-	.pixel-room { height: 100% !important; border-bottom: 1px solid var(--border); }
-.welcome{text-align:center;margin:auto;max-width:480px;padding:32px 16px}
-.welcome-icon{font-size:52px;margin-bottom:14px}
-.welcome h2{font-family:var(--fh);font-size:26px;font-weight:800;margin-bottom:10px}
-.welcome p{color:var(--text2);font-size:14px;line-height:1.6;margin-bottom:20px}
-.api-key-warning{background:rgba(255,85,85,.1);border:1px solid rgba(255,85,85,.3);border-radius:10px;padding:12px 16px;font-size:13px;color:#ff9999;margin-bottom:16px}
-.link-btn{background:none;border:none;color:var(--accent2);text-decoration:underline;cursor:pointer;font-size:inherit;padding:0}
-.suggestions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
-.suggestion{padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;color:var(--text2);font-size:12px;cursor:pointer;transition:all .2s}
-.suggestion:hover{background:rgba(124,106,255,.15);border-color:var(--accent);color:var(--accent)}
-.message{display:flex;gap:10px;align-items:flex-start}.message.user{flex-direction:row-reverse}
-.msg-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;background:var(--surface2);border:1px solid var(--border)}
-.msg-avatar.ai{background:linear-gradient(135deg,#2a1a5e,#0d2a2a);border-color:rgba(124,106,255,.3)}
-.msg-avatar.user{background:var(--accent);color:white;font-family:var(--fh);font-weight:700;font-size:14px;border-color:transparent}
-.msg-bubble{max-width:82%;display:flex;flex-direction:column;gap:10px}
-.message.user .msg-bubble{align-items:flex-end}
-.msg-text{padding:11px 15px;background:var(--surface2);border-radius:14px;font-size:14px;line-height:1.6;border:1px solid var(--border)}
-.message.user .msg-text{background:rgba(124,106,255,.2);border-color:rgba(124,106,255,.3)}
-.typing-indicator{display:flex;gap:5px;align-items:center;min-width:48px}
-.typing-indicator span{width:7px;height:7px;background:var(--text3);border-radius:50%;animation:bounce 1.2s infinite}
-.typing-indicator span:nth-child(2){animation-delay:.2s}.typing-indicator span:nth-child(3){animation-delay:.4s}
-@keyframes bounce{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
-
-	/* INPUT */
-	.input-area{padding:16px;background:transparent;flex-shrink:0;position:relative;z-index:100}
-	.input-wrap{
-	  display:flex;gap:8px;background:rgba(30,30,45,0.9);backdrop-filter:blur(10px);
-	  border: 1px solid var(--border);border-radius:18px;padding:8px 8px 8px 18px;
-	  box-shadow: 0 -5px 25px rgba(0,0,0,0.3);
-	}
-.api-error-bar{background:rgba(255,85,85,.1);border:1px solid rgba(255,85,85,.3);border-radius:8px;padding:8px 12px;font-size:12px;color:#ff9999;margin-bottom:8px}
-.input-wrap{display:flex;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:5px 5px 5px 14px;transition:border-color .2s}
-.input-wrap:focus-within{border-color:rgba(124,106,255,.5)}
-.chat-input{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:14px;min-width:0}
-.chat-input::placeholder{color:var(--text3)}
-.send-btn{width:36px;height:36px;background:var(--accent);border:none;border-radius:10px;color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity .2s;flex-shrink:0}
-.send-btn:disabled{opacity:.4;cursor:default}
-.input-hint{text-align:center;font-size:10px;color:var(--text3);margin-top:6px}
-
-/* GAME CARDS */
-.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px}
-.game-card{background:var(--surface3);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:transform .2s,border-color .2s}
-.game-card:hover{transform:translateY(-2px);border-color:rgba(124,106,255,.4)}
-.game-cover{position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--surface2);cursor:pointer}
-.game-cover img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
-.game-cover:hover img{transform:scale(1.05)}
-.no-cover{display:flex;align-items:center;justify-content:center;height:100%;font-size:34px}
-.cover-hover-hint{position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;font-size:12px;color:white;opacity:0;transition:opacity .2s;font-weight:600}
-.game-cover:hover .cover-hover-hint{opacity:1}
-.status-badge{position:absolute;top:6px;right:6px;font-size:9px;padding:3px 7px;border-radius:20px;font-weight:700;color:#000}
-.meta-badge{position:absolute;top:6px;left:6px;font-size:10px;font-weight:700;padding:3px 7px;border-radius:6px;color:white}
-.game-info{padding:9px 11px}
-.game-name{font-family:var(--fh);font-size:12px;font-weight:600;margin-bottom:5px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
-.game-name:hover{color:var(--accent)}
-.game-meta{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:4px}
-.tag{font-size:9px;padding:2px 6px;background:var(--surface2);border-radius:20px;color:var(--text2)}
-.tag.year{color:var(--accent2)}.tag.rating{color:var(--accent3)}
-.game-plat{font-size:9px;color:var(--text3);margin-bottom:7px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.my-rating{font-size:11px;color:var(--accent3);margin-bottom:6px}.my-rating span{font-weight:700}
-.rating-row{margin-bottom:7px}.rating-label{display:block;font-size:10px;color:var(--text2);margin-bottom:4px}
-.star-rating{display:flex;gap:2px}.star{cursor:pointer;font-size:13px;color:var(--surface2);transition:color .1s}.star.lit{color:var(--accent3)}
-.card-actions{display:flex;gap:4px}
-.btn-action{flex:1;padding:5px 3px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer;transition:all .2s}
-.btn-action:hover{background:rgba(124,106,255,.2);border-color:var(--accent)}
-.btn-action.active.backlog{background:rgba(124,106,255,.3);border-color:var(--accent)}
-.btn-action.active.playing{background:rgba(0,212,170,.2);border-color:var(--accent2)}
-.btn-action.active.finished{background:rgba(244,196,48,.15);border-color:var(--accent3)}
-.btn-action.rate{background:rgba(244,196,48,.1);border-color:rgba(244,196,48,.3)}
-.btn-action.remove{flex:none;width:28px;padding:5px;background:rgba(255,85,85,.05);border-color:rgba(255,85,85,.2);color:var(--text3);font-size:11px}
-.btn-action.remove:hover{background:rgba(255,85,85,.2);border-color:var(--danger);color:white}
-
-/* POPUP */
-.popup-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;display:flex;align-items:flex-end;justify-content:center;padding:0;backdrop-filter:blur(4px)}
-.popup-box{background:var(--surface);width:100%;max-width:560px;max-height:92dvh;border-radius:24px 24px 0 0;overflow-y:auto;position:relative;animation:slideUp .3s ease;scrollbar-width:thin;scrollbar-color:var(--surface3) transparent}
-@media(min-width:600px){
-  .popup-backdrop{align-items:center;padding:20px}
-  .popup-box{border-radius:24px;max-height:88dvh}
-}
-@keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
-.popup-close{position:absolute;top:14px;right:14px;z-index:10;width:32px;height:32px;background:rgba(0,0,0,.5);border:none;border-radius:50%;color:white;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
-.popup-close:hover{background:var(--danger)}
-.popup-loading{padding:60px 20px;text-align:center;color:var(--text2)}
-.popup-loading p{margin-top:16px;font-size:14px}
-.popup-error{padding:40px;text-align:center;color:#ff9999;font-size:14px}
-.popup-hero{position:relative;aspect-ratio:16/7;overflow:hidden;background:var(--surface3)}
-.popup-hero-img{width:100%;height:100%;object-fit:cover}
-.popup-hero-placeholder{display:flex;align-items:center;justify-content:center;height:100%;font-size:64px}
-.popup-hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.7) 0%,transparent 60%);display:flex;align-items:flex-end;justify-content:space-between;padding:12px}
-.popup-metacritic{font-size:14px;font-weight:800;padding:5px 10px;border-radius:8px;color:white}
-.popup-status-badge{font-size:10px;padding:4px 10px;border-radius:20px;font-weight:700;color:#000}
-.popup-content{padding:20px}
-.popup-title{font-family:var(--fh);font-size:22px;font-weight:800;margin-bottom:14px;line-height:1.2}
-.popup-stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
-.popup-stat{display:flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:13px}
-.ps-icon{font-size:14px}
-.popup-info-grid{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
-.popup-info-row{display:flex;gap:10px;font-size:13px}
-.pi-label{color:var(--text3);min-width:96px;flex-shrink:0}
-.pi-value{color:var(--text);line-height:1.4}
-.popup-section-title{font-family:var(--fh);font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
-.popup-desc-section{margin-bottom:16px}
-.popup-desc{font-size:13px;color:var(--text2);line-height:1.7}
-.popup-tags-section{margin-bottom:16px}
-.popup-tags{display:flex;flex-wrap:wrap;gap:6px}
-.popup-tag{font-size:11px;padding:3px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;color:var(--text2)}
-.popup-my-rating{margin-bottom:16px}
-.popup-rating-display{display:flex;align-items:center;gap:10px}
-.popup-rating-num{font-family:var(--fh);font-size:18px;font-weight:700;color:var(--accent3)}
-.popup-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
-.popup-action-btn{padding:11px 8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text2);font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;text-align:center}
-.popup-action-btn:hover{border-color:var(--accent);color:var(--accent)}
-.popup-action-btn.active-backlog{background:rgba(124,106,255,.25);border-color:var(--accent);color:var(--accent)}
-.popup-action-btn.active-playing{background:rgba(0,212,170,.2);border-color:var(--accent2);color:var(--accent2)}
-.popup-action-btn.active-finished{background:rgba(244,196,48,.15);border-color:var(--accent3);color:var(--accent3)}
-.popup-action-btn.danger{background:rgba(255,85,85,.08);border-color:rgba(255,85,85,.25);color:#ff9999}
-.popup-action-btn.danger:hover{background:rgba(255,85,85,.2);border-color:var(--danger);color:white}
-.popup-website{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--accent2);font-size:13px;text-decoration:none;transition:all .2s;margin-bottom:8px}
-.popup-website:hover{border-color:var(--accent2);background:rgba(0,212,170,.1)}
-
-/* ADDED GAME CARD */
-.added-game-card{margin-top:4px;background:rgba(0,212,170,.08);border:1px solid rgba(0,212,170,.25);border-radius:12px;overflow:hidden;max-width:340px}
-.added-game-inner{display:flex;align-items:center;gap:10px;padding:10px}
-.added-game-thumb{width:56px;height:56px;object-fit:cover;border-radius:8px;flex-shrink:0}
-.added-game-info{flex:1;min-width:0}
-.added-game-name{font-family:var(--fh);font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.added-game-status{font-size:11px;color:var(--accent2);margin-top:3px;font-weight:500}
-.added-game-year{font-size:10px;color:var(--text3);margin-top:2px}
-.added-game-undo{background:none;border:1px solid var(--border);border-radius:8px;color:var(--text3);font-size:14px;cursor:pointer;padding:4px 8px;flex-shrink:0;transition:all .2s}
-.added-game-undo:hover{border-color:var(--danger);color:var(--danger)}
-
-/* SEARCH */
-.search-view{flex:1;overflow-y:auto;padding:20px}
-.search-header{margin-bottom:20px}
-.search-header h2{font-family:var(--fh);font-size:24px;font-weight:800;margin-bottom:4px}
-.search-sub{color:var(--text2);font-size:13px}
-.search-form{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:20px;display:flex;flex-direction:column;gap:12px}
-.search-input-row{display:flex;gap:8px}
-.search-text-input{flex:1;padding:11px 14px;background:var(--surface3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;outline:none;transition:border-color .2s}
-.search-text-input:focus{border-color:var(--accent)}
-.search-text-input::placeholder{color:var(--text3)}
-.search-go-btn{width:44px;height:44px;background:var(--accent);border:none;border-radius:10px;font-size:18px;cursor:pointer;flex-shrink:0;transition:opacity .2s}
-.search-go-btn:disabled{opacity:.4}
-.search-filters{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.search-select{padding:9px 10px;background:var(--surface3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:12px;outline:none;cursor:pointer;width:100%}
-.genre-pills{display:flex;flex-wrap:wrap;gap:6px}
-.genre-pill{padding:6px 12px;background:var(--surface3);border:1px solid var(--border);border-radius:20px;color:var(--text2);font-size:12px;cursor:pointer;transition:all .2s}
-.genre-pill:hover{border-color:var(--accent);color:var(--accent)}
-.genre-pill.active{background:rgba(124,106,255,.2);border-color:var(--accent);color:var(--accent)}
-.search-error{background:rgba(255,85,85,.1);border:1px solid rgba(255,85,85,.3);border-radius:10px;padding:12px;font-size:13px;color:#ff9999;margin-bottom:16px}
-.search-loading{text-align:center;padding:40px;color:var(--text2)}
-.search-loading p{margin-top:12px;font-size:14px}
-.loading-dots{display:flex;gap:6px;justify-content:center}
-.loading-dots span{width:10px;height:10px;background:var(--accent);border-radius:50%;animation:bounce 1.2s infinite}
-.loading-dots span:nth-child(2){animation-delay:.2s}.loading-dots span:nth-child(3){animation-delay:.4s}
-.search-placeholder{text-align:center;padding:60px 20px;color:var(--text2)}
-.search-placeholder p{margin-top:12px;line-height:1.7;font-size:14px}
-.search-results-header{font-size:12px;color:var(--text3);margin-bottom:12px}
-
-/* LIBRARY */
-.library-view{flex:1;overflow-y:auto;padding:20px}
-.lib-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.lib-title-row h2{font-family:var(--fh);font-size:24px;font-weight:800}
-.avg-rating{font-size:13px;color:var(--accent3);font-weight:600}
-.lib-stats-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-.filter-btn{padding:7px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;color:var(--text2);font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px}
-.filter-btn:hover{border-color:var(--accent);color:var(--text)}
-.filter-btn.active{background:rgba(124,106,255,.2);border-color:var(--accent);color:var(--accent)}
-.count{background:var(--surface3);border-radius:20px;padding:1px 7px;font-size:10px}
-.lib-sort-row{display:flex;align-items:center;gap:6px;margin-bottom:16px}
-.sort-label{font-size:12px;color:var(--text3)}
-.sort-btn{padding:4px 12px;background:none;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-size:12px;cursor:pointer;transition:all .2s}
-.sort-btn.active{border-color:var(--accent2);color:var(--accent2)}
-.empty-lib{text-align:center;padding:60px 20px;color:var(--text2)}
-.empty-icon{font-size:48px;margin-bottom:12px}.empty-lib p{line-height:1.7}
-
-/* SETTINGS */
-.settings-view{flex:1;overflow-y:auto;padding:24px 20px}
-.settings-view h2{font-family:var(--fh);font-size:24px;font-weight:800;margin-bottom:24px}
-.settings-section{margin-bottom:28px}
-.settings-section h3{font-family:var(--fh);font-size:15px;font-weight:700;margin-bottom:12px;color:var(--text2)}
-.settings-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px}
-.settings-note{font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.5}
-.setting-label{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;margin-bottom:6px}
-.setting-badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600}
-.setting-badge.required{background:rgba(124,106,255,.2);color:var(--accent)}
-.setting-badge.optional{background:rgba(0,212,170,.15);color:var(--accent2)}
-.setting-desc{font-size:12px;color:var(--text3);margin-bottom:10px;line-height:1.5}
-.setting-input{width:100%;padding:11px 14px;background:var(--surface3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;outline:none;transition:border-color .2s}
-.setting-input:focus{border-color:var(--accent)}
-.setting-user{display:flex;align-items:center;gap:14px;margin-bottom:14px}
-.user-avatar-big{width:48px;height:48px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:800;font-size:22px;color:white;flex-shrink:0}
-.setting-user-name{font-size:15px;font-weight:600}.setting-user-email{font-size:12px;color:var(--text3);margin-top:2px}
-.key-status{font-size:12px;margin-top:8px;padding:6px 10px;border-radius:8px}
-.key-status.ok{background:rgba(0,212,170,.1);color:var(--accent2);border:1px solid rgba(0,212,170,.2)}
-.btn-save{width:100%;padding:12px;background:var(--accent);border:none;border-radius:10px;color:white;font-family:var(--fh);font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px}
-.btn-save:hover{opacity:.85}.btn-save.saved{background:var(--accent2)}
-.btn-danger{padding:9px 18px;background:rgba(255,85,85,.1);border:1px solid rgba(255,85,85,.3);border-radius:10px;color:#ff9999;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
-.btn-danger:hover{background:rgba(255,85,85,.25);border-color:var(--danger);color:white}
-
-/* BOTTOM NAV */
-.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--bot-nav);background:var(--surface);border-top:1px solid var(--border);z-index:100}
-.bottom-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;cursor:pointer;color:var(--text3);transition:color .2s;padding:6px 0}
-.bottom-nav-item.active{color:var(--accent)}.bnav-icon{font-size:20px}.bnav-label{font-size:9px;font-weight:500}
-
-/* RESPONSIVE */
-@media(max-width:700px){
-  .sidebar{display:none}.app{padding-bottom:var(--bot-nav)}.bottom-nav{display:flex}
-  .messages{padding:14px}.games-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
-  .welcome h2{font-size:22px}.auth-box{padding:32px 24px}
-  .search-filters{grid-template-columns:1fr}
-  .popup-actions{grid-template-columns:repeat(2,1fr)}
-}
-@media(min-width:701px){.app{padding-bottom:0}}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px}
-@supports(padding-bottom:env(safe-area-inset-bottom)){
-  .bottom-nav{padding-bottom:env(safe-area-inset-bottom);height:calc(var(--bot-nav) + env(safe-area-inset-bottom))}
-  .app{padding-bottom:calc(var(--bot-nav) + env(safe-area-inset-bottom))}
-}
-
-/* ── LIBRARY SEARCH ─────────────────────────────────────────── */
-.lib-search-row{position:relative;margin-bottom:16px;display:flex;align-items:center}
-.lib-search-input{width:100%;padding:9px 36px 9px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;outline:none;transition:border-color .2s}
-.lib-search-input:focus{border-color:var(--accent)}
-.lib-search-input::placeholder{color:var(--text3)}
-.lib-search-clear{position:absolute;right:10px;background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:4px}
-.lib-search-clear:hover{color:var(--text)}
-
-/* ── POPUP NOTES ─────────────────────────────────────────────── */
-.popup-notes-section{margin-top:16px;margin-bottom:8px}
-.popup-notes-input{width:100%;padding:11px 14px;background:var(--surface3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-family:var(--fb);line-height:1.5;outline:none;resize:none;transition:border-color .2s}
-.popup-notes-input:focus{border-color:var(--accent)}
-.popup-notes-input::placeholder{color:var(--text3)}
-
-/* ── STATS VIEW ──────────────────────────────────────────────── */
-.stats-view{flex:1;overflow-y:auto;padding:20px}
-.stats-view h2{font-family:var(--fh);font-size:24px;font-weight:800;margin-bottom:20px}
-.stats-empty{text-align:center;padding:60px 20px;color:var(--text2)}
-.stats-empty p{margin-top:12px;line-height:1.7;margin-bottom:20px}
-.stats-cta{padding:11px 24px;background:var(--accent);border:none;border-radius:10px;color:white;font-family:var(--fh);font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s}
-.stats-cta:hover{opacity:.85}
-
-.stats-big-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
-@media(min-width:480px){.stats-big-grid{grid-template-columns:repeat(4,1fr)}}
-.stats-big-card{border-radius:16px;padding:16px 12px;text-align:center;border:1px solid var(--border)}
-.stats-big-card.accent {background:rgba(124,106,255,.12);border-color:rgba(124,106,255,.25)}
-.stats-big-card.green  {background:rgba(0,212,170,.1);  border-color:rgba(0,212,170,.2)}
-.stats-big-card.yellow {background:rgba(244,196,48,.1); border-color:rgba(244,196,48,.2)}
-.stats-big-card.purple {background:rgba(180,100,255,.1);border-color:rgba(180,100,255,.2)}
-.sbc-num{font-family:var(--fh);font-size:28px;font-weight:800;line-height:1}
-.sbc-label{font-size:11px;color:var(--text3);margin-top:5px}
-
-.stats-section{margin-bottom:22px}
-.stats-section-title{font-family:var(--fh);font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px}
-
-.stats-progress-bars{display:flex;flex-direction:column;gap:10px}
-.spb-row{display:flex;align-items:center;gap:10px}
-.spb-label{font-size:12px;width:100px;flex-shrink:0}
-.spb-bar-wrap{flex:1;height:8px;background:var(--surface3);border-radius:4px;overflow:hidden}
-.spb-bar{height:100%;border-radius:4px;transition:width .6s ease;background:var(--accent)}
-.spb-count{font-size:12px;color:var(--text3);width:24px;text-align:right}
-
-.stats-top-games{display:flex;flex-direction:column;gap:8px}
-.stg-row{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:8px 12px}
-.stg-rank{font-family:var(--fh);font-size:16px;font-weight:800;color:var(--text3);width:20px;flex-shrink:0}
-.stg-thumb{width:44px;height:44px;object-fit:cover;border-radius:8px;flex-shrink:0}
-.stg-info{flex:1;min-width:0}
-.stg-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.stg-genre{font-size:10px;color:var(--text3);margin-top:2px}
-.stg-rating{font-size:13px;color:var(--accent3);font-weight:700;flex-shrink:0}
-
-.stats-bars{display:flex;flex-direction:column;gap:8px}
-.sb-row{display:flex;align-items:center;gap:10px}
-.sb-label{font-size:12px;width:110px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sb-bar-wrap{flex:1;height:8px;background:var(--surface3);border-radius:4px;overflow:hidden}
-.sb-bar{height:100%;border-radius:4px;background:var(--accent);transition:width .6s ease}
-.sb-bar.accent2{background:var(--accent2)}
-.sb-count{font-size:12px;color:var(--text3);width:24px;text-align:right}
-
-.stats-suggestion{display:flex;gap:12px;background:var(--surface2);border:1px solid rgba(244,196,48,.2);border-radius:14px;padding:12px;align-items:center}
-.ss-cover{width:64px;height:64px;object-fit:cover;border-radius:10px;flex-shrink:0}
-.ss-info{flex:1;min-width:0}
-.ss-name{font-family:var(--fh);font-size:14px;font-weight:700;margin-bottom:4px}
-.ss-meta{font-size:11px;color:var(--text3);margin-bottom:6px}
-.ss-tag{font-size:11px;color:var(--accent3);font-weight:600}
-
-/* ── PIXEL CHARACTER STYLES ─────────────────────────────────── */
-
-/* Header avatar */
-.pixel-avatar-wrap{position:relative;flex-shrink:0}
-.pixel-avatar{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#2a1a5e,#0d3a2a);border:2px solid rgba(124,106,255,.5);display:flex;align-items:center;justify-content:center;font-size:22px;animation:pixelFloat 3s ease-in-out infinite}
-.pixel-online-dot{position:absolute;bottom:1px;right:1px;width:10px;height:10px;background:var(--accent2);border-radius:50%;border:2px solid var(--surface);animation:pixelPulseGreen 2s ease-in-out infinite}
-@keyframes pixelFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-@keyframes pixelPulseGreen{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.2)}}
-
-/* Header title */
-.pixel-tag{font-size:10px;background:rgba(124,106,255,.2);color:var(--accent);padding:2px 7px;border-radius:20px;font-family:var(--fb);font-weight:500;margin-left:5px;vertical-align:middle}
-.pixel-status{display:flex;align-items:center;gap:5px}
-.pixel-pulse{width:6px;height:6px;border-radius:50%;background:var(--accent2);display:inline-block;animation:pixelPulseGreen 1.5s ease-in-out infinite}
-
-/* Message avatar */
-.pixel-msg-avatar{background:linear-gradient(135deg,#2a1a5e,#0d3a2a) !important;border-color:rgba(124,106,255,.4) !important;font-size:18px;border-radius:10px !important}
-
-/* Thinking indicator */
-.pixel-thinking{display:flex;align-items:center;gap:8px;padding:10px 14px;min-width:180px}
-.pixel-think-icon{font-size:16px;animation:pixelSpin 1s linear infinite}
-.pixel-think-text{font-size:13px;color:var(--text2)}
-.typing-dots{display:flex;gap:4px;align-items:center}
-.typing-dots span{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:bounce 1.2s infinite}
-.typing-dots span:nth-child(2){animation-delay:.2s}
-.typing-dots span:nth-child(3){animation-delay:.4s}
-@keyframes pixelSpin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-
-/* Welcome screen */
-.pixel-welcome-avatar{font-size:64px;margin-bottom:8px;animation:pixelFloat 3s ease-in-out infinite;display:block}
-.pixel-welcome-badge{display:inline-block;background:linear-gradient(135deg,rgba(124,106,255,.3),rgba(0,212,170,.2));border:1px solid rgba(124,106,255,.4);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:600;color:var(--accent);margin-bottom:14px}
-.pixel-intro{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:16px;text-align:left}
-.pixel-intro p{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:6px}
-.pixel-intro p:last-child{margin-bottom:0}
-.pixel-intro strong{color:var(--text)}
-.pixel-suggestions-label{font-size:12px;color:var(--text3);margin-bottom:8px}
-.wave{display:inline-block;animation:waveHand .8s ease-in-out 2}
-@keyframes waveHand{0%,100%{transform:rotate(0)}25%{transform:rotate(20deg)}75%{transform:rotate(-10deg)}}
-
-/* Message bubbles — PIXEL style */
-.message.assistant .msg-text{border-left:3px solid rgba(124,106,255,.4);background:linear-gradient(135deg,var(--surface2),rgba(42,26,94,.15))}
-
-/* Suggestion buttons — enhanced */
-.suggestion{border-left:2px solid rgba(124,106,255,.3) !important;text-align:left !important}
-
-/* ════════════════════════════════════════════════════════════════
-   PIXEL ROOM — full scene
-   ════════════════════════════════════════════════════════════════ */
-
-.pixel-room {
-  position: relative; width: 100%; height: 220px; overflow: hidden;
-  flex-shrink: 0; border-bottom: 2px solid var(--border);
-  font-family: var(--fb);
-}
-
-/* ── TIME-BASED BACKGROUNDS ── */
-.pixel-room.day    { background: linear-gradient(180deg, #1a1a3e 0%, #2a1a5e 40%, #0d1a2a 100%); }
-.pixel-room.evening{ background: linear-gradient(180deg, #2a1010 0%, #3a1a20 40%, #0d0d1a 100%); }
-.pixel-room.night  { background: linear-gradient(180deg, #050510 0%, #0a0a20 40%, #060612 100%); }
-
-/* ── ROOM LAYERS ── */
-.room-bg { position: absolute; inset: 0; }
-
-/* Ceiling */
-.room-ceiling {
-  position: absolute; top: 0; left: 0; right: 0; height: 50px;
-  background: rgba(0,0,0,.2);
-  border-bottom: 1px solid rgba(255,255,255,.05);
-}
-.sun  { position: absolute; top: 8px; right: 24px; font-size: 20px; animation: sunGlow 4s ease-in-out infinite; }
-.moon { position: absolute; top: 8px; right: 24px; font-size: 18px; animation: moonFloat 6s ease-in-out infinite; }
-@keyframes sunGlow  { 0%,100%{filter:brightness(1)} 50%{filter:brightness(1.3)} }
-@keyframes moonFloat{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
-
-/* Stars */
-.star { position: absolute; color: #ffffaa; animation: starTwinkle 2s ease-in-out infinite; }
-.s1 { top: 10px; left: 15%; font-size: 10px; }
-.s2 { top: 20px; left: 35%; font-size: 8px;  animation-delay: .5s; }
-.s3 { top: 8px;  left: 60%; font-size: 12px; animation-delay: 1s; }
-.s4 { top: 18px; left: 80%; font-size: 8px;  animation-delay: 1.5s; }
-@keyframes starTwinkle { 0%,100%{opacity:.3} 50%{opacity:1} }
-
-/* Wall */
-.room-wall {
-  position: absolute; top: 50px; left: 0; right: 0; height: 100px;
-  background: linear-gradient(180deg, rgba(30,20,60,.6) 0%, rgba(20,15,40,.8) 100%);
-}
-
-/* Wall posters */
-.wall-poster {
-  position: absolute; top: 12px; width: 38px; height: 46px;
-  background: var(--surface3); border: 2px solid rgba(255,255,255,.1);
-  border-radius: 4px; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 2px;
-}
-.p1 { left: 12px; }
-.p2 { left: 62px; transform: rotate(-2deg); }
-.poster-inner { font-size: 18px; }
-.poster-label { font-size: 7px; color: var(--text3); font-weight: 700; letter-spacing: .05em; }
-
-/* Shelf */
-.wall-shelf {
-  position: absolute; top: 14px; right: 10px;
-  display: flex; align-items: flex-end; gap: 6px;
-  background: rgba(255,255,255,.06); padding: 4px 8px 2px;
-  border-radius: 4px; border-bottom: 3px solid rgba(255,255,255,.1);
-}
-.shelf-item { font-size: 16px; }
-.anim-float2 { animation: shelfFloat 3s ease-in-out infinite .5s; }
-.anim-float3 { animation: shelfFloat 3s ease-in-out infinite 1s; }
-@keyframes shelfFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
-
-/* Floor */
-.room-floor {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 90px;
-  background: linear-gradient(180deg, rgba(15,10,30,.9) 0%, rgba(8,6,18,1) 100%);
-  border-top: 2px solid rgba(255,255,255,.06);
-}
-
-	/* TV */
-	.room-tv {
-	  position: absolute; right: 12px; bottom: 20px;
-	  display: flex; flex-direction: column; align-items: center;
-      transition: all 0.3s ease;
-	}
-	.tv-screen {
-	  width: 80px; height: 52px; background: #050515;
-	  border: 3px solid #333; border-radius: 6px; overflow: hidden;
-	  display: flex; align-items: center; justify-content: center;
-	  box-shadow: 0 0 12px rgba(124,106,255,.4), inset 0 0 10px rgba(0,0,0,.5);
-	}
-	.tv-loading { font-size: 7px; color: var(--accent2); font-weight: 700; letter-spacing: .1em; text-align: center; }
-	.tv-dots { animation: dotCycle 1s steps(4) infinite; }
-	@keyframes dotCycle { 0%{content:'.'} 33%{content:'..'} 66%{content:'...'} 100%{content:''} }
-	.tv-idle { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-	.tv-pixel-art { display: flex; gap: 1px; font-size: 8px; }
-	.tv-label { font-size: 6px; color: var(--accent); font-weight: 700; letter-spacing: .15em; }
-	.tv-stand { width: 20px; height: 6px; background: #2a2a3a; border-radius: 0 0 4px 4px; }
-    
-    /* Novos estilos para TV dinâmica */
-    .tv-content-img { width: 100%; height: 100%; background-size: cover; background-position: center; position: relative; }
-    .tv-noise { position: absolute; inset: 0; background: url('https://media.giphy.com/media/oEI9uWUzn938e5w6gc/giphy.gif'); opacity: 0.1; mix-blend-mode: screen; pointer-events: none; }
-    .tv-overlay-text { position: absolute; bottom: 4px; left: 0; right: 0; background: rgba(0,255,170,0.7); color: black; font-size: 6px; font-weight: 900; text-align: center; letter-spacing: 1px; }
-    .tv-glow-pulse { box-shadow: 0 0 30px var(--accent); transform: scale(1.1); }
-    
-    /* Ambiente reativo */
-    .room-ambient-dark { position: absolute; inset: 0; background: rgba(0,0,10,0.4); pointer-events: none; z-index: 1; transition: opacity 1s; }
-    .lamp-glow { position: absolute; bottom: 40px; right: 40px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(255,200,100,0.2) 0%, transparent 70%); pointer-events: none; z-index: 1; }
-
-/* Plant */
-.room-plant {
-  position: absolute; left: 14px; bottom: 14px; font-size: 28px;
-  transform-origin: bottom center;
-}
-.anim-sway { animation: plantSway 4s ease-in-out infinite; }
-@keyframes plantSway { 0%,100%{transform:rotate(-2deg)} 50%{transform:rotate(2deg)} }
-
-/* Console */
-.room-console {
-  position: absolute; left: 52px; bottom: 18px; font-size: 18px;
-  animation: consolePulse 3s ease-in-out infinite;
-}
-@keyframes consolePulse { 0%,100%{filter:brightness(1)} 50%{filter:brightness(1.4)} }
-
-/* Lamp glow */
-.lamp-glow {
-  position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
-  width: 120px; height: 120px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(124,106,255,.3) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-/* Ambient dark overlay */
-.room-ambient-dark {
-  position: absolute; inset: 0;
-  background: rgba(0,0,10,.3); pointer-events: none;
-}
-
-/* ── PIXEL CHARACTER ── */
-.pixel-char {
-  position: absolute; left: 50%; bottom: 18px;
-  transform: translateX(-50%);
-  width: 80px; display: flex; flex-direction: column; align-items: center;
-  z-index: 10;
-}
-.char-bounce { animation: charBounce .4s ease-in-out 3; }
-@keyframes charBounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(-10px)} }
-.char-talking { animation: charTalk .3s ease-in-out infinite; }
-@keyframes charTalk { 0%,100%{transform:translateX(-50%) scaleY(1)} 50%{transform:translateX(-50%) scaleY(1.02)} }
-
-/* Speech bubble */
-.pixel-speech-bubble {
-  position: absolute; top: -32px; left: 50%; transform: translateX(-50%);
-  background: var(--surface); border: 2px solid var(--accent);
-  border-radius: 10px; padding: 5px 10px; white-space: nowrap;
-  font-size: 11px; color: var(--text);
-  animation: bubblePop .2s ease-out;
-}
-.pixel-speech-bubble::after {
-  content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
-  border: 4px solid transparent; border-top-color: var(--accent);
-}
-.excited-bubble {
-  border-color: var(--accent2); color: var(--accent2);
-  animation: bubblePop .2s ease-out, excitedShake .15s ease-in-out 3;
-}
-.excited-bubble::after { border-top-color: var(--accent2); }
-@keyframes bubblePop { 0%{transform:translateX(-50%) scale(0)} 80%{transform:translateX(-50%) scale(1.1)} 100%{transform:translateX(-50%) scale(1)} }
-@keyframes excitedShake { 0%,100%{transform:translateX(-50%)} 50%{transform:translateX(calc(-50% + 3px))} }
-.speech-dots { display: flex; gap: 3px; align-items: center; }
-.speech-dots span { width: 5px; height: 5px; background: var(--accent); border-radius: 50%; animation: bounce 1s infinite; }
-.speech-dots span:nth-child(2) { animation-delay: .15s; }
-.speech-dots span:nth-child(3) { animation-delay: .3s; }
-
-/* Particles */
-.pixel-particle {
-  position: absolute; font-size: 14px; pointer-events: none; z-index: 20;
-  animation: particleFly 1.8s ease-out forwards;
-}
-@keyframes particleFly {
-  0%   { opacity: 1; transform: translate(0,0) scale(1); }
-  100% { opacity: 0; transform: translate(calc(var(--rx,20px)), -50px) scale(0); }
-}
-
-/* ── ROBOT BODY ── */
-.robot-wrap { display: flex; flex-direction: column; align-items: center; position: relative; }
-
-/* Antenna */
-.robot-antenna { display: flex; flex-direction: column; align-items: center; margin-bottom: 2px; }
-.antenna-ball  { width: 8px; height: 8px; border-radius: 50%; animation: antennaPulse 1.5s ease-in-out infinite; }
-.antenna-stem  { width: 2px; height: 10px; background: rgba(255,255,255,.3); }
-@keyframes antennaPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:.7} }
-
-/* Head */
-.robot-head {
-  width: 54px; height: 46px; background: linear-gradient(135deg,#1e1e2e,#2a2a3e);
-  border: 2px solid; border-radius: 10px; position: relative; overflow: hidden;
-  box-shadow: 0 0 10px rgba(124,106,255,.3);
-}
-.robot-face { position: absolute; inset: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
-
-/* Eyes */
-.robot-eyes { display: flex; gap: 8px; }
-.robot-eye {
-  width: 14px; height: 14px; border-radius: 50%; position: relative;
-  display: flex; align-items: center; justify-content: center;
-  transition: transform .2s;
-}
-.robot-eye.blink { transform: scaleY(.1); }
-.eye-pupil { width: 5px; height: 5px; background: rgba(0,0,0,.6); border-radius: 50%; }
-.eye-spin  { position: absolute; inset: 2px; border: 1.5px solid rgba(255,255,255,.4); border-top-color: transparent; border-radius: 50%; animation: spinEye .6s linear infinite; }
-@keyframes spinEye { to { transform: rotate(360deg); } }
-
-/* Mouth */
-.robot-mouth {
-  width: 22px; height: 10px; border: 2px solid; border-radius: 0 0 6px 6px;
-  position: relative; overflow: hidden; transition: all .3s;
-}
-.robot-mouth.mouth-talk { animation: mouthTalk .15s ease-in-out infinite; }
-@keyframes mouthTalk { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(.4)} }
-.mouth-excited { position: absolute; inset: 1px; background: currentColor; border-radius: 0 0 4px 4px; opacity: .4; }
-.mouth-o       { position: absolute; inset: 1px; border-radius: 50%; background: currentColor; opacity: .4; }
-
-/* Face scan line */
-.face-scanline {
-  position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: rgba(255,255,255,.1);
-  animation: scanLine 2s linear infinite;
-}
-@keyframes scanLine { 0%{top:0} 100%{top:100%} }
-
-/* Head bolts */
-.head-bolt { position: absolute; width: 5px; height: 5px; border-radius: 50%; top: 50%; transform: translateY(-50%); }
-.left-bolt  { left: -3px; }
-.right-bolt { right: -3px; }
-
-/* Body */
-.robot-body { width: 46px; height: 40px; background: linear-gradient(135deg,#1a1a2e,#252535); border: 2px solid rgba(255,255,255,.1); border-radius: 6px; position: relative; margin-top: 2px; }
-.body-chest { position: absolute; inset: 5px; }
-.chest-screen { width: 100%; height: 100%; background: rgba(0,0,0,.5); border-radius: 4px; display: flex; align-items: flex-end; padding: 3px; gap: 2px; overflow: hidden; }
-.chest-bar { width: 4px; border-radius: 2px 2px 0 0; animation: barPulse 1.2s ease-in-out infinite; flex-shrink: 0; }
-@keyframes barPulse { 0%,100%{opacity:.5;transform:scaleY(.6)} 50%{opacity:1;transform:scaleY(1)} }
-
-/* Arms */
-.robot-arm {
-  position: absolute; top: 4px; width: 10px; height: 28px;
-  background: linear-gradient(180deg,#1a1a2e,#252535); border: 1px solid rgba(255,255,255,.1);
-  border-radius: 4px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 1px;
-}
-.left-arm  { left: -13px; transform-origin: top center; }
-.right-arm { right: -13px; transform-origin: top center; }
-.arm-wave  { animation: armWave .4s ease-in-out infinite; }
-.arm-raise { animation: armRaise .5s ease-out; }
-@keyframes armWave  { 0%,100%{transform:rotate(0)}  50%{transform:rotate(-25deg)} }
-@keyframes armRaise { 0%{transform:rotate(0)} 50%{transform:rotate(-50deg)} 100%{transform:rotate(-10deg)} }
-.arm-hand { font-size: 7px; color: white; }
-
-/* Legs */
-.robot-legs { display: flex; gap: 6px; margin-top: 2px; }
-.robot-leg  { width: 14px; height: 18px; background: linear-gradient(180deg,#1a1a2e,#252535); border: 1px solid rgba(255,255,255,.1); border-radius: 0 0 4px 4px; }
-
-/* Shadow */
-.robot-shadow {
-  width: 50px; height: 8px; margin-top: 2px;
-  background: radial-gradient(ellipse, rgba(0,0,0,.5) 0%, transparent 70%);
-  border-radius: 50%;
-}
-
-/* ── MOOD BAR ── */
-.pixel-mood-bar {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 18px;
-  background: rgba(0,0,0,.5); backdrop-filter: blur(4px);
-  display: flex; align-items: center; padding: 0 10px; gap: 6px;
-  border-top: 1px solid rgba(255,255,255,.05);
-}
-.mood-dot  { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; animation: antennaPulse 1.5s ease-in-out infinite; }
-.mood-text { font-size: 9px; color: var(--text3); flex: 1; }
-.room-time { font-size: 9px; color: var(--text3); font-weight: 700; font-variant-numeric: tabular-nums; }
-
-/* ── BATCH RESULT CARD ───────────────────────────────────────── */
-.batch-result-card{margin-top:6px;background:rgba(124,106,255,.08);border:1px solid rgba(124,106,255,.25);border-radius:14px;overflow:hidden;max-width:420px}
-.batch-result-header{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid rgba(124,106,255,.15);background:rgba(124,106,255,.1)}
-.batch-icon{font-size:16px}
-.batch-title{flex:1;font-family:var(--fh);font-size:13px;font-weight:700;color:var(--accent)}
-.batch-undo-all{background:none;border:1px solid rgba(124,106,255,.3);border-radius:8px;color:var(--text3);font-size:11px;cursor:pointer;padding:4px 8px;transition:all .2s;white-space:nowrap}
-.batch-undo-all:hover{border-color:var(--danger);color:var(--danger)}
-.batch-items{display:flex;flex-direction:column;gap:0}
-.batch-item{display:flex;align-items:center;gap:9px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.04);transition:background .2s}
-.batch-item:last-child{border-bottom:none}
-.batch-item:hover{background:rgba(255,255,255,.03)}
-.batch-item.found{}
-.batch-item.not-found{opacity:.6}
-.batch-thumb{width:40px;height:40px;object-fit:cover;border-radius:7px;flex-shrink:0}
-.batch-thumb-missing{width:40px;height:40px;border-radius:7px;background:var(--surface3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;color:var(--text3)}
-.batch-item-info{flex:1;min-width:0}
-.batch-item-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.batch-item-status{font-size:10px;color:var(--text3);margin-top:2px}
-.batch-item.found .batch-item-status{color:var(--accent2)}
-.batch-item.not-found .batch-item-status{color:#ff9999}
-.batch-item-undo{background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:4px 6px;border-radius:6px;transition:all .2s;flex-shrink:0}
-.batch-item-undo:hover{background:rgba(255,85,85,.2);color:var(--danger)}
-`;
-
-const styleEl = document.createElement('style');
-styleEl.textContent = STYLES;
-document.head.appendChild(styleEl);
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(React.createElement(App));
+ReactDOM.createRoot(document.getElementById('root')).render( /*#__PURE__*/React.createElement(Journey, null));

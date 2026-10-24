@@ -1,17 +1,13 @@
 {
-  "name": "GamePal – AI Gaming Companion",
-  "short_name": "GamePal",
-  "description": "Your intelligent AI gaming companion.",
-
+  "name": "Journey — Suas histórias nos jogos",
+  "short_name": "Journey",
+  "description": "Organize seus jogos e guarde suas jornadas e memórias.",
   "start_url": "./index.html",
   "scope": "./",
-
   "display": "standalone",
   "orientation": "portrait",
-
-  "background_color": "#0d0d12",
-  "theme_color": "#0d0d12",
-
+  "background_color": "#101312",
+  "theme_color": "#101312",
   "icons": [
     {
       "src": "icons/icon-192.png",
