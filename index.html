@@ -50,11 +50,11 @@
     <div id="splash">
       <img id="splash-logo" src="icons/icon.svg?v=journey-3" alt="" width="72" height="72" />
       <div id="splash-title">Journey</div>
-      <div id="splash-sub">Carregando…</div>
+      <div id="splash-sub">Loading…</div>
     </div>
 
     <div id="error-box">
-      <h2>Erro ao carregar</h2>
+      <h2>Unable to load</h2>
       <pre id="error-msg"></pre>
     </div>
 
@@ -71,7 +71,7 @@
         if (box)    box.classList.add('show');
       }
       window.onerror = function(msg, src, line, col, err) {
-        showError('Erro: ' + msg + '\nArquivo: ' + src + '\nLinha: ' + line + ':' + col + (err ? '\n\n' + err.stack : ''));
+        showError('Error: ' + msg + '\nFile: ' + src + '\nLine: ' + line + ':' + col + (err ? '\n\n' + err.stack : ''));
         return false;
       };
       window.addEventListener('unhandledrejection', function(e) {
@@ -83,7 +83,7 @@
         var root   = document.getElementById('root');
         var splash = document.getElementById('splash');
         if (root && !root.hasChildNodes() && splash && !splash.classList.contains('hidden')) {
-          showError('App não carregou em 20 segundos.\nVerifique o console do navegador (F12) para mais detalhes.');
+          showError('The app did not load within 20 seconds.\nCheck the browser console for details.');
         }
       }, 20000);
 
@@ -104,7 +104,7 @@
         window.addEventListener('load', function() {
           navigator.serviceWorker.register('sw.js')
             .then(function(r) { console.log('SW registrado:', r.scope); })
-            .catch(function(e) { console.warn('SW falhou (não crítico):', e.message); });
+            .catch(function(e) { console.warn('Service worker unavailable:', e.message); });
         });
       }
     </script>
