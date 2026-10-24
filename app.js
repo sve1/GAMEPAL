@@ -932,7 +932,7 @@ function Journey() {
     className: "panel form",
     onSubmit: function onSubmit(e) {
       e.preventDefault();
-      var f = new FormDate(e.currentTarget);
+      var f = new FormData(e.currentTarget);
       var u = _objectSpread(_objectSpread({}, user), {}, {
           name: f.get('name').trim() || 'Player'
         }),
@@ -1060,7 +1060,7 @@ function Journey() {
     className: "form",
     onSubmit: function onSubmit(e) {
       e.preventDefault();
-      var f = new FormDate(e.currentTarget);
+      var f = new FormData(e.currentTarget);
       change(selected.id, {
         platform: f.get('platform'),
         access: f.get('access'),
@@ -1232,7 +1232,7 @@ function Journey() {
           while (1) switch (_context.prev = _context.next) {
             case 0:
               e.preventDefault();
-              f = new FormDate(e.currentTarget);
+              f = new FormData(e.currentTarget);
               if (!(modal.type === 'manual')) {
                 _context.next = 8;
                 break;
@@ -1388,7 +1388,7 @@ function Journey() {
   })), modal.type === 'manual' && /*#__PURE__*/React.createElement("label", null, "Genre \xB7 optional", /*#__PURE__*/React.createElement("input", {
     name: "genre",
     maxLength: "100",
-    placeholder: "RPG, aventura\u2026"
+    placeholder: "RPG, adventure\u2026"
   }))), /*#__PURE__*/React.createElement("button", {
     className: "primary"
   }, modal.type === 'session' ? 'Save memory' : 'Save')))), toast && /*#__PURE__*/React.createElement("div", {

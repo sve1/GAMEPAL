@@ -245,7 +245,7 @@ function Journey() {
         })}><Icon name="plus" />Add game</button>)}<p className="attribution">Catalog and images: RAWG. Your entries stay on this device.</p></>}
  {view === 'profile' && <><div className="page-title"><div><h1>{user?.name || 'Player'}<span>.</span></h1></div></div><div className="stats">{[[entries.length, 'in library'], [entries.filter(e => e.status === 'finished').length, 'completed'], [sessions.length, 'memories'], [(sessions.reduce((n, s) => n + (+s.minutes || 0), 0) / 60).toFixed(1) + 'h', 'logged']].map(([n, l]) => <div className="panel" key={l}><strong>{n}</strong><p>{l}</p></div>)}</div><div className="two-col"><form className="panel form" onSubmit={e => {
             e.preventDefault();
-            const f = new FormDate(e.currentTarget);
+            const f = new FormData(e.currentTarget);
             const u = {
                 ...user,
                 name: f.get('name').trim() || 'Player'
@@ -275,7 +275,7 @@ function Journey() {
                   journey: active.id
                 })}><Icon name="play" />Log session</button></div><form key={selected.id + '-' + entry.updatedAt} className="form" onSubmit={e => {
                 e.preventDefault();
-                const f = new FormDate(e.currentTarget);
+                const f = new FormData(e.currentTarget);
                 change(selected.id, {
                   platform: f.get('platform'),
                   access: f.get('access'),
@@ -311,7 +311,7 @@ function Journey() {
             }
           }}>Import and merge</button></> : <form className="form" onSubmit={async e => {
           e.preventDefault();
-          const f = new FormDate(e.currentTarget);
+          const f = new FormData(e.currentTarget);
           if (modal.type === 'manual') {
             const name = f.get('name').trim();
             if (!name) return;
@@ -403,7 +403,7 @@ function Journey() {
               collection: 'New collection',
               replay: 'New playthrough',
               session: 'Log a session'
-            }[modal.type]}</h2>{modal.type === 'session' ? <><label>Date<input name="date" type="date" defaultValue={modal.session?.date || nowDate()} required /></label><label>Time played · minutes<input name="minutes" type="number" min="0" max="1440" defaultValue={modal.session?.minutes || ''} /></label><label>What happened?<textarea name="text" maxLength="8000" defaultValue={modal.session?.text || ''} placeholder="A discovery, a challenge, or how you felt…" /></label><label>Screenshot · optional<input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp" /></label><p>Up to 1.5 MB per image. Export backups to preserve your memories.</p></> : <><label>Name<input name="name" required maxLength="160" autoFocus placeholder={modal.type === 'collection' ? 'Favoritos da vida' : modal.type === 'replay' ? 'Segunda campanha · PC' : 'Game title'} /></label>{modal.type === 'manual' && <label>Genre · optional<input name="genre" maxLength="100" placeholder="RPG, aventura…" /></label>}</>}<button className="primary">{modal.type === 'session' ? 'Save memory' : 'Save'}</button></form>}</section></div>}
+            }[modal.type]}</h2>{modal.type === 'session' ? <><label>Date<input name="date" type="date" defaultValue={modal.session?.date || nowDate()} required /></label><label>Time played · minutes<input name="minutes" type="number" min="0" max="1440" defaultValue={modal.session?.minutes || ''} /></label><label>What happened?<textarea name="text" maxLength="8000" defaultValue={modal.session?.text || ''} placeholder="A discovery, a challenge, or how you felt…" /></label><label>Screenshot · optional<input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp" /></label><p>Up to 1.5 MB per image. Export backups to preserve your memories.</p></> : <><label>Name<input name="name" required maxLength="160" autoFocus placeholder={modal.type === 'collection' ? 'Favoritos da vida' : modal.type === 'replay' ? 'Segunda campanha · PC' : 'Game title'} /></label>{modal.type === 'manual' && <label>Genre · optional<input name="genre" maxLength="100" placeholder="RPG, adventure…" /></label>}</>}<button className="primary">{modal.type === 'session' ? 'Save memory' : 'Save'}</button></form>}</section></div>}
  {toast && <div className="toast" role="status">{toast}{undo && <button onClick={() => {
         if (persist(undo)) {
           setUndo(null);
