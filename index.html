@@ -3,25 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#101312" />
+    <meta name="theme-color" content="#080808" />
     <meta name="description" content="Journey – Your stories in games." />
 
     <link rel="manifest" href="manifest.json" />
-    <link rel="icon" href="icons/favicon.svg?v=journey-4" type="image/svg+xml" />
-    <link rel="icon" href="icons/favicon.ico?v=journey-4" sizes="48x48" />
-    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=journey-4" />
+    <link rel="icon" href="icons/icon-192.png?v=journey-5" type="image/png" />
+    <link rel="icon" href="icons/favicon.ico?v=journey-5" sizes="48x48" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=journey-5" />
     <meta name="mobile-web-app-capable"                content="yes" />
     <meta name="apple-mobile-web-app-capable"          content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title"            content="Journey" />
 
     <title>Journey</title>
-    <link rel="stylesheet" href="journey.css?v=journey-4" />
+    <link rel="stylesheet" href="journey.css?v=journey-5" />
     <style>
       * { box-sizing: border-box; margin: 0; padding: 0; }
-      body { background: #101312; color: #e8e8f0; font-family: sans-serif; }
+      body { background: #080808; color: #e8e8f0; font-family: sans-serif; }
       #splash {
-        position: fixed; inset: 0; background: #101312;
+        position: fixed; inset: 0; background: #080808;
         display: flex; flex-direction: column;
         align-items: center; justify-content: center;
         z-index: 9999; transition: opacity 0.4s;
@@ -32,7 +32,7 @@
       #splash-sub   { font-size: 14px; color: #5a5a72; margin-top: 8px; }
       @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
       #error-box {
-        display: none; position: fixed; inset: 0; background: #101312;
+        display: none; position: fixed; inset: 0; background: #080808;
         align-items: center; justify-content: center; flex-direction: column;
         padding: 24px; text-align: center; z-index: 99999;
       }
@@ -48,7 +48,7 @@
   </head>
   <body>
     <div id="splash">
-      <img id="splash-logo" src="icons/icon.svg?v=journey-4" alt="" width="72" height="72" />
+      <img id="splash-logo" src="icons/icon-192.png?v=journey-5" alt="" width="72" height="72" />
       <div id="splash-title">Journey</div>
       <div id="splash-sub">Loading…</div>
     </div>
@@ -93,10 +93,10 @@
       };
     </script>
 
-    <script src="vendor/react.min.js?v=journey-4"></script>
-    <script src="vendor/react-dom.min.js?v=journey-4"></script>
-    <script src="api.js?v=journey-4"></script>
-    <script src="app.js?v=journey-4"></script>
+    <script src="vendor/react.min.js?v=journey-5"></script>
+    <script src="vendor/react-dom.min.js?v=journey-5"></script>
+    <script src="api.js?v=journey-5"></script>
+    <script src="app.js?v=journey-5"></script>
 
     <!-- 4. Service Worker — registered after everything loads -->
     <script>

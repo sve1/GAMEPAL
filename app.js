@@ -675,7 +675,7 @@ function Journey() {
     },
     "aria-label": "Journey \u2014 Home"
   }, /*#__PURE__*/React.createElement("img", {
-    src: "icons/icon.svg?v=journey-3",
+    src: "icons/icon-192.png?v=journey-5",
     alt: ""
   }), "journey"), /*#__PURE__*/React.createElement("nav", null, [['home', 'Home'], ['library', 'Library'], ['journal', 'Journal'], ['explore', 'Explore'], ['profile', 'Profile']].map(function (_ref7) {
     var _ref8 = _slicedToArray(_ref7, 2),
@@ -706,7 +706,7 @@ function Journey() {
       return nav('home');
     }
   }, /*#__PURE__*/React.createElement("img", {
-    src: "icons/icon.svg?v=journey-3",
+    src: "icons/icon-192.png?v=journey-5",
     alt: ""
   }), "journey")), view === 'home' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "page-title home-title"
