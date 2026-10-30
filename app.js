@@ -105,7 +105,7 @@ function GameOverview(_ref) {
     var _t$data, _t$data2;
     return safeMediaUrl(((_t$data = t.data) === null || _t$data === void 0 ? void 0 : _t$data.max) || ((_t$data2 = t.data) === null || _t$data2 === void 0 ? void 0 : _t$data2['480']));
   });
-  var facts = [['Release date', info.releaseDate ? dateLabel(info.releaseDate + 'T12:00:00') : info.released], ['Developer', info.developers], ['Publisher', info.publishers], ['Genres', info.genres], ['Age rating', info.esrb], ['Metacritic', info.metacritic ? String(info.metacritic) + '/100' : null], ['Nota RAWG', info.rating && info.rating !== 'N/A' ? info.rating + '/5' : null]].filter(function (_ref2) {
+  var facts = [['Release date', info.releaseDate ? dateLabel(info.releaseDate + 'T12:00:00') : info.released], ['Developer', info.developers], ['Publisher', info.publishers], ['Genres', info.genres], ['Age rating', info.esrb], ['Metacritic', info.metacritic ? String(info.metacritic) + '/100' : null], ['RAWG rating', info.rating && info.rating !== 'N/A' ? info.rating + '/5' : null]].filter(function (_ref2) {
     var _ref3 = _slicedToArray(_ref2, 2),
       v = _ref3[1];
     return v;
@@ -127,6 +127,33 @@ function GameOverview(_ref) {
   }, "Try again")), !manual && !rawgKey && /*#__PURE__*/React.createElement("p", {
     className: "media-notice"
   }, "Set your RAWG key in Profile to load details and media."), /*#__PURE__*/React.createElement("section", {
+    className: "completion-times"
+  }, /*#__PURE__*/React.createElement("h2", null, "Time to beat"), Object.values(game.timeToBeat || {}).some(function (v) {
+    return Number(v) > 0;
+  }) ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "completion-grid"
+  }, [['main', 'Main story'], ['extras', 'Story + extras'], ['complete', '100% completion']].map(function (_ref4) {
+    var _game$timeToBeat;
+    var _ref5 = _slicedToArray(_ref4, 2),
+      k = _ref5[0],
+      label = _ref5[1];
+    return Number((_game$timeToBeat = game.timeToBeat) === null || _game$timeToBeat === void 0 ? void 0 : _game$timeToBeat[k]) > 0 && /*#__PURE__*/React.createElement("div", {
+      key: k
+    }, /*#__PURE__*/React.createElement("small", null, label), /*#__PURE__*/React.createElement("strong", null, game.timeToBeat[k], /*#__PURE__*/React.createElement("span", null, " h")));
+  })), /*#__PURE__*/React.createElement("p", {
+    className: "media-notice"
+  }, "Your saved estimates \xB7 edit in My journey.")) : /*#__PURE__*/React.createElement("p", {
+    className: "media-notice"
+  }, "No completion estimate saved. RAWG average playtime is not a time-to-beat estimate."), /*#__PURE__*/React.createElement("a", {
+    className: "external-game",
+    href: 'https://howlongtobeat.com/?q=' + encodeURIComponent(game.name),
+    target: "_blank",
+    rel: "noopener noreferrer"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "explore"
+  }), "Find on HowLongToBeat"), Number(info.averagePlaytime) > 0 && /*#__PURE__*/React.createElement("p", {
+    className: "media-notice"
+  }, "RAWG average playtime: ", info.averagePlaytime, " h \xB7 player activity, not completion time.")), /*#__PURE__*/React.createElement("section", {
     className: "synopsis"
   }, /*#__PURE__*/React.createElement("h2", null, "Synopsis"), /*#__PURE__*/React.createElement("p", null, info.description || (loading ? 'Loading synopsis…' : 'No synopsis available for this game.'))), platforms.length > 0 && /*#__PURE__*/React.createElement("section", null, /*#__PURE__*/React.createElement("h2", null, "Platforms"), /*#__PURE__*/React.createElement("div", {
     className: "platform-chips"
@@ -138,10 +165,10 @@ function GameOverview(_ref) {
     }), p.name, p.released_at && /*#__PURE__*/React.createElement("small", null, p.released_at.slice(0, 4)));
   }))), facts.length > 0 && /*#__PURE__*/React.createElement("dl", {
     className: "game-facts"
-  }, facts.map(function (_ref4) {
-    var _ref5 = _slicedToArray(_ref4, 2),
-      label = _ref5[0],
-      value = _ref5[1];
+  }, facts.map(function (_ref6) {
+    var _ref7 = _slicedToArray(_ref6, 2),
+      label = _ref7[0],
+      value = _ref7[1];
     return /*#__PURE__*/React.createElement("div", {
       key: label
     }, /*#__PURE__*/React.createElement("dt", null, label), /*#__PURE__*/React.createElement("dd", null, value));
@@ -251,8 +278,8 @@ var dateLabel = function dateLabel(v) {
     year: 'numeric'
   });
 };
-function Icon(_ref6) {
-  var name = _ref6.name;
+function Icon(_ref8) {
+  var name = _ref8.name;
   var paths = {
     home: 'M3 10l9-7 9 7v11h-6v-7H9v7H3z',
     library: 'M4 3v18M9 3v18M14 3v18M18 4l4 16',
@@ -412,6 +439,17 @@ function Journey() {
     }))))) {
       setUndo(old);
       setToast('Journey updated.');
+    }
+  }
+  function removeGame(id) {
+    var previous = library;
+    var next = _objectSpread({}, library);
+    delete next[id];
+    if (persist(next)) {
+      setUndo(previous);
+      setSelected(null);
+      setModal(null);
+      setToast('Game removed from library.');
     }
   }
   function add(game) {
@@ -582,10 +620,10 @@ function Journey() {
           case 6:
             _context3.t1 = _context3.sent;
             data = _context3.t0.parse.call(_context3.t0, _context3.t1);
-            if (!(data.format !== 'journey' || data.version !== 1 || !data.library || _typeof(data.library) !== 'object' || Array.isArray(data.library) || Object.entries(data.library).some(function (_ref18) {
-              var _ref19 = _slicedToArray(_ref18, 2),
-                id = _ref19[0],
-                e = _ref19[1];
+            if (!(data.format !== 'journey' || data.version !== 1 || !data.library || _typeof(data.library) !== 'object' || Array.isArray(data.library) || Object.entries(data.library).some(function (_ref22) {
+              var _ref23 = _slicedToArray(_ref22, 2),
+                id = _ref23[0],
+                e = _ref23[1];
               return !(e !== null && e !== void 0 && e.game) || String(e.game.id) !== id || typeof e.game.name !== 'string' || !STATES[e.status] || e.journeys && !Array.isArray(e.journeys);
             }))) {
               _context3.next = 10;
@@ -677,10 +715,10 @@ function Journey() {
   }, /*#__PURE__*/React.createElement("img", {
     src: "icons/icon-192.png?v=journey-5",
     alt: ""
-  }), "journey"), /*#__PURE__*/React.createElement("nav", null, [['home', 'Home'], ['library', 'Library'], ['journal', 'Journal'], ['explore', 'Explore'], ['profile', 'Profile']].map(function (_ref7) {
-    var _ref8 = _slicedToArray(_ref7, 2),
-      v = _ref8[0],
-      label = _ref8[1];
+  }), "journey"), /*#__PURE__*/React.createElement("nav", null, [['home', 'Home'], ['library', 'Library'], ['journal', 'Journal'], ['explore', 'Explore'], ['profile', 'Profile']].map(function (_ref9) {
+    var _ref10 = _slicedToArray(_ref9, 2),
+      v = _ref10[0],
+      label = _ref10[1];
     return /*#__PURE__*/React.createElement("button", {
       key: v,
       "aria-current": view === v ? 'page' : undefined,
@@ -780,10 +818,10 @@ function Journey() {
     name: "plus"
   }), "Add game")), /*#__PURE__*/React.createElement("div", {
     className: "tabs"
-  }, [['all', 'All']].concat(_toConsumableArray(Object.entries(STATES))).map(function (_ref9) {
-    var _ref10 = _slicedToArray(_ref9, 2),
-      v = _ref10[0],
-      l = _ref10[1];
+  }, [['all', 'All']].concat(_toConsumableArray(Object.entries(STATES))).map(function (_ref11) {
+    var _ref12 = _slicedToArray(_ref11, 2),
+      v = _ref12[0],
+      l = _ref12[1];
     return /*#__PURE__*/React.createElement("button", {
       className: filter === v ? 'active' : '',
       key: v,
@@ -918,10 +956,10 @@ function Journey() {
     return e.status === 'finished';
   }).length, 'completed'], [sessions.length, 'memories'], [(sessions.reduce(function (n, s) {
     return n + (+s.minutes || 0);
-  }, 0) / 60).toFixed(1) + 'h', 'logged']].map(function (_ref11) {
-    var _ref12 = _slicedToArray(_ref11, 2),
-      n = _ref12[0],
-      l = _ref12[1];
+  }, 0) / 60).toFixed(1) + 'h', 'logged']].map(function (_ref13) {
+    var _ref14 = _slicedToArray(_ref13, 2),
+      n = _ref14[0],
+      l = _ref14[1];
     return /*#__PURE__*/React.createElement("div", {
       className: "panel",
       key: l
@@ -1006,12 +1044,20 @@ function Journey() {
     alt: ""
   }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("small", null, entry ? STATES[entry.status] : 'UM NOVO MUNDO'), /*#__PURE__*/React.createElement("h1", null, selected.name), /*#__PURE__*/React.createElement("p", null, selected.genres, " \xB7 ", selected.released))), /*#__PURE__*/React.createElement("div", {
     className: "detail-body"
-  }, /*#__PURE__*/React.createElement("div", {
+  }, entry && /*#__PURE__*/React.createElement("button", {
+    className: "remove-game",
+    onClick: function onClick() {
+      return setModal({
+        type: "remove",
+        id: selected.id
+      });
+    }
+  }, "Remove from library"), /*#__PURE__*/React.createElement("div", {
     className: "tabs"
-  }, [['about', 'Overview']].concat(_toConsumableArray(entry ? [['journey', 'My journey'], ['memories', 'Memories']] : [])).map(function (_ref13) {
-    var _ref14 = _slicedToArray(_ref13, 2),
-      v = _ref14[0],
-      l = _ref14[1];
+  }, [['about', 'Overview']].concat(_toConsumableArray(entry ? [['journey', 'My journey'], ['memories', 'Memories']] : [])).map(function (_ref15) {
+    var _ref16 = _slicedToArray(_ref15, 2),
+      v = _ref16[0],
+      l = _ref16[1];
     return /*#__PURE__*/React.createElement("button", {
       key: v,
       className: tab === v ? 'active' : '',
@@ -1036,10 +1082,10 @@ function Journey() {
         status: e.target.value
       });
     }
-  }, Object.entries(STATES).map(function (_ref15) {
-    var _ref16 = _slicedToArray(_ref15, 2),
-      v = _ref16[0],
-      l = _ref16[1];
+  }, Object.entries(STATES).map(function (_ref17) {
+    var _ref18 = _slicedToArray(_ref17, 2),
+      v = _ref18[0],
+      l = _ref18[1];
     return /*#__PURE__*/React.createElement("option", {
       key: v,
       value: v
@@ -1062,6 +1108,9 @@ function Journey() {
       e.preventDefault();
       var f = new FormData(e.currentTarget);
       change(selected.id, {
+        timeToBeat: Object.fromEntries(['main', 'extras', 'complete'].map(function (k) {
+          return [k, f.get('ttb_' + k) ? Number(f.get('ttb_' + k)) : null];
+        })),
         platform: f.get('platform'),
         access: f.get('access'),
         completion: f.get('completion'),
@@ -1124,6 +1173,21 @@ function Journey() {
     max: "10",
     step: "0.5",
     defaultValue: (_entry$rating = entry.rating) !== null && _entry$rating !== void 0 ? _entry$rating : ''
+  })), /*#__PURE__*/React.createElement("fieldset", null, /*#__PURE__*/React.createElement("legend", null, "Time to beat \xB7 your estimates"), [["main", "Main story"], ["extras", "Story + extras"], ["complete", "100% completion"]].map(function (_ref19) {
+    var _entry$timeToBeat;
+    var _ref20 = _slicedToArray(_ref19, 2),
+      k = _ref20[0],
+      label = _ref20[1];
+    return /*#__PURE__*/React.createElement("label", {
+      key: k
+    }, label, " \xB7 hours", /*#__PURE__*/React.createElement("input", {
+      type: "number",
+      name: "ttb_" + k,
+      min: "0.1",
+      max: "10000",
+      step: "0.1",
+      defaultValue: ((_entry$timeToBeat = entry.timeToBeat) === null || _entry$timeToBeat === void 0 ? void 0 : _entry$timeToBeat[k]) || ""
+    }));
   })), /*#__PURE__*/React.createElement("label", null, "My thoughts", /*#__PURE__*/React.createElement("textarea", {
     name: "note",
     defaultValue: entry.note || '',
@@ -1165,7 +1229,9 @@ function Journey() {
     }
   }, "+ New playthrough"))), tab === 'about' && /*#__PURE__*/React.createElement(GameOverview, {
     key: selected.id,
-    game: selected,
+    game: _objectSpread(_objectSpread({}, selected), {}, {
+      timeToBeat: (entry === null || entry === void 0 ? void 0 : entry.timeToBeat) || selected.timeToBeat
+    }),
     rawgKey: settings.rawgKey
   }), tab === 'memories' && (sessions.filter(function (s) {
     return s.game.id === selected.id;
@@ -1208,7 +1274,16 @@ function Journey() {
     onClick: function onClick() {
       return setModal(null);
     }
-  }, "\xD7"), modal.type === 'restore' ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h2", null, "Import your journeys?"), /*#__PURE__*/React.createElement("p", null, "Games will be merged into your library. For matching IDs, the backup takes priority. Export your current data first."), /*#__PURE__*/React.createElement("button", {
+  }, "\xD7"), modal.type === 'remove' ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h2", null, "Remove this game?"), /*#__PURE__*/React.createElement("p", null, "This removes the game from every list and collection, together with its notes, playthroughs and memories. You can undo immediately after removal."), /*#__PURE__*/React.createElement("button", {
+    className: "primary",
+    onClick: function onClick() {
+      return removeGame(modal.id);
+    }
+  }, "Remove game"), /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return setModal(null);
+    }
+  }, "Keep game")) : modal.type === 'restore' ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h2", null, "Import your journeys?"), /*#__PURE__*/React.createElement("p", null, "Games will be merged into your library. For matching IDs, the backup takes priority. Export your current data first."), /*#__PURE__*/React.createElement("button", {
     onClick: backup
   }, "Export current data"), /*#__PURE__*/React.createElement("button", {
     className: "primary",
@@ -1226,7 +1301,7 @@ function Journey() {
   }, "Import and merge")) : /*#__PURE__*/React.createElement("form", {
     className: "form",
     onSubmit: ( /*#__PURE__*/function () {
-      var _ref17 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(e) {
+      var _ref21 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(e) {
         var f, name, _name, next, en, js, j, _modal$session, _fileRef$current, _modal$session2, image, file, _en, _js, session;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) switch (_context.prev = _context.next) {
@@ -1351,7 +1426,7 @@ function Journey() {
         }, _callee);
       }));
       return function (_x3) {
-        return _ref17.apply(this, arguments);
+        return _ref21.apply(this, arguments);
       };
     }())
   }, /*#__PURE__*/React.createElement("h2", null, {
