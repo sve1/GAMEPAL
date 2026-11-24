@@ -19,39 +19,190 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-var overviewCache = new Map();
-function GameOverview(_ref) {
-  var _trailers$clip, _trailers$clip2, _trailers$clip3, _trailers$clip4;
-  var game = _ref.game,
-    rawgKey = _ref.rawgKey;
-  var _useState = useState(game),
+function SliderField(_ref) {
+  var name = _ref.name,
+    label = _ref.label,
+    initialValue = _ref.initialValue,
+    _ref$kind = _ref.kind,
+    kind = _ref$kind === void 0 ? 'hours' : _ref$kind;
+  var rating = kind === 'rating';
+  var valid = initialValue !== null && initialValue !== undefined && initialValue !== '' && Number.isFinite(Number(initialValue));
+  var initial = valid ? Number(initialValue) : null;
+  var _useState = useState(initial),
     _useState2 = _slicedToArray(_useState, 2),
-    info = _useState2[0],
-    setInfo = _useState2[1],
-    _useState3 = useState(false),
+    value = _useState2[0],
+    setValue = _useState2[1];
+  var _useState3 = useState(rating ? 10 : Math.max(200, Math.ceil((initial || 0) / 100) * 100)),
     _useState4 = _slicedToArray(_useState3, 2),
-    loading = _useState4[0],
-    setLoading = _useState4[1],
-    _useState5 = useState(''),
+    limit = _useState4[0],
+    setLimit = _useState4[1];
+  var step = rating ? 0.5 : 0.5;
+  var id = 'journey-field-' + name;
+  var numeric = value === null ? 0 : value;
+  var update = function update(next) {
+    return setValue(Math.min(limit, Math.max(0, Math.round(next * 10) / 10)));
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "slider-field"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "slider-heading"
+  }, /*#__PURE__*/React.createElement("label", {
+    htmlFor: id
+  }, label), /*#__PURE__*/React.createElement("output", {
+    htmlFor: id,
+    "aria-live": "polite"
+  }, value === null ? 'Not set' : new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 1
+  }).format(value) + (rating ? ' / 10' : ' h'))), /*#__PURE__*/React.createElement("input", {
+    type: "hidden",
+    name: name,
+    value: value === null ? '' : String(value)
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "slider-row"
+  }, /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    className: "step-control",
+    "aria-label": 'Decrease ' + label,
+    disabled: value !== null && value <= 0,
+    onClick: function onClick() {
+      return update(numeric - step);
+    }
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "minus"
+  })), /*#__PURE__*/React.createElement("input", {
+    id: id,
+    type: "range",
+    min: "0",
+    max: limit,
+    step: step,
+    value: numeric,
+    "aria-valuetext": value === null ? 'Not set' : String(value) + (rating ? ' out of 10' : ' hours'),
+    onChange: function onChange(e) {
+      return update(Number(e.target.value));
+    },
+    style: {
+      '--range-progress': numeric / limit * 100 + '%'
+    }
+  }), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    className: "step-control",
+    "aria-label": 'Increase ' + label,
+    disabled: value !== null && value >= limit,
+    onClick: function onClick() {
+      return update(numeric + step);
+    }
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "plus"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "slider-footer"
+  }, /*#__PURE__*/React.createElement("span", null, "0", rating ? '' : ' h'), /*#__PURE__*/React.createElement("div", null, !rating && limit < 10000 && /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: function onClick() {
+      return setLimit(function (n) {
+        return Math.min(10000, n + 100);
+      });
+    },
+    "aria-label": 'Extend range for ' + label
+  }, "More hours"), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: function onClick() {
+      return setValue(null);
+    },
+    disabled: value === null,
+    "aria-label": 'Clear ' + label
+  }, "Clear")), /*#__PURE__*/React.createElement("span", null, limit, rating ? '' : ' h')));
+}
+function DateField(_ref2) {
+  var name = _ref2.name,
+    label = _ref2.label,
+    _ref2$initialValue = _ref2.initialValue,
+    initialValue = _ref2$initialValue === void 0 ? '' : _ref2$initialValue,
+    _ref2$required = _ref2.required,
+    required = _ref2$required === void 0 ? false : _ref2$required;
+  var _useState5 = useState(initialValue || ''),
     _useState6 = _slicedToArray(_useState5, 2),
-    problem = _useState6[0],
-    setProblem = _useState6[1],
-    _useState7 = useState([]),
+    value = _useState6[0],
+    setValue = _useState6[1];
+  var inputRef = useRef(null);
+  var id = 'journey-date-' + name;
+  function openCalendar() {
+    var input = inputRef.current;
+    if (!input) return;
+    try {
+      if (typeof input.showPicker === 'function') input.showPicker();else input.focus();
+    } catch (error) {
+      input.focus();
+    }
+  }
+  return /*#__PURE__*/React.createElement("div", {
+    className: "date-field"
+  }, /*#__PURE__*/React.createElement("label", {
+    htmlFor: id
+  }, label), /*#__PURE__*/React.createElement("div", {
+    className: 'date-control ' + (!value ? 'is-empty' : '')
+  }, /*#__PURE__*/React.createElement("input", {
+    id: id,
+    ref: inputRef,
+    name: name,
+    type: "date",
+    value: value,
+    required: required,
+    onChange: function onChange(e) {
+      return setValue(e.target.value);
+    },
+    onClick: openCalendar
+  }), !value && /*#__PURE__*/React.createElement("span", {
+    className: "date-placeholder",
+    "aria-hidden": "true"
+  }, "Choose date"), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    className: "calendar-button",
+    "aria-label": 'Open calendar for ' + label,
+    onClick: openCalendar
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "calendar"
+  }))), value && !required && /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    className: "date-clear",
+    "aria-label": 'Clear ' + label,
+    onClick: function onClick() {
+      return setValue('');
+    }
+  }, "Clear date"));
+}
+var overviewCache = new Map();
+function GameOverview(_ref3) {
+  var _trailers$clip, _trailers$clip2, _trailers$clip3, _trailers$clip4;
+  var game = _ref3.game,
+    rawgKey = _ref3.rawgKey;
+  var _useState7 = useState(game),
     _useState8 = _slicedToArray(_useState7, 2),
-    mediaErrors = _useState8[0],
-    setMediaErrors = _useState8[1],
-    _useState9 = useState(0),
+    info = _useState8[0],
+    setInfo = _useState8[1],
+    _useState9 = useState(false),
     _useState10 = _slicedToArray(_useState9, 2),
-    attempt = _useState10[0],
-    setAttempt = _useState10[1],
-    _useState11 = useState(null),
+    loading = _useState10[0],
+    setLoading = _useState10[1],
+    _useState11 = useState(''),
     _useState12 = _slicedToArray(_useState11, 2),
-    shot = _useState12[0],
-    setShot = _useState12[1],
-    _useState13 = useState(0),
+    problem = _useState12[0],
+    setProblem = _useState12[1],
+    _useState13 = useState([]),
     _useState14 = _slicedToArray(_useState13, 2),
-    clip = _useState14[0],
-    setClip = _useState14[1];
+    mediaErrors = _useState14[0],
+    setMediaErrors = _useState14[1],
+    _useState15 = useState(0),
+    _useState16 = _slicedToArray(_useState15, 2),
+    attempt = _useState16[0],
+    setAttempt = _useState16[1],
+    _useState17 = useState(null),
+    _useState18 = _slicedToArray(_useState17, 2),
+    shot = _useState18[0],
+    setShot = _useState18[1],
+    _useState19 = useState(0),
+    _useState20 = _slicedToArray(_useState19, 2),
+    clip = _useState20[0],
+    setClip = _useState20[1];
   var manual = String(game.id).startsWith('manual-');
   var freeGame = game.provider === 'freetogame' || String(game.id).startsWith('ftg-');
   useEffect(function () {
@@ -106,9 +257,9 @@ function GameOverview(_ref) {
     var _t$data, _t$data2;
     return safeMediaUrl(((_t$data = t.data) === null || _t$data === void 0 ? void 0 : _t$data.max) || ((_t$data2 = t.data) === null || _t$data2 === void 0 ? void 0 : _t$data2['480']));
   });
-  var facts = [['Release date', info.releaseDate ? dateLabel(info.releaseDate + 'T12:00:00') : info.released], ['Developer', info.developers], ['Publisher', info.publishers], ['Genres', info.genres], ['Age rating', info.esrb], ['Metacritic', info.metacritic ? String(info.metacritic) + '/100' : null], ['RAWG rating', info.rating && info.rating !== 'N/A' ? info.rating + '/5' : null]].filter(function (_ref2) {
-    var _ref3 = _slicedToArray(_ref2, 2),
-      v = _ref3[1];
+  var facts = [['Release date', info.releaseDate ? dateLabel(info.releaseDate + 'T12:00:00') : info.released], ['Developer', info.developers], ['Publisher', info.publishers], ['Genres', info.genres], ['Age rating', info.esrb], ['Metacritic', info.metacritic ? String(info.metacritic) + '/100' : null], ['RAWG rating', info.rating && info.rating !== 'N/A' ? info.rating + '/5' : null]].filter(function (_ref4) {
+    var _ref5 = _slicedToArray(_ref4, 2),
+      v = _ref5[1];
     return v;
   });
   return /*#__PURE__*/React.createElement("div", {
@@ -133,11 +284,11 @@ function GameOverview(_ref) {
     return Number(v) > 0;
   }) ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "completion-grid"
-  }, [['main', 'Main story'], ['extras', 'Story + extras'], ['complete', '100% completion']].map(function (_ref4) {
+  }, [['main', 'Main story'], ['extras', 'Story + extras'], ['complete', '100% completion']].map(function (_ref6) {
     var _game$timeToBeat;
-    var _ref5 = _slicedToArray(_ref4, 2),
-      k = _ref5[0],
-      label = _ref5[1];
+    var _ref7 = _slicedToArray(_ref6, 2),
+      k = _ref7[0],
+      label = _ref7[1];
     return Number((_game$timeToBeat = game.timeToBeat) === null || _game$timeToBeat === void 0 ? void 0 : _game$timeToBeat[k]) > 0 && /*#__PURE__*/React.createElement("div", {
       key: k
     }, /*#__PURE__*/React.createElement("small", null, label), /*#__PURE__*/React.createElement("strong", null, game.timeToBeat[k], /*#__PURE__*/React.createElement("span", null, " h")));
@@ -166,10 +317,10 @@ function GameOverview(_ref) {
     }), p.name, p.released_at && /*#__PURE__*/React.createElement("small", null, p.released_at.slice(0, 4)));
   }))), facts.length > 0 && /*#__PURE__*/React.createElement("dl", {
     className: "game-facts"
-  }, facts.map(function (_ref6) {
-    var _ref7 = _slicedToArray(_ref6, 2),
-      label = _ref7[0],
-      value = _ref7[1];
+  }, facts.map(function (_ref8) {
+    var _ref9 = _slicedToArray(_ref8, 2),
+      label = _ref9[0],
+      value = _ref9[1];
     return /*#__PURE__*/React.createElement("div", {
       key: label
     }, /*#__PURE__*/React.createElement("dt", null, label), /*#__PURE__*/React.createElement("dd", null, value));
@@ -225,7 +376,9 @@ function GameOverview(_ref) {
       return setShot(null);
     },
     "aria-label": "Close image"
-  }, "\xD7"), /*#__PURE__*/React.createElement("img", {
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "close"
+  })), /*#__PURE__*/React.createElement("img", {
     src: safeMediaUrl(screenshots[shot].image),
     alt: 'Enlarged screenshot of ' + game.name
   }))), !loading && !problem && !manual && !freeGame && rawgKey && !trailers.length && /*#__PURE__*/React.createElement("p", {
@@ -262,48 +415,48 @@ function GameOverview(_ref) {
     rel: "noopener noreferrer"
   }, freeGame ? "FreeToGame" : "RAWG")));
 }
-function HomeDiscovery(_ref8) {
-  var library = _ref8.library,
-    rawgKey = _ref8.rawgKey,
-    renderGame = _ref8.renderGame;
-  var _useState15 = useState([]),
-    _useState16 = _slicedToArray(_useState15, 2),
-    pool = _useState16[0],
-    setPool = _useState16[1],
-    _useState17 = useState(''),
-    _useState18 = _slicedToArray(_useState17, 2),
-    source = _useState18[0],
-    setSource = _useState18[1],
-    _useState19 = useState(true),
-    _useState20 = _slicedToArray(_useState19, 2),
-    loading = _useState20[0],
-    setLoading = _useState20[1],
-    _useState21 = useState(''),
+function HomeDiscovery(_ref10) {
+  var library = _ref10.library,
+    rawgKey = _ref10.rawgKey,
+    renderGame = _ref10.renderGame;
+  var _useState21 = useState([]),
     _useState22 = _slicedToArray(_useState21, 2),
-    gameError = _useState22[0],
-    setGameError = _useState22[1],
-    _useState23 = useState(function () {
-      return Date.now() >>> 0;
-    }),
+    pool = _useState22[0],
+    setPool = _useState22[1],
+    _useState23 = useState(''),
     _useState24 = _slicedToArray(_useState23, 2),
-    seed = _useState24[0],
-    setSeed = _useState24[1];
-  var _useState25 = useState(null),
+    source = _useState24[0],
+    setSource = _useState24[1],
+    _useState25 = useState(true),
     _useState26 = _slicedToArray(_useState25, 2),
-    news = _useState26[0],
-    setNews = _useState26[1],
+    loading = _useState26[0],
+    setLoading = _useState26[1],
     _useState27 = useState(''),
     _useState28 = _slicedToArray(_useState27, 2),
-    newsError = _useState28[0],
-    setNewsError = _useState28[1],
-    _useState29 = useState(true),
+    gameError = _useState28[0],
+    setGameError = _useState28[1],
+    _useState29 = useState(function () {
+      return Date.now() >>> 0;
+    }),
     _useState30 = _slicedToArray(_useState29, 2),
-    newsLoading = _useState30[0],
-    setNewsLoading = _useState30[1],
-    _useState31 = useState(0),
+    seed = _useState30[0],
+    setSeed = _useState30[1];
+  var _useState31 = useState(null),
     _useState32 = _slicedToArray(_useState31, 2),
-    newsAttempt = _useState32[0],
-    setNewsAttempt = _useState32[1];
+    news = _useState32[0],
+    setNews = _useState32[1],
+    _useState33 = useState(''),
+    _useState34 = _slicedToArray(_useState33, 2),
+    newsError = _useState34[0],
+    setNewsError = _useState34[1],
+    _useState35 = useState(true),
+    _useState36 = _slicedToArray(_useState35, 2),
+    newsLoading = _useState36[0],
+    setNewsLoading = _useState36[1],
+    _useState37 = useState(0),
+    _useState38 = _slicedToArray(_useState37, 2),
+    newsAttempt = _useState38[0],
+    setNewsAttempt = _useState38[1];
   useEffect(function () {
     var cancelled = false;
     setLoading(true);
@@ -506,8 +659,8 @@ var dateLabel = function dateLabel(v) {
     year: 'numeric'
   });
 };
-function Icon(_ref9) {
-  var name = _ref9.name;
+function Icon(_ref11) {
+  var name = _ref11.name;
   var paths = {
     home: 'M3 10l9-7 9 7v11h-6v-7H9v7H3z',
     library: 'M4 3v18M9 3v18M14 3v18M18 4l4 16',
@@ -517,6 +670,9 @@ function Icon(_ref9) {
     play: 'M9 5l11 7-11 7z',
     gamepad: 'M7 7h10a4 4 0 0 1 4 4l1 7c0 3-4 3-6-1H8c-2 4-6 4-6 1l1-7a4 4 0 0 1 4-4M6 12h6M9 9v6M16 11h.01M19 14h.01',
     plus: 'M12 5v14M5 12h14',
+    minus: 'M5 12h14',
+    close: 'M6 6l12 12M18 6L6 18',
+    calendar: 'M5 5h14v16H5zM8 3v4M16 3v4M5 10h14M9 14h.01M15 14h.01M9 17h.01',
     chevron: 'M9 5l7 7-7 7',
     search: 'M20 20l-5-5M17 10a7 7 0 1 0-14 0 7 7 0 0 0 14 0',
     spark: 'M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z'
@@ -532,97 +688,97 @@ function Icon(_ref9) {
   }));
 }
 function Journey() {
-  var _entry$rating, _modal$session3, _modal$session4, _modal$session5;
-  var _useState33 = useState(function () {
+  var _modal$session3, _modal$session4, _modal$session5;
+  var _useState39 = useState(function () {
       return load(STORAGE_KEY, {});
     }),
-    _useState34 = _slicedToArray(_useState33, 2),
-    library = _useState34[0],
-    setLibrary = _useState34[1],
-    _useState35 = useState(function () {
+    _useState40 = _slicedToArray(_useState39, 2),
+    library = _useState40[0],
+    setLibrary = _useState40[1],
+    _useState41 = useState(function () {
       return load(SETTINGS_KEY, {});
     }),
-    _useState36 = _slicedToArray(_useState35, 2),
-    settings = _useState36[0],
-    setSettings = _useState36[1],
-    _useState37 = useState(function () {
+    _useState42 = _slicedToArray(_useState41, 2),
+    settings = _useState42[0],
+    setSettings = _useState42[1],
+    _useState43 = useState(function () {
       return load(USER_KEY, {
         name: 'Player'
       });
     }),
-    _useState38 = _slicedToArray(_useState37, 2),
-    user = _useState38[0],
-    setUser = _useState38[1];
-  var _useState39 = useState('home'),
-    _useState40 = _slicedToArray(_useState39, 2),
-    view = _useState40[0],
-    setView = _useState40[1],
-    _useState41 = useState(null),
-    _useState42 = _slicedToArray(_useState41, 2),
-    selected = _useState42[0],
-    setSelected = _useState42[1],
-    _useState43 = useState(''),
     _useState44 = _slicedToArray(_useState43, 2),
-    query = _useState44[0],
-    setQuery = _useState44[1],
-    _useState45 = useState('all'),
+    user = _useState44[0],
+    setUser = _useState44[1];
+  var _useState45 = useState('home'),
     _useState46 = _slicedToArray(_useState45, 2),
-    filter = _useState46[0],
-    setFilter = _useState46[1],
-    _useState47 = useState(''),
+    view = _useState46[0],
+    setView = _useState46[1],
+    _useState47 = useState(null),
     _useState48 = _slicedToArray(_useState47, 2),
-    platform = _useState48[0],
-    setPlatform = _useState48[1],
-    _useState49 = useState('recent'),
+    selected = _useState48[0],
+    setSelected = _useState48[1],
+    _useState49 = useState(''),
     _useState50 = _slicedToArray(_useState49, 2),
-    sort = _useState50[0],
-    setSort = _useState50[1],
-    _useState51 = useState(false),
+    query = _useState50[0],
+    setQuery = _useState50[1],
+    _useState51 = useState('all'),
     _useState52 = _slicedToArray(_useState51, 2),
-    list = _useState52[0],
-    setList = _useState52[1],
-    _useState53 = useState([]),
+    filter = _useState52[0],
+    setFilter = _useState52[1],
+    _useState53 = useState(''),
     _useState54 = _slicedToArray(_useState53, 2),
-    results = _useState54[0],
-    setResults = _useState54[1],
-    _useState55 = useState(false),
+    platform = _useState54[0],
+    setPlatform = _useState54[1],
+    _useState55 = useState('recent'),
     _useState56 = _slicedToArray(_useState55, 2),
-    busy = _useState56[0],
-    setBusy = _useState56[1],
-    _useState57 = useState(''),
+    sort = _useState56[0],
+    setSort = _useState56[1],
+    _useState57 = useState(false),
     _useState58 = _slicedToArray(_useState57, 2),
-    error = _useState58[0],
-    setError = _useState58[1],
-    _useState59 = useState(''),
+    list = _useState58[0],
+    setList = _useState58[1],
+    _useState59 = useState([]),
     _useState60 = _slicedToArray(_useState59, 2),
-    toast = _useState60[0],
-    setToast = _useState60[1],
-    _useState61 = useState(null),
+    results = _useState60[0],
+    setResults = _useState60[1],
+    _useState61 = useState(false),
     _useState62 = _slicedToArray(_useState61, 2),
-    undo = _useState62[0],
-    setUndo = _useState62[1],
+    busy = _useState62[0],
+    setBusy = _useState62[1],
     _useState63 = useState(''),
     _useState64 = _slicedToArray(_useState63, 2),
-    collection = _useState64[0],
-    setCollection = _useState64[1],
-    _useState65 = useState(function () {
+    error = _useState64[0],
+    setError = _useState64[1],
+    _useState65 = useState(''),
+    _useState66 = _slicedToArray(_useState65, 2),
+    toast = _useState66[0],
+    setToast = _useState66[1],
+    _useState67 = useState(null),
+    _useState68 = _slicedToArray(_useState67, 2),
+    undo = _useState68[0],
+    setUndo = _useState68[1],
+    _useState69 = useState(''),
+    _useState70 = _slicedToArray(_useState69, 2),
+    collection = _useState70[0],
+    setCollection = _useState70[1],
+    _useState71 = useState(function () {
       return load('journey_collections_v1', []);
     }),
-    _useState66 = _slicedToArray(_useState65, 2),
-    collections = _useState66[0],
-    setCollections = _useState66[1];
-  var _useState67 = useState(null),
-    _useState68 = _slicedToArray(_useState67, 2),
-    modal = _useState68[0],
-    setModal = _useState68[1],
-    _useState69 = useState('about'),
-    _useState70 = _slicedToArray(_useState69, 2),
-    tab = _useState70[0],
-    setTab = _useState70[1];
-  var _useState71 = useState(settings.rawgKey ? 'rawg' : 'freetogame'),
     _useState72 = _slicedToArray(_useState71, 2),
-    catalogSource = _useState72[0],
-    setCatalogSource = _useState72[1];
+    collections = _useState72[0],
+    setCollections = _useState72[1];
+  var _useState73 = useState(null),
+    _useState74 = _slicedToArray(_useState73, 2),
+    modal = _useState74[0],
+    setModal = _useState74[1],
+    _useState75 = useState('about'),
+    _useState76 = _slicedToArray(_useState75, 2),
+    tab = _useState76[0],
+    setTab = _useState76[1];
+  var _useState77 = useState(settings.rawgKey ? 'rawg' : 'freetogame'),
+    _useState78 = _slicedToArray(_useState77, 2),
+    catalogSource = _useState78[0],
+    setCatalogSource = _useState78[1];
   var fileRef = useRef(),
     restoreRef = useRef(),
     previousFocus = useRef();
@@ -703,7 +859,11 @@ function Journey() {
     (_window$__hideSplash = (_window = window).__hideSplash) === null || _window$__hideSplash === void 0 || _window$__hideSplash.call(_window);
     var hash = function hash() {
       var v = location.hash.slice(1);
-      if (['home', 'library', 'journal', 'explore', 'profile'].includes(v)) setView(v);
+      if (v === 'journal') {
+        v = 'library';
+        window.history.replaceState(null, '', '#library');
+      }
+      if (['home', 'library', 'explore', 'profile'].includes(v)) setView(v);
     };
     hash();
     window.addEventListener('hashchange', hash);
@@ -864,10 +1024,10 @@ function Journey() {
           case 6:
             _context4.t1 = _context4.sent;
             data = _context4.t0.parse.call(_context4.t0, _context4.t1);
-            if (!(data.format !== 'journey' || data.version !== 1 || !data.library || _typeof(data.library) !== 'object' || Array.isArray(data.library) || Object.entries(data.library).some(function (_ref23) {
-              var _ref24 = _slicedToArray(_ref23, 2),
-                id = _ref24[0],
-                e = _ref24[1];
+            if (!(data.format !== 'journey' || data.version !== 1 || !data.library || _typeof(data.library) !== 'object' || Array.isArray(data.library) || Object.entries(data.library).some(function (_ref25) {
+              var _ref26 = _slicedToArray(_ref25, 2),
+                id = _ref26[0],
+                e = _ref26[1];
               return !(e !== null && e !== void 0 && e.game) || String(e.game.id) !== id || typeof e.game.name !== 'string' || !STATES[e.status] || e.journeys && !Array.isArray(e.journeys);
             }))) {
               _context4.next = 10;
@@ -959,10 +1119,10 @@ function Journey() {
   }, /*#__PURE__*/React.createElement("img", {
     src: "icons/icon-192.png?v=journey-5",
     alt: ""
-  }), "journey"), /*#__PURE__*/React.createElement("nav", null, [['home', 'Home'], ['library', 'Library'], ['journal', 'Journal'], ['explore', 'Explore'], ['profile', 'Profile']].map(function (_ref10) {
-    var _ref11 = _slicedToArray(_ref10, 2),
-      v = _ref11[0],
-      label = _ref11[1];
+  }), "journey"), /*#__PURE__*/React.createElement("nav", null, [['home', 'Home'], ['library', 'Library'], ['explore', 'Explore'], ['profile', 'Profile']].map(function (_ref12) {
+    var _ref13 = _slicedToArray(_ref12, 2),
+      v = _ref13[0],
+      label = _ref13[1];
     return /*#__PURE__*/React.createElement("button", {
       key: v,
       "aria-current": view === v ? 'page' : undefined,
@@ -1066,10 +1226,10 @@ function Journey() {
     name: "plus"
   }), "Add game")), /*#__PURE__*/React.createElement("div", {
     className: "tabs"
-  }, [['all', 'All']].concat(_toConsumableArray(Object.entries(STATES))).map(function (_ref12) {
-    var _ref13 = _slicedToArray(_ref12, 2),
-      v = _ref13[0],
-      l = _ref13[1];
+  }, [['all', 'All']].concat(_toConsumableArray(Object.entries(STATES))).map(function (_ref14) {
+    var _ref15 = _slicedToArray(_ref14, 2),
+      v = _ref15[0],
+      l = _ref15[1];
     return /*#__PURE__*/React.createElement("button", {
       className: filter === v ? 'active' : '',
       key: v,
@@ -1142,23 +1302,7 @@ function Journey() {
     }
   }, "+ Collection")), filtered.length ? /*#__PURE__*/React.createElement("div", {
     className: 'grid ' + (list ? 'list' : '')
-  }, filtered.map(card)) : empty('A space for your games', 'Add a game or adjust your filters.')), view === 'journal' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
-    className: "page-title"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", null, "Journal", /*#__PURE__*/React.createElement("span", null, ".")))), sessions.length ? /*#__PURE__*/React.createElement("div", {
-    className: "timeline"
-  }, sessions.map(function (s, i) {
-    return /*#__PURE__*/React.createElement("article", {
-      className: "memory",
-      key: s.id + '-' + i
-    }, /*#__PURE__*/React.createElement("small", null, dateLabel(s.date + 'T12:00:00'), " \xB7 ", s.minutes ? s.minutes + ' min' : 'No duration', " \xB7 ", s.journey), /*#__PURE__*/React.createElement("button", {
-      onClick: function onClick() {
-        return setSelected(s.game);
-      }
-    }, /*#__PURE__*/React.createElement("h2", null, s.game.name)), s.text && /*#__PURE__*/React.createElement("p", null, s.text), s.image && /*#__PURE__*/React.createElement("img", {
-      src: s.image,
-      alt: 'Memory of ' + s.game.name
-    }));
-  })) : empty('Your story starts here', 'Open a game to log your first session.')), view === 'explore' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  }, filtered.map(card)) : empty('A space for your games', 'Add a game or adjust your filters.')), view === 'explore' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "page-title"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", null, "Explore", /*#__PURE__*/React.createElement("span", null, "."))), /*#__PURE__*/React.createElement("button", {
     onClick: function onClick() {
@@ -1222,10 +1366,10 @@ function Journey() {
     return e.status === 'finished';
   }).length, 'completed'], [sessions.length, 'memories'], [(sessions.reduce(function (n, s) {
     return n + (+s.minutes || 0);
-  }, 0) / 60).toFixed(1) + 'h', 'logged']].map(function (_ref14) {
-    var _ref15 = _slicedToArray(_ref14, 2),
-      n = _ref15[0],
-      l = _ref15[1];
+  }, 0) / 60).toFixed(1) + 'h', 'logged']].map(function (_ref16) {
+    var _ref17 = _slicedToArray(_ref16, 2),
+      n = _ref17[0],
+      l = _ref17[1];
     return /*#__PURE__*/React.createElement("div", {
       className: "panel",
       key: l
@@ -1303,7 +1447,9 @@ function Journey() {
     onClick: function onClick() {
       return setSelected(null);
     }
-  }, "\xD7"), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "close"
+  })), /*#__PURE__*/React.createElement("div", {
     className: "detail-hero"
   }, selected.cover && /*#__PURE__*/React.createElement("img", {
     src: selected.cover,
@@ -1320,10 +1466,10 @@ function Journey() {
     }
   }, "Remove from library"), /*#__PURE__*/React.createElement("div", {
     className: "tabs"
-  }, [['about', 'Overview']].concat(_toConsumableArray(entry ? [['journey', 'My journey'], ['memories', 'Memories']] : [])).map(function (_ref16) {
-    var _ref17 = _slicedToArray(_ref16, 2),
-      v = _ref17[0],
-      l = _ref17[1];
+  }, [['about', 'Overview']].concat(_toConsumableArray(entry ? [['journey', 'My journey'], ['memories', 'Memories']] : [])).map(function (_ref18) {
+    var _ref19 = _slicedToArray(_ref18, 2),
+      v = _ref19[0],
+      l = _ref19[1];
     return /*#__PURE__*/React.createElement("button", {
       key: v,
       className: tab === v ? 'active' : '',
@@ -1348,10 +1494,10 @@ function Journey() {
         status: e.target.value
       });
     }
-  }, Object.entries(STATES).map(function (_ref18) {
-    var _ref19 = _slicedToArray(_ref18, 2),
-      v = _ref19[0],
-      l = _ref19[1];
+  }, Object.entries(STATES).map(function (_ref20) {
+    var _ref21 = _slicedToArray(_ref20, 2),
+      v = _ref21[0],
+      l = _ref21[1];
     return /*#__PURE__*/React.createElement("option", {
       key: v,
       value: v
@@ -1424,36 +1570,30 @@ function Journey() {
     maxLength: "4000"
   })), /*#__PURE__*/React.createElement("div", {
     className: "two-col"
-  }, /*#__PURE__*/React.createElement("label", null, "Started on", /*#__PURE__*/React.createElement("input", {
-    type: "date",
+  }, /*#__PURE__*/React.createElement(DateField, {
     name: "start",
-    defaultValue: entry.startDate || ''
-  })), /*#__PURE__*/React.createElement("label", null, "Finished on", /*#__PURE__*/React.createElement("input", {
-    type: "date",
+    label: "Started on",
+    initialValue: entry.startDate || ''
+  }), /*#__PURE__*/React.createElement(DateField, {
     name: "end",
-    defaultValue: entry.endDate || ''
-  }))), /*#__PURE__*/React.createElement("label", null, "My rating \xB7 0 a 10", /*#__PURE__*/React.createElement("input", {
+    label: "Finished on",
+    initialValue: entry.endDate || ''
+  })), /*#__PURE__*/React.createElement(SliderField, {
     name: "rating",
-    type: "number",
-    min: "0",
-    max: "10",
-    step: "0.5",
-    defaultValue: (_entry$rating = entry.rating) !== null && _entry$rating !== void 0 ? _entry$rating : ''
-  })), /*#__PURE__*/React.createElement("fieldset", null, /*#__PURE__*/React.createElement("legend", null, "Time to beat \xB7 your estimates"), [["main", "Main story"], ["extras", "Story + extras"], ["complete", "100% completion"]].map(function (_ref20) {
+    label: "My rating",
+    kind: "rating",
+    initialValue: entry.rating
+  }), /*#__PURE__*/React.createElement("fieldset", null, /*#__PURE__*/React.createElement("legend", null, "Time to beat \xB7 your estimates"), [["main", "Main story"], ["extras", "Story + extras"], ["complete", "100% completion"]].map(function (_ref22) {
     var _entry$timeToBeat;
-    var _ref21 = _slicedToArray(_ref20, 2),
-      k = _ref21[0],
-      label = _ref21[1];
-    return /*#__PURE__*/React.createElement("label", {
-      key: k
-    }, label, " \xB7 hours", /*#__PURE__*/React.createElement("input", {
-      type: "number",
+    var _ref23 = _slicedToArray(_ref22, 2),
+      k = _ref23[0],
+      label = _ref23[1];
+    return /*#__PURE__*/React.createElement(SliderField, {
+      key: k,
       name: "ttb_" + k,
-      min: "0.1",
-      max: "10000",
-      step: "0.1",
-      defaultValue: ((_entry$timeToBeat = entry.timeToBeat) === null || _entry$timeToBeat === void 0 ? void 0 : _entry$timeToBeat[k]) || ""
-    }));
+      label: label,
+      initialValue: (_entry$timeToBeat = entry.timeToBeat) === null || _entry$timeToBeat === void 0 ? void 0 : _entry$timeToBeat[k]
+    });
   })), /*#__PURE__*/React.createElement("label", null, "My thoughts", /*#__PURE__*/React.createElement("textarea", {
     name: "note",
     defaultValue: entry.note || '',
@@ -1540,7 +1680,9 @@ function Journey() {
     onClick: function onClick() {
       return setModal(null);
     }
-  }, "\xD7"), modal.type === 'remove' ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h2", null, "Remove this game?"), /*#__PURE__*/React.createElement("p", null, "This removes the game from every list and collection, together with its notes, playthroughs and memories. You can undo immediately after removal."), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "close"
+  })), modal.type === 'remove' ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h2", null, "Remove this game?"), /*#__PURE__*/React.createElement("p", null, "This removes the game from every list and collection, together with its notes, playthroughs and memories. You can undo immediately after removal."), /*#__PURE__*/React.createElement("button", {
     className: "primary",
     onClick: function onClick() {
       return removeGame(modal.id);
@@ -1567,7 +1709,7 @@ function Journey() {
   }, "Import and merge")) : /*#__PURE__*/React.createElement("form", {
     className: "form",
     onSubmit: ( /*#__PURE__*/function () {
-      var _ref22 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(e) {
+      var _ref24 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(e) {
         var f, name, _name, next, en, js, j, _modal$session, _fileRef$current, _modal$session2, image, file, _en, _js, session;
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
           while (1) switch (_context2.prev = _context2.next) {
@@ -1692,7 +1834,7 @@ function Journey() {
         }, _callee2);
       }));
       return function (_x3) {
-        return _ref22.apply(this, arguments);
+        return _ref24.apply(this, arguments);
       };
     }())
   }, /*#__PURE__*/React.createElement("h2", null, {
@@ -1700,12 +1842,12 @@ function Journey() {
     collection: 'New collection',
     replay: 'New playthrough',
     session: 'Log a session'
-  }[modal.type]), modal.type === 'session' ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("label", null, "Date", /*#__PURE__*/React.createElement("input", {
+  }[modal.type]), modal.type === 'session' ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(DateField, {
     name: "date",
-    type: "date",
-    defaultValue: ((_modal$session3 = modal.session) === null || _modal$session3 === void 0 ? void 0 : _modal$session3.date) || nowDate(),
+    label: "Date",
+    initialValue: ((_modal$session3 = modal.session) === null || _modal$session3 === void 0 ? void 0 : _modal$session3.date) || nowDate(),
     required: true
-  })), /*#__PURE__*/React.createElement("label", null, "Time played \xB7 minutes", /*#__PURE__*/React.createElement("input", {
+  }), /*#__PURE__*/React.createElement("label", null, "Time played \xB7 minutes", /*#__PURE__*/React.createElement("input", {
     name: "minutes",
     type: "number",
     min: "0",
@@ -1747,6 +1889,8 @@ function Journey() {
     onClick: function onClick() {
       return setToast('');
     }
-  }, "\xD7")));
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "close"
+  }))));
 }
 ReactDOM.createRoot(document.getElementById('root')).render( /*#__PURE__*/React.createElement(Journey, null));
