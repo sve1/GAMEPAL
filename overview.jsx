@@ -11,8 +11,9 @@ function GameOverview({
     [shot, setShot] = useState(null),
     [clip, setClip] = useState(0);
   const manual = String(game.id).startsWith('manual-');
+  const freeGame = game.provider==='freetogame'||String(game.id).startsWith('ftg-');
   useEffect(() => {
-    if (manual || !rawgKey) return;
+    if (manual || (!rawgKey && !freeGame)) return;
     const controller = new AbortController();
     let mounted = true;
     const cacheKey = String(game.id);
@@ -59,16 +60,16 @@ function GameOverview({
   return <div className="overview">
  {loading && <div className="detail-loading" role="status">Loading game details…</div>}
  {problem && <div className="notice" role="alert">{problem}<button onClick={() => setAttempt(a => a + 1)}>Try again</button></div>}
- {!manual && !rawgKey && <p className="media-notice">Set your RAWG key in Profile to load details and media.</p>}
+ {!manual && !freeGame && !rawgKey && <p className="media-notice">Set your RAWG key in Profile to load details and media.</p>}
  <section className="completion-times"><h2>Time to beat</h2>{Object.values(game.timeToBeat||{}).some(v=>Number(v)>0)?<><div className="completion-grid">{[['main','Main story'],['extras','Story + extras'],['complete','100% completion']].map(([k,label])=>Number(game.timeToBeat?.[k])>0&&<div key={k}><small>{label}</small><strong>{game.timeToBeat[k]}<span> h</span></strong></div>)}</div><p className="media-notice">Your saved estimates · edit in My journey.</p></>:<p className="media-notice">No completion estimate saved. RAWG average playtime is not a time-to-beat estimate.</p>}<a className="external-game" href={'https://howlongtobeat.com/?q='+encodeURIComponent(game.name)} target="_blank" rel="noopener noreferrer"><Icon name="explore"/>Find on HowLongToBeat</a>{Number(info.averagePlaytime)>0&&<p className="media-notice">RAWG average playtime: {info.averagePlaytime} h · player activity, not completion time.</p>}</section><section className="synopsis"><h2>Synopsis</h2><p>{info.description || (loading ? 'Loading synopsis…' : 'No synopsis available for this game.')}</p></section>
  {platforms.length > 0 && <section><h2>Platforms</h2><div className="platform-chips">{platforms.map(p => <span key={p.name}><Icon name="gamepad" />{p.name}{p.released_at && <small>{p.released_at.slice(0, 4)}</small>}</span>)}</div></section>}
  {facts.length > 0 && <dl className="game-facts">{facts.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>}
  {trailers.length > 0 && <section className="trailer-section"><div className="section-heading"><h2>Trailers</h2><Icon name="play" /></div><video key={trailers[clip]?.id || clip} controls playsInline preload="none" poster={safeMediaUrl(trailers[clip]?.preview)} src={safeMediaUrl(trailers[clip]?.data?.max || trailers[clip]?.data?.['480'])} onError={() => setMediaErrors(a => [...new Set([...a, 'Unable to play this trailer.'])])}>Your browser does not support this video.</video>{trailers.length > 1 && <div className="trailer-picker">{trailers.map((t, i) => <button key={t.id || i} className={i === clip ? 'active' : ''} onClick={() => setClip(i)}><Icon name="play" />{t.name || 'Trailer ' + (i + 1)}</button>)}</div>}</section>}
  {screenshots.length > 0 && <section><h2>Gallery</h2><div className="screenshot-grid">{screenshots.map((s, i) => <button key={s.id || i} aria-label={'Enlarge screenshot ' + (i + 1)} onClick={() => setShot(shot === i ? null : i)} aria-expanded={shot === i}><img src={safeMediaUrl(s.image)} alt={'Screenshot ' + (i + 1) + ' de ' + game.name} loading="lazy" /></button>)}</div>{shot !== null && screenshots[shot] && <div className="expanded-shot"><button onClick={() => setShot(null)} aria-label="Close image">×</button><img src={safeMediaUrl(screenshots[shot].image)} alt={'Enlarged screenshot of ' + game.name} /></div>}</section>}
- {!loading && !problem && !manual && rawgKey && !trailers.length && <p className="media-notice">{mediaErrors.some(e => e.includes('trailers')) ? 'Trailers unavailable for this request.' : 'No trailer available on RAWG for this game.'}</p>}
+ {!loading && !problem && !manual && !freeGame && rawgKey && !trailers.length && <p className="media-notice">{mediaErrors.some(e => e.includes('trailers')) ? 'Trailers unavailable for this request.' : 'No trailer available on RAWG for this game.'}</p>}
  {!loading && mediaErrors.length > 0 && <div className="media-notice" role="status">Some media could not be loaded. <button onClick={() => setAttempt(a => a + 1)}>Retry media</button></div>}
  {(info.tags || []).length > 0 && <section><h2>Features</h2><div className="tags">{info.tags.map(t => <span key={t}>{t}</span>)}</div></section>}
  {safeMediaUrl(info.website) && <a className="external-game" href={safeMediaUrl(info.website)} target="_blank" rel="noopener noreferrer"><Icon name="explore" />Official website</a>}
- <p className="attribution">Date and media: <a href="https://rawg.io" target="_blank" rel="noopener noreferrer">RAWG</a></p>
+ <p className="attribution">Data and media: <a href={freeGame?"https://www.freetogame.com":"https://rawg.io"} target="_blank" rel="noopener noreferrer">{freeGame?"FreeToGame":"RAWG"}</a></p>
  </div>;
 }

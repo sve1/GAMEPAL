@@ -101,33 +101,45 @@ function nameSimilarity(a, b) {
 }
 
 // Fetch raw RAWG results with given params
+const rawgSearchCache = new Map();
+const rawgPendingSearches = new Map();
+async function fetchJsonWithTimeout(url, timeout = 9000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeout);
+  try {
+    const res = await fetch(url, {signal: controller.signal});
+    if (!res.ok) throw new Error(res.status === 401 || res.status === 403 ? 'Invalid API key or access denied. Check Profile.' : 'Service unavailable. Please try again.');
+    return await res.json();
+  } catch (error) {
+    if (error.name === 'AbortError') throw new Error('The request took too long. Please try again.');
+    throw error;
+  } finally { clearTimeout(timer); }
+}
 async function rawgFetch(params, rawgKey) {
   const url = new URL('https://api.rawg.io/api/games');
-  Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, String(v)));
-  if (rawgKey) url.searchParams.set('key', rawgKey);
-  const res = await fetch(url.toString());
-  if (!res.ok) throw new Error(res.status === 401 || res.status === 403 ? 'Invalid RAWG key or access denied. Check Profile.' : 'Catalog unavailable. Please try again.');
-  const data = await res.json();
-  return data.results || [];
+  Object.entries(params).sort(([a],[b])=>a.localeCompare(b)).forEach(([k,v])=>url.searchParams.set(k,String(v)));
+  if(rawgKey) url.searchParams.set('key',rawgKey);
+  const cacheKey = url.toString();
+  const cached = rawgSearchCache.get(cacheKey);
+  if(cached && Date.now()-cached.at < 5*60*1000) return cached.results;
+  if(rawgPendingSearches.has(cacheKey)) return rawgPendingSearches.get(cacheKey);
+  const pending = fetchJsonWithTimeout(cacheKey).then(data=>{
+    const results = Array.isArray(data.results)? data.results:[];
+    rawgSearchCache.set(cacheKey,{at:Date.now(),results});
+    if(rawgSearchCache.size>40)rawgSearchCache.delete(rawgSearchCache.keys().next().value);
+    return results;
+  }).finally(()=>rawgPendingSearches.delete(cacheKey));
+  rawgPendingSearches.set(cacheKey,pending);
+  return pending;
 }
 
-async function searchGames({ query, genre, platform, ordering = '-rating', pageSize = 20 }, rawgKey) {
+async function searchGames({ query, genre, platform, ordering = '-rating', pageSize = 20, page = 1 }, rawgKey) {
   // If it's a pure title search (no genre/platform filters), use smart matching
   const isDirectTitleSearch = query && !genre && !platform;
 
   if (isDirectTitleSearch) {
-    // Run two parallel searches: exact flag + relevance order
-    const [exactResults, relevanceResults] = await Promise.all([
-      rawgFetch({ search: query, search_exact: 'true', page_size: 10 }, rawgKey),
-      rawgFetch({ search: query, page_size: 20 }, rawgKey),
-    ]);
-
-    // Merge deduped results, exact first
-    const seen = new Set();
-    const merged = [];
-    exactResults.concat(relevanceResults).forEach(function(g) {
-      if (!seen.has(g.id)) { seen.add(g.id); merged.push(g); }
-    });
+    // One relevance request; rank locally instead of waiting for two searches.
+    const merged = await rawgFetch({search: query.trim(), page_size: Math.max(pageSize,24)}, rawgKey);
 
     // Score each result by name similarity + rating weight
     const scored = merged.map(g => ({
@@ -141,7 +153,7 @@ async function searchGames({ query, genre, platform, ordering = '-rating', pageS
   }
 
   // Genre/platform search — use ordering as normal but still apply name sort if query present
-  const params = { page_size: pageSize, ordering };
+  const params = { page_size: pageSize, ordering, page };
   if (query)    params.search = query;
   if (genre)  { const s = GENRE_MAP[genre.toLowerCase()];       if (s) params.genres    = s; }
   if (platform){ const s = PLATFORM_MAP[platform.toLowerCase()]; if (s) params.platforms = s; }
@@ -229,6 +241,7 @@ function safeMediaUrl(value) {
   try { const url=new URL(value); return url.protocol==='https:'?url.href:undefined; } catch(e) { return undefined; }
 }
 async function fetchGameOverview(id,key,signal) {
+  if(String(id).startsWith('ftg-')) return fetchFreeGameOverview(id,signal);
   async function request(suffix='') {
     const url=new URL('https://api.rawg.io/api/games/'+encodeURIComponent(id)+suffix);
     url.searchParams.set('key',key);
@@ -240,4 +253,34 @@ async function fetchGameOverview(id,key,signal) {
   if(core.status==='rejected')throw core.reason;
   const g=core.value;
   return {info:{...mapGame(g),averagePlaytime:Number(g.playtime)>0?Number(g.playtime):null,description:g.description_raw||'',releaseDate:g.released||'',developers:(g.developers||[]).map(d=>d.name).join(', '),publishers:(g.publishers||[]).map(p=>p.name).join(', '),platformDetails:(g.platforms||[]).map(p=>({name:p.platform.name,released_at:p.released_at})),website:g.website||'',esrb:g.esrb_rating?.name||'',tags:(g.tags||[]).filter(t=>!t.language||t.language==='eng').slice(0,16).map(t=>t.name),screenshots:shots.status==='fulfilled'?(shots.value.results||[]):[],trailers:movies.status==='fulfilled'?(movies.value.results||[]):[]},errors:[...(shots.status==='rejected'?['screenshots']:[]),...(movies.status==='rejected'?['trailers']:[])]};
+}
+
+let freeCatalogPromise;
+async function getFreeCatalog() {
+  if(!freeCatalogPromise)freeCatalogPromise=fetchJsonWithTimeout('data/free-games.json').then(data=>{
+    if(!Array.isArray(data.games))throw new Error('Free-to-play catalog unavailable.');
+    return data.games.map(mapFreeGame);
+  }).catch(error=>{freeCatalogPromise=null;throw error});
+  return freeCatalogPromise;
+}
+function mapFreeGame(g) {
+ return {id:'ftg-'+g.id,provider:'freetogame',name:g.title,cover:g.thumbnail,description:g.short_description||g.description||'',genres:g.genre||'',platforms:g.platform||'',platformDetails:(g.platform||'').split(', ').filter(Boolean).map(name=>({name})),developers:g.developer||'',publishers:g.publisher||'',releaseDate:g.release_date||'',released:(g.release_date||'').slice(0,4),website:safeMediaUrl(g.game_url)||'',rating:'N/A',screenshots:(g.screenshots||[]).map(s=>({id:s.id,image:s.image})),trailers:[]};
+}
+async function searchFreeGames(query) {
+ const catalog=await getFreeCatalog();
+ const q=query.trim().toLowerCase();
+ return catalog.filter(g=>g.name.toLowerCase().includes(q)).sort((a,b)=>nameSimilarity(b.name,q)-nameSimilarity(a.name,q)).slice(0,30);
+}
+async function fetchFreeGameOverview(id,signal) {
+ const number=String(id).slice(4);
+ if(!/^\d+$/.test(number))throw new Error('Invalid game ID.');
+ const response=await fetch('https://www.freetogame.com/api/game?id='+number,{signal});
+ if(!response.ok)throw new Error('FreeToGame details unavailable. Please try again.');
+ return {info:mapFreeGame(await response.json()),errors:[]};
+}
+function randomGames(games, library, count=6, random=Math.random) {
+ const names=new Set(Object.values(library).map(e=>e.game?.name?.trim().toLowerCase()));
+ const candidates=games.filter(g=>!library[g.id]&&!names.has(g.name.trim().toLowerCase()));
+ for(let i=candidates.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[candidates[i],candidates[j]]=[candidates[j],candidates[i]];}
+ return candidates.slice(0,count);
 }

@@ -1,0 +1,36 @@
+name: Refresh Journey home feeds
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+concurrency:
+  group: journey-home-feeds
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/update-home.py
+      - name: Save refreshed feeds
+        id: save
+        run: |
+          git add data/news.json data/free-games.json
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name 'Journey feeds'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Refresh gaming headlines and free-to-play catalog'
+          git push
+          echo 'changed=true' >> "$GITHUB_OUTPUT"
+      - name: Rebuild GitHub Pages
+        if: steps.save.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST "repos/$GITHUB_REPOSITORY/pages/builds"

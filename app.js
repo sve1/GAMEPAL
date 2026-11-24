@@ -53,8 +53,9 @@ function GameOverview(_ref) {
     clip = _useState14[0],
     setClip = _useState14[1];
   var manual = String(game.id).startsWith('manual-');
+  var freeGame = game.provider === 'freetogame' || String(game.id).startsWith('ftg-');
   useEffect(function () {
-    if (manual || !rawgKey) return;
+    if (manual || !rawgKey && !freeGame) return;
     var controller = new AbortController();
     var mounted = true;
     var cacheKey = String(game.id);
@@ -124,7 +125,7 @@ function GameOverview(_ref) {
         return a + 1;
       });
     }
-  }, "Try again")), !manual && !rawgKey && /*#__PURE__*/React.createElement("p", {
+  }, "Try again")), !manual && !freeGame && !rawgKey && /*#__PURE__*/React.createElement("p", {
     className: "media-notice"
   }, "Set your RAWG key in Profile to load details and media."), /*#__PURE__*/React.createElement("section", {
     className: "completion-times"
@@ -227,7 +228,7 @@ function GameOverview(_ref) {
   }, "\xD7"), /*#__PURE__*/React.createElement("img", {
     src: safeMediaUrl(screenshots[shot].image),
     alt: 'Enlarged screenshot of ' + game.name
-  }))), !loading && !problem && !manual && rawgKey && !trailers.length && /*#__PURE__*/React.createElement("p", {
+  }))), !loading && !problem && !manual && !freeGame && rawgKey && !trailers.length && /*#__PURE__*/React.createElement("p", {
     className: "media-notice"
   }, mediaErrors.some(function (e) {
     return e.includes('trailers');
@@ -255,11 +256,238 @@ function GameOverview(_ref) {
     name: "explore"
   }), "Official website"), /*#__PURE__*/React.createElement("p", {
     className: "attribution"
-  }, "Date and media: ", /*#__PURE__*/React.createElement("a", {
-    href: "https://rawg.io",
+  }, "Data and media: ", /*#__PURE__*/React.createElement("a", {
+    href: freeGame ? "https://www.freetogame.com" : "https://rawg.io",
     target: "_blank",
     rel: "noopener noreferrer"
-  }, "RAWG")));
+  }, freeGame ? "FreeToGame" : "RAWG")));
+}
+function HomeDiscovery(_ref8) {
+  var library = _ref8.library,
+    rawgKey = _ref8.rawgKey,
+    renderGame = _ref8.renderGame;
+  var _useState15 = useState([]),
+    _useState16 = _slicedToArray(_useState15, 2),
+    pool = _useState16[0],
+    setPool = _useState16[1],
+    _useState17 = useState(''),
+    _useState18 = _slicedToArray(_useState17, 2),
+    source = _useState18[0],
+    setSource = _useState18[1],
+    _useState19 = useState(true),
+    _useState20 = _slicedToArray(_useState19, 2),
+    loading = _useState20[0],
+    setLoading = _useState20[1],
+    _useState21 = useState(''),
+    _useState22 = _slicedToArray(_useState21, 2),
+    gameError = _useState22[0],
+    setGameError = _useState22[1],
+    _useState23 = useState(function () {
+      return Date.now() >>> 0;
+    }),
+    _useState24 = _slicedToArray(_useState23, 2),
+    seed = _useState24[0],
+    setSeed = _useState24[1];
+  var _useState25 = useState(null),
+    _useState26 = _slicedToArray(_useState25, 2),
+    news = _useState26[0],
+    setNews = _useState26[1],
+    _useState27 = useState(''),
+    _useState28 = _slicedToArray(_useState27, 2),
+    newsError = _useState28[0],
+    setNewsError = _useState28[1],
+    _useState29 = useState(true),
+    _useState30 = _slicedToArray(_useState29, 2),
+    newsLoading = _useState30[0],
+    setNewsLoading = _useState30[1],
+    _useState31 = useState(0),
+    _useState32 = _slicedToArray(_useState31, 2),
+    newsAttempt = _useState32[0],
+    setNewsAttempt = _useState32[1];
+  useEffect(function () {
+    var cancelled = false;
+    setLoading(true);
+    setGameError('');
+    function discover() {
+      return _discover.apply(this, arguments);
+    }
+    function _discover() {
+      _discover = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+        var cached, _games, games;
+        return _regeneratorRuntime().wrap(function _callee$(_context) {
+          while (1) switch (_context.prev = _context.next) {
+            case 0:
+              if (!rawgKey) {
+                _context.next = 17;
+                break;
+              }
+              _context.prev = 1;
+              cached = load('journey_discovery_v1', null);
+              if (!(!cached || Date.now() - cached.at > 86400000 || !Array.isArray(cached.games))) {
+                _context.next = 11;
+                break;
+              }
+              _context.next = 6;
+              return searchGames({
+                ordering: '-added',
+                pageSize: 40,
+                page: 1 + Math.floor(Math.random() * 5)
+              }, rawgKey);
+            case 6:
+              _games = _context.sent;
+              if (_games.length) {
+                _context.next = 9;
+                break;
+              }
+              throw Error('No suggestions available.');
+            case 9:
+              cached = {
+                at: Date.now(),
+                games: _games
+              };
+              save('journey_discovery_v1', cached);
+            case 11:
+              if (!cancelled) {
+                setPool(cached.games);
+                setSource('RAWG');
+              }
+              return _context.abrupt("return");
+            case 15:
+              _context.prev = 15;
+              _context.t0 = _context["catch"](1);
+            case 17:
+              _context.next = 19;
+              return getFreeCatalog();
+            case 19:
+              games = _context.sent;
+              if (!cancelled) {
+                setPool(games);
+                setSource('FreeToGame · free-to-play');
+              }
+            case 21:
+            case "end":
+              return _context.stop();
+          }
+        }, _callee, null, [[1, 15]]);
+      }));
+      return _discover.apply(this, arguments);
+    }
+    discover()["catch"](function () {
+      if (!cancelled) setGameError('Suggestions unavailable. Your library is ready to use.');
+    })["finally"](function () {
+      if (!cancelled) setLoading(false);
+    });
+    return function () {
+      cancelled = true;
+    };
+  }, [rawgKey]);
+  useEffect(function () {
+    var cancelled = false;
+    setNewsLoading(true);
+    setNewsError('');
+    fetchJsonWithTimeout('data/news.json' + (newsAttempt ? '?refresh=' + newsAttempt : ''), 8000).then(function (data) {
+      if (!Array.isArray(data.articles)) throw Error('Invalid news feed');
+      var articles = data.articles.filter(function (a) {
+        return typeof a.title === 'string' && typeof a.source === 'string' && safeMediaUrl(a.url) && !Number.isNaN(Date.parse(a.publishedAt));
+      }).slice(0, 9);
+      if (!articles.length) throw Error('No news available');
+      if (!cancelled) setNews(_objectSpread(_objectSpread({}, data), {}, {
+        articles: articles
+      }));
+    })["catch"](function () {
+      if (!cancelled) setNewsError('Headlines are temporarily unavailable.');
+    })["finally"](function () {
+      if (!cancelled) setNewsLoading(false);
+    });
+    return function () {
+      cancelled = true;
+    };
+  }, [newsAttempt]);
+  var state = seed || 1;
+  var rng = function rng() {
+    state = Math.imul(1664525, state) + 1013904223 >>> 0;
+    return state / 4294967296;
+  };
+  var picks = randomGames(pool, library, 6, rng);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "home-discovery"
+  }, /*#__PURE__*/React.createElement("section", {
+    "aria-label": "Random game suggestions"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section-heading"
+  }, /*#__PURE__*/React.createElement("h2", null, "Random picks"), /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return setSeed(function (s) {
+        return s + 1 >>> 0;
+      });
+    },
+    disabled: loading || !picks.length,
+    "aria-label": "Shuffle game suggestions"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "gamepad"
+  }), "Shuffle")), loading ? /*#__PURE__*/React.createElement("div", {
+    className: "home-loading",
+    role: "status"
+  }, "Finding your next game\u2026") : gameError ? /*#__PURE__*/React.createElement("p", {
+    className: "media-notice",
+    role: "status"
+  }, gameError) : picks.length ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "grid"
+  }, picks.map(renderGame)), /*#__PURE__*/React.createElement("p", {
+    className: "attribution"
+  }, /*#__PURE__*/React.createElement("a", {
+    href: source === 'RAWG' ? 'https://rawg.io' : 'https://www.freetogame.com',
+    target: "_blank",
+    rel: "noopener noreferrer"
+  }, source))) : /*#__PURE__*/React.createElement("p", {
+    className: "media-notice"
+  }, "All available picks are already in your library.")), /*#__PURE__*/React.createElement("section", {
+    "aria-label": "Gaming news"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "section-heading"
+  }, /*#__PURE__*/React.createElement("h2", null, "Gaming news"), /*#__PURE__*/React.createElement("button", {
+    onClick: function onClick() {
+      return setNewsAttempt(function (a) {
+        return a + 1;
+      });
+    },
+    disabled: newsLoading,
+    "aria-label": "Reload news headlines"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "journal"
+  }), "Refresh")), newsLoading && !news ? /*#__PURE__*/React.createElement("div", {
+    className: "home-loading",
+    role: "status"
+  }, "Loading headlines\u2026") : null, newsError && /*#__PURE__*/React.createElement("p", {
+    className: "media-notice",
+    role: "status"
+  }, newsError), news && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "news-grid"
+  }, news.articles.map(function (article) {
+    return /*#__PURE__*/React.createElement("a", {
+      key: article.url,
+      className: "news-card",
+      href: safeMediaUrl(article.url),
+      target: "_blank",
+      rel: "noopener noreferrer"
+    }, safeMediaUrl(article.image) && /*#__PURE__*/React.createElement("img", {
+      src: safeMediaUrl(article.image),
+      alt: "",
+      loading: "lazy",
+      onError: function onError(e) {
+        return e.currentTarget.style.display = 'none';
+      }
+    }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("small", null, article.source, " \xB7 ", /*#__PURE__*/React.createElement("time", {
+      dateTime: article.publishedAt
+    }, dateLabel(article.publishedAt))), /*#__PURE__*/React.createElement("h3", null, article.title), /*#__PURE__*/React.createElement("span", null, "Read article ", /*#__PURE__*/React.createElement(Icon, {
+      name: "chevron"
+    }))));
+  })), /*#__PURE__*/React.createElement("p", {
+    className: "attribution"
+  }, "Public RSS headlines \xB7 feed updated ", Number.isNaN(Date.parse(news.updatedAt)) ? 'date unavailable' : new Date(news.updatedAt).toLocaleString('en-US', {
+    dateStyle: 'medium',
+    timeStyle: 'short'
+  }), Date.now() - Date.parse(news.updatedAt) > 36 * 3600000 ? ' · Saved feed; updates may be delayed.' : ''))));
 }
 var STATES = {
   backlog: 'Backlog',
@@ -278,8 +506,8 @@ var dateLabel = function dateLabel(v) {
     year: 'numeric'
   });
 };
-function Icon(_ref8) {
-  var name = _ref8.name;
+function Icon(_ref9) {
+  var name = _ref9.name;
   var paths = {
     home: 'M3 10l9-7 9 7v11h-6v-7H9v7H3z',
     library: 'M4 3v18M9 3v18M14 3v18M18 4l4 16',
@@ -305,92 +533,96 @@ function Icon(_ref8) {
 }
 function Journey() {
   var _entry$rating, _modal$session3, _modal$session4, _modal$session5;
-  var _useState15 = useState(function () {
+  var _useState33 = useState(function () {
       return load(STORAGE_KEY, {});
     }),
-    _useState16 = _slicedToArray(_useState15, 2),
-    library = _useState16[0],
-    setLibrary = _useState16[1],
-    _useState17 = useState(function () {
+    _useState34 = _slicedToArray(_useState33, 2),
+    library = _useState34[0],
+    setLibrary = _useState34[1],
+    _useState35 = useState(function () {
       return load(SETTINGS_KEY, {});
     }),
-    _useState18 = _slicedToArray(_useState17, 2),
-    settings = _useState18[0],
-    setSettings = _useState18[1],
-    _useState19 = useState(function () {
+    _useState36 = _slicedToArray(_useState35, 2),
+    settings = _useState36[0],
+    setSettings = _useState36[1],
+    _useState37 = useState(function () {
       return load(USER_KEY, {
         name: 'Player'
       });
     }),
-    _useState20 = _slicedToArray(_useState19, 2),
-    user = _useState20[0],
-    setUser = _useState20[1];
-  var _useState21 = useState('home'),
-    _useState22 = _slicedToArray(_useState21, 2),
-    view = _useState22[0],
-    setView = _useState22[1],
-    _useState23 = useState(null),
-    _useState24 = _slicedToArray(_useState23, 2),
-    selected = _useState24[0],
-    setSelected = _useState24[1],
-    _useState25 = useState(''),
-    _useState26 = _slicedToArray(_useState25, 2),
-    query = _useState26[0],
-    setQuery = _useState26[1],
-    _useState27 = useState('all'),
-    _useState28 = _slicedToArray(_useState27, 2),
-    filter = _useState28[0],
-    setFilter = _useState28[1],
-    _useState29 = useState(''),
-    _useState30 = _slicedToArray(_useState29, 2),
-    platform = _useState30[0],
-    setPlatform = _useState30[1],
-    _useState31 = useState('recent'),
-    _useState32 = _slicedToArray(_useState31, 2),
-    sort = _useState32[0],
-    setSort = _useState32[1],
-    _useState33 = useState(false),
-    _useState34 = _slicedToArray(_useState33, 2),
-    list = _useState34[0],
-    setList = _useState34[1],
-    _useState35 = useState([]),
-    _useState36 = _slicedToArray(_useState35, 2),
-    results = _useState36[0],
-    setResults = _useState36[1],
-    _useState37 = useState(false),
     _useState38 = _slicedToArray(_useState37, 2),
-    busy = _useState38[0],
-    setBusy = _useState38[1],
-    _useState39 = useState(''),
+    user = _useState38[0],
+    setUser = _useState38[1];
+  var _useState39 = useState('home'),
     _useState40 = _slicedToArray(_useState39, 2),
-    error = _useState40[0],
-    setError = _useState40[1],
-    _useState41 = useState(''),
+    view = _useState40[0],
+    setView = _useState40[1],
+    _useState41 = useState(null),
     _useState42 = _slicedToArray(_useState41, 2),
-    toast = _useState42[0],
-    setToast = _useState42[1],
-    _useState43 = useState(null),
+    selected = _useState42[0],
+    setSelected = _useState42[1],
+    _useState43 = useState(''),
     _useState44 = _slicedToArray(_useState43, 2),
-    undo = _useState44[0],
-    setUndo = _useState44[1],
-    _useState45 = useState(''),
+    query = _useState44[0],
+    setQuery = _useState44[1],
+    _useState45 = useState('all'),
     _useState46 = _slicedToArray(_useState45, 2),
-    collection = _useState46[0],
-    setCollection = _useState46[1],
-    _useState47 = useState(function () {
+    filter = _useState46[0],
+    setFilter = _useState46[1],
+    _useState47 = useState(''),
+    _useState48 = _slicedToArray(_useState47, 2),
+    platform = _useState48[0],
+    setPlatform = _useState48[1],
+    _useState49 = useState('recent'),
+    _useState50 = _slicedToArray(_useState49, 2),
+    sort = _useState50[0],
+    setSort = _useState50[1],
+    _useState51 = useState(false),
+    _useState52 = _slicedToArray(_useState51, 2),
+    list = _useState52[0],
+    setList = _useState52[1],
+    _useState53 = useState([]),
+    _useState54 = _slicedToArray(_useState53, 2),
+    results = _useState54[0],
+    setResults = _useState54[1],
+    _useState55 = useState(false),
+    _useState56 = _slicedToArray(_useState55, 2),
+    busy = _useState56[0],
+    setBusy = _useState56[1],
+    _useState57 = useState(''),
+    _useState58 = _slicedToArray(_useState57, 2),
+    error = _useState58[0],
+    setError = _useState58[1],
+    _useState59 = useState(''),
+    _useState60 = _slicedToArray(_useState59, 2),
+    toast = _useState60[0],
+    setToast = _useState60[1],
+    _useState61 = useState(null),
+    _useState62 = _slicedToArray(_useState61, 2),
+    undo = _useState62[0],
+    setUndo = _useState62[1],
+    _useState63 = useState(''),
+    _useState64 = _slicedToArray(_useState63, 2),
+    collection = _useState64[0],
+    setCollection = _useState64[1],
+    _useState65 = useState(function () {
       return load('journey_collections_v1', []);
     }),
-    _useState48 = _slicedToArray(_useState47, 2),
-    collections = _useState48[0],
-    setCollections = _useState48[1];
-  var _useState49 = useState(null),
-    _useState50 = _slicedToArray(_useState49, 2),
-    modal = _useState50[0],
-    setModal = _useState50[1],
-    _useState51 = useState('about'),
-    _useState52 = _slicedToArray(_useState51, 2),
-    tab = _useState52[0],
-    setTab = _useState52[1];
+    _useState66 = _slicedToArray(_useState65, 2),
+    collections = _useState66[0],
+    setCollections = _useState66[1];
+  var _useState67 = useState(null),
+    _useState68 = _slicedToArray(_useState67, 2),
+    modal = _useState68[0],
+    setModal = _useState68[1],
+    _useState69 = useState('about'),
+    _useState70 = _slicedToArray(_useState69, 2),
+    tab = _useState70[0],
+    setTab = _useState70[1];
+  var _useState71 = useState(settings.rawgKey ? 'rawg' : 'freetogame'),
+    _useState72 = _slicedToArray(_useState71, 2),
+    catalogSource = _useState72[0],
+    setCatalogSource = _useState72[1];
   var fileRef = useRef(),
     restoreRef = useRef(),
     previousFocus = useRef();
@@ -531,50 +763,62 @@ function Journey() {
     return _search.apply(this, arguments);
   }
   function _search() {
-    _search = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(e) {
-      return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-        while (1) switch (_context2.prev = _context2.next) {
+    _search = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(e) {
+      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+        while (1) switch (_context3.prev = _context3.next) {
           case 0:
             e === null || e === void 0 || e.preventDefault();
             if (query.trim()) {
-              _context2.next = 3;
+              _context3.next = 3;
               break;
             }
-            return _context2.abrupt("return");
+            return _context3.abrupt("return");
           case 3:
             setError('');
             setBusy(true);
-            _context2.prev = 5;
+            _context3.prev = 5;
+            if (!(catalogSource === 'freetogame')) {
+              _context3.next = 13;
+              break;
+            }
+            _context3.t0 = setResults;
+            _context3.next = 10;
+            return searchFreeGames(query);
+          case 10:
+            _context3.t1 = _context3.sent;
+            (0, _context3.t0)(_context3.t1);
+            return _context3.abrupt("return");
+          case 13:
             if (settings.rawgKey) {
-              _context2.next = 8;
+              _context3.next = 15;
               break;
             }
             throw Error('Set your RAWG key in Profile to search the catalog, or add a game manually.');
-          case 8:
-            _context2.t0 = setResults;
-            _context2.next = 11;
+          case 15:
+            _context3.t2 = setResults;
+            _context3.next = 18;
             return searchGames({
               query: query.trim(),
               pageSize: 24
             }, settings.rawgKey);
-          case 11:
-            _context2.t1 = _context2.sent;
-            (0, _context2.t0)(_context2.t1);
-            _context2.next = 18;
-            break;
-          case 15:
-            _context2.prev = 15;
-            _context2.t2 = _context2["catch"](5);
-            setError(_context2.t2.message);
           case 18:
-            _context2.prev = 18;
+            _context3.t3 = _context3.sent;
+            (0, _context3.t2)(_context3.t3);
+            _context3.next = 25;
+            break;
+          case 22:
+            _context3.prev = 22;
+            _context3.t4 = _context3["catch"](5);
+            setError(_context3.t4.message);
+          case 25:
+            _context3.prev = 25;
             setBusy(false);
-            return _context2.finish(18);
-          case 21:
+            return _context3.finish(25);
+          case 28:
           case "end":
-            return _context2.stop();
+            return _context3.stop();
         }
-      }, _callee2, null, [[5, 15, 18, 21]]);
+      }, _callee3, null, [[5, 22, 25, 28]]);
     }));
     return _search.apply(this, arguments);
   }
@@ -602,31 +846,31 @@ function Journey() {
     return _restore.apply(this, arguments);
   }
   function _restore() {
-    _restore = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(file) {
+    _restore = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(file) {
       var data;
-      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-        while (1) switch (_context3.prev = _context3.next) {
+      return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+        while (1) switch (_context4.prev = _context4.next) {
           case 0:
             if (file) {
-              _context3.next = 2;
+              _context4.next = 2;
               break;
             }
-            return _context3.abrupt("return");
+            return _context4.abrupt("return");
           case 2:
-            _context3.prev = 2;
-            _context3.t0 = JSON;
-            _context3.next = 6;
+            _context4.prev = 2;
+            _context4.t0 = JSON;
+            _context4.next = 6;
             return file.text();
           case 6:
-            _context3.t1 = _context3.sent;
-            data = _context3.t0.parse.call(_context3.t0, _context3.t1);
-            if (!(data.format !== 'journey' || data.version !== 1 || !data.library || _typeof(data.library) !== 'object' || Array.isArray(data.library) || Object.entries(data.library).some(function (_ref22) {
-              var _ref23 = _slicedToArray(_ref22, 2),
-                id = _ref23[0],
-                e = _ref23[1];
+            _context4.t1 = _context4.sent;
+            data = _context4.t0.parse.call(_context4.t0, _context4.t1);
+            if (!(data.format !== 'journey' || data.version !== 1 || !data.library || _typeof(data.library) !== 'object' || Array.isArray(data.library) || Object.entries(data.library).some(function (_ref23) {
+              var _ref24 = _slicedToArray(_ref23, 2),
+                id = _ref24[0],
+                e = _ref24[1];
               return !(e !== null && e !== void 0 && e.game) || String(e.game.id) !== id || typeof e.game.name !== 'string' || !STATES[e.status] || e.journeys && !Array.isArray(e.journeys);
             }))) {
-              _context3.next = 10;
+              _context4.next = 10;
               break;
             }
             throw Error('Invalid backup file.');
@@ -635,19 +879,19 @@ function Journey() {
               type: 'restore',
               data: data
             });
-            _context3.next = 16;
+            _context4.next = 16;
             break;
           case 13:
-            _context3.prev = 13;
-            _context3.t2 = _context3["catch"](2);
-            setToast(_context3.t2.message);
+            _context4.prev = 13;
+            _context4.t2 = _context4["catch"](2);
+            setToast(_context4.t2.message);
           case 16:
             restoreRef.current.value = '';
           case 17:
           case "end":
-            return _context3.stop();
+            return _context4.stop();
         }
-      }, _callee3, null, [[2, 13]]);
+      }, _callee4, null, [[2, 13]]);
     }));
     return _restore.apply(this, arguments);
   }
@@ -715,10 +959,10 @@ function Journey() {
   }, /*#__PURE__*/React.createElement("img", {
     src: "icons/icon-192.png?v=journey-5",
     alt: ""
-  }), "journey"), /*#__PURE__*/React.createElement("nav", null, [['home', 'Home'], ['library', 'Library'], ['journal', 'Journal'], ['explore', 'Explore'], ['profile', 'Profile']].map(function (_ref9) {
-    var _ref10 = _slicedToArray(_ref9, 2),
-      v = _ref10[0],
-      label = _ref10[1];
+  }), "journey"), /*#__PURE__*/React.createElement("nav", null, [['home', 'Home'], ['library', 'Library'], ['journal', 'Journal'], ['explore', 'Explore'], ['profile', 'Profile']].map(function (_ref10) {
+    var _ref11 = _slicedToArray(_ref10, 2),
+      v = _ref11[0],
+      label = _ref11[1];
     return /*#__PURE__*/React.createElement("button", {
       key: v,
       "aria-current": view === v ? 'page' : undefined,
@@ -805,7 +1049,11 @@ function Journey() {
     className: "grid"
   }, entries.filter(function (e) {
     return e.status === 'finished';
-  }).slice(0, 6).map(card)))), view === 'library' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  }).slice(0, 6).map(card))), /*#__PURE__*/React.createElement(HomeDiscovery, {
+    library: library,
+    rawgKey: settings.rawgKey,
+    renderGame: card
+  })), view === 'library' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "page-title"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", null, "Library"), /*#__PURE__*/React.createElement("p", null, entries.length, " ", entries.length === 1 ? 'game' : 'games')), /*#__PURE__*/React.createElement("button", {
     className: "primary",
@@ -818,10 +1066,10 @@ function Journey() {
     name: "plus"
   }), "Add game")), /*#__PURE__*/React.createElement("div", {
     className: "tabs"
-  }, [['all', 'All']].concat(_toConsumableArray(Object.entries(STATES))).map(function (_ref11) {
-    var _ref12 = _slicedToArray(_ref11, 2),
-      v = _ref12[0],
-      l = _ref12[1];
+  }, [['all', 'All']].concat(_toConsumableArray(Object.entries(STATES))).map(function (_ref12) {
+    var _ref13 = _slicedToArray(_ref12, 2),
+      v = _ref13[0],
+      l = _ref13[1];
     return /*#__PURE__*/React.createElement("button", {
       className: filter === v ? 'active' : '',
       key: v,
@@ -918,7 +1166,21 @@ function Journey() {
         type: 'manual'
       });
     }
-  }, "Add manually")), /*#__PURE__*/React.createElement("form", {
+  }, "Add manually")), /*#__PURE__*/React.createElement("div", {
+    className: "catalog-source"
+  }, /*#__PURE__*/React.createElement("label", null, "Catalog ", /*#__PURE__*/React.createElement("select", {
+    "aria-label": "Game catalog",
+    value: catalogSource,
+    onChange: function onChange(e) {
+      setCatalogSource(e.target.value);
+      setResults([]);
+      setError('');
+    }
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "rawg"
+  }, "RAWG \xB7 all platforms"), /*#__PURE__*/React.createElement("option", {
+    value: "freetogame"
+  }, "FreeToGame \xB7 free-to-play")))), /*#__PURE__*/React.createElement("form", {
     className: "searchbar",
     onSubmit: search
   }, /*#__PURE__*/React.createElement(Icon, {
@@ -948,7 +1210,11 @@ function Journey() {
     name: "plus"
   }), "Add game")), /*#__PURE__*/React.createElement("p", {
     className: "attribution"
-  }, "Catalog and images: RAWG. Your entries stay on this device.")), view === 'profile' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  }, "Catalog: ", /*#__PURE__*/React.createElement("a", {
+    href: catalogSource === 'rawg' ? 'https://rawg.io' : 'https://www.freetogame.com',
+    target: "_blank",
+    rel: "noopener noreferrer"
+  }, catalogSource === 'rawg' ? 'RAWG' : 'FreeToGame'), " \xB7 ", catalogSource === 'rawg' ? 'All platforms.' : 'Free-to-play PC and browser games.', " Your entries stay on this device.")), view === 'profile' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "page-title"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", null, (user === null || user === void 0 ? void 0 : user.name) || 'Player', /*#__PURE__*/React.createElement("span", null, ".")))), /*#__PURE__*/React.createElement("div", {
     className: "stats"
@@ -956,10 +1222,10 @@ function Journey() {
     return e.status === 'finished';
   }).length, 'completed'], [sessions.length, 'memories'], [(sessions.reduce(function (n, s) {
     return n + (+s.minutes || 0);
-  }, 0) / 60).toFixed(1) + 'h', 'logged']].map(function (_ref13) {
-    var _ref14 = _slicedToArray(_ref13, 2),
-      n = _ref14[0],
-      l = _ref14[1];
+  }, 0) / 60).toFixed(1) + 'h', 'logged']].map(function (_ref14) {
+    var _ref15 = _slicedToArray(_ref14, 2),
+      n = _ref15[0],
+      l = _ref15[1];
     return /*#__PURE__*/React.createElement("div", {
       className: "panel",
       key: l
@@ -1054,10 +1320,10 @@ function Journey() {
     }
   }, "Remove from library"), /*#__PURE__*/React.createElement("div", {
     className: "tabs"
-  }, [['about', 'Overview']].concat(_toConsumableArray(entry ? [['journey', 'My journey'], ['memories', 'Memories']] : [])).map(function (_ref15) {
-    var _ref16 = _slicedToArray(_ref15, 2),
-      v = _ref16[0],
-      l = _ref16[1];
+  }, [['about', 'Overview']].concat(_toConsumableArray(entry ? [['journey', 'My journey'], ['memories', 'Memories']] : [])).map(function (_ref16) {
+    var _ref17 = _slicedToArray(_ref16, 2),
+      v = _ref17[0],
+      l = _ref17[1];
     return /*#__PURE__*/React.createElement("button", {
       key: v,
       className: tab === v ? 'active' : '',
@@ -1082,10 +1348,10 @@ function Journey() {
         status: e.target.value
       });
     }
-  }, Object.entries(STATES).map(function (_ref17) {
-    var _ref18 = _slicedToArray(_ref17, 2),
-      v = _ref18[0],
-      l = _ref18[1];
+  }, Object.entries(STATES).map(function (_ref18) {
+    var _ref19 = _slicedToArray(_ref18, 2),
+      v = _ref19[0],
+      l = _ref19[1];
     return /*#__PURE__*/React.createElement("option", {
       key: v,
       value: v
@@ -1173,11 +1439,11 @@ function Journey() {
     max: "10",
     step: "0.5",
     defaultValue: (_entry$rating = entry.rating) !== null && _entry$rating !== void 0 ? _entry$rating : ''
-  })), /*#__PURE__*/React.createElement("fieldset", null, /*#__PURE__*/React.createElement("legend", null, "Time to beat \xB7 your estimates"), [["main", "Main story"], ["extras", "Story + extras"], ["complete", "100% completion"]].map(function (_ref19) {
+  })), /*#__PURE__*/React.createElement("fieldset", null, /*#__PURE__*/React.createElement("legend", null, "Time to beat \xB7 your estimates"), [["main", "Main story"], ["extras", "Story + extras"], ["complete", "100% completion"]].map(function (_ref20) {
     var _entry$timeToBeat;
-    var _ref20 = _slicedToArray(_ref19, 2),
-      k = _ref20[0],
-      label = _ref20[1];
+    var _ref21 = _slicedToArray(_ref20, 2),
+      k = _ref21[0],
+      label = _ref21[1];
     return /*#__PURE__*/React.createElement("label", {
       key: k
     }, label, " \xB7 hours", /*#__PURE__*/React.createElement("input", {
@@ -1301,23 +1567,23 @@ function Journey() {
   }, "Import and merge")) : /*#__PURE__*/React.createElement("form", {
     className: "form",
     onSubmit: ( /*#__PURE__*/function () {
-      var _ref21 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(e) {
+      var _ref22 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(e) {
         var f, name, _name, next, en, js, j, _modal$session, _fileRef$current, _modal$session2, image, file, _en, _js, session;
-        return _regeneratorRuntime().wrap(function _callee$(_context) {
-          while (1) switch (_context.prev = _context.next) {
+        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+          while (1) switch (_context2.prev = _context2.next) {
             case 0:
               e.preventDefault();
               f = new FormData(e.currentTarget);
               if (!(modal.type === 'manual')) {
-                _context.next = 8;
+                _context2.next = 8;
                 break;
               }
               name = f.get('name').trim();
               if (name) {
-                _context.next = 6;
+                _context2.next = 6;
                 break;
               }
-              return _context.abrupt("return");
+              return _context2.abrupt("return");
             case 6:
               add({
                 id: 'manual-' + Date.now(),
@@ -1330,15 +1596,15 @@ function Journey() {
               setModal(null);
             case 8:
               if (!(modal.type === 'collection')) {
-                _context.next = 14;
+                _context2.next = 14;
                 break;
               }
               _name = f.get('name').trim();
               if (_name) {
-                _context.next = 12;
+                _context2.next = 12;
                 break;
               }
-              return _context.abrupt("return");
+              return _context2.abrupt("return");
             case 12:
               next = _toConsumableArray(new Set([].concat(_toConsumableArray(collections), [_name])));
               try {
@@ -1366,23 +1632,23 @@ function Journey() {
                 setModal(null);
               }
               if (!(modal.type === 'session')) {
-                _context.next = 28;
+                _context2.next = 28;
                 break;
               }
               image = ((_modal$session = modal.session) === null || _modal$session === void 0 ? void 0 : _modal$session.image) || '';
               file = (_fileRef$current = fileRef.current) === null || _fileRef$current === void 0 ? void 0 : _fileRef$current.files[0];
               if (!file) {
-                _context.next = 25;
+                _context2.next = 25;
                 break;
               }
               if (!(!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 1500000)) {
-                _context.next = 22;
+                _context2.next = 22;
                 break;
               }
               setToast('Choose a JPG, PNG or WebP image up to 1.5 MB.');
-              return _context.abrupt("return");
+              return _context2.abrupt("return");
             case 22:
-              _context.next = 24;
+              _context2.next = 24;
               return new Promise(function (resolve, reject) {
                 var r = new FileReader();
                 r.onload = function () {
@@ -1392,7 +1658,7 @@ function Journey() {
                 r.readAsDateURL(file);
               });
             case 24:
-              image = _context.sent;
+              image = _context2.sent;
             case 25:
               _en = library[modal.id], _js = _en.journeys || [{
                 id: 'original',
@@ -1421,12 +1687,12 @@ function Journey() {
               }
             case 28:
             case "end":
-              return _context.stop();
+              return _context2.stop();
           }
-        }, _callee);
+        }, _callee2);
       }));
       return function (_x3) {
-        return _ref21.apply(this, arguments);
+        return _ref22.apply(this, arguments);
       };
     }())
   }, /*#__PURE__*/React.createElement("h2", null, {

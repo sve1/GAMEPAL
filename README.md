@@ -26,3 +26,15 @@ RAWG requer chave do usuário no Perfil. O app não possui assistente de IA. A v
 - Sincronização e importação de plataformas requerem backend e análise das APIs.
 - Duração HowLongToBeat e recomendações editoriais ainda não integradas.
 - Validar instalação e atualização em iOS e Android reais.
+
+
+## Home discovery and search (November 2026)
+
+- RAWG title searches now use one relevance request, locally ranked. A five-minute memory cache (40 entries) and in-flight deduplication avoid repeated calls. Requests time out after nine seconds. Credentials remain in the browser.
+- Explore offers RAWG or FreeToGame. FreeToGame is limited to free-to-play PC/browser games; IDs use `ftg-` and never overwrite RAWG entries. Its catalog is searched locally after one same-origin download. Game details use the public FreeToGame endpoint.
+- Random picks exclude owned IDs and matching titles. With a RAWG key, one catalog pool is cached locally for a day; otherwise (or on failure) the FreeToGame snapshot is used. Shuffle does not call an API.
+- Gaming news displays publisher-supplied RSS headlines, dates, thumbnails and links only, never article bodies. Sources: PC Gamer, GamesRadar+, GamingOnLinux. The feed update timestamp remains visible, including stale-feed warnings.
+- `python scripts/update-home.py` refreshes `data/news.json` and `data/free-games.json`. Individual feed failures are isolated; a total failure retains the last snapshot.
+- `.github/workflows/refresh-home.yml` runs every six hours or manually. It commits public snapshots and requests a GitHub Pages build. GitHub Actions schedules can be delayed or disabled on inactive public repositories, and are subject to account quotas. No paid news API, third-party CORS proxy, user records or secrets are required.
+- Runtime source order for compilation: `overview.jsx`, `home.jsx`, `app.jsx`. Compile with Babel 7, presets `react` and `env`, into `app.js`.
+- Checks: `node tests/journey.test.cjs`, `node tests/rawg.test.cjs`, `node tests/discovery.test.cjs`.
