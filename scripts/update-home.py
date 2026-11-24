@@ -17,6 +17,7 @@ def feed(source,url,host):
   try:published=email.utils.parsedate_to_datetime(item.findtext('pubDate','')).astimezone(datetime.timezone.utc).isoformat()
   except (ValueError,TypeError,AttributeError):continue
   if not title or not link:continue
+  if host=='gamesradar.com' and not urllib.parse.urlparse(link).path.startswith(('/games/','/platforms/','/hardware/','/gaming-')):continue
   # Only publisher-supplied thumbnails; no scraped article pages or text.
   image=None
   for child in item.iter():

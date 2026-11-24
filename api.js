@@ -264,7 +264,7 @@ async function getFreeCatalog() {
   return freeCatalogPromise;
 }
 function mapFreeGame(g) {
- return {id:'ftg-'+g.id,provider:'freetogame',name:g.title,cover:g.thumbnail,description:g.short_description||g.description||'',genres:g.genre||'',platforms:g.platform||'',platformDetails:(g.platform||'').split(', ').filter(Boolean).map(name=>({name})),developers:g.developer||'',publishers:g.publisher||'',releaseDate:g.release_date||'',released:(g.release_date||'').slice(0,4),website:safeMediaUrl(g.game_url)||'',rating:'N/A',screenshots:(g.screenshots||[]).map(s=>({id:s.id,image:s.image})),trailers:[]};
+ return {id:'ftg-'+g.id,provider:'freetogame',name:g.title,cover:g.thumbnail,description:g.description||g.short_description||'',genres:g.genre||'',platforms:g.platform||'',platformDetails:(g.platform||'').split(', ').filter(Boolean).map(name=>({name})),developers:g.developer||'',publishers:g.publisher||'',releaseDate:g.release_date||'',released:(g.release_date||'').slice(0,4),website:safeMediaUrl(g.game_url)||'',rating:'N/A',screenshots:(g.screenshots||[]).map(s=>({id:s.id,image:s.image})),trailers:[]};
 }
 async function searchFreeGames(query) {
  const catalog=await getFreeCatalog();

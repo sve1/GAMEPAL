@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-11-24T19:44:29.663392+00:00",
+  "updatedAt": "2026-11-24T19:46:06.583838+00:00",
   "sources": [
-    "GamesRadar+",
     "GamingOnLinux",
-    "PC Gamer"
+    "PC Gamer",
+    "GamesRadar+"
   ],
   "unavailableSources": [],
   "articles": [
@@ -43,18 +43,18 @@
       "image": "https://cdn.mos.cms.futurecdn.net/y7iynwPx69vDcmgwyV4xW4-1920-80.jpg"
     },
     {
-      "title": "Prime Video officially confirms The Rings of Power season 4",
-      "url": "https://www.gamesradar.com/entertainment/lord-of-the-rings-tv-shows/prime-video-officially-confirms-the-rings-of-power-season-4/",
-      "source": "GamesRadar+",
-      "publishedAt": "2026-11-24T18:15:00+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/8Apv5cytHXzkTch2yVYTfh-1920-80.jpg"
-    },
-    {
       "title": "Quote of the Day from GTA 6 writer: \"We want players to be emotionally in step with Jason and Lucia\"",
       "url": "https://www.gamesradar.com/games/grand-theft-auto/quote-of-the-day-from-gta-6-writer-we-want-players-to-be-emotionally-in-step-with-jason-and-lucia/",
       "source": "GamesRadar+",
       "publishedAt": "2026-11-24T18:00:00+00:00",
       "image": "https://cdn.mos.cms.futurecdn.net/rEdpLQ3nrdgraaEQofNt2A-1920-80.jpg"
+    },
+    {
+      "title": "\"Blizzard, I'm looking at you\" - Path of Exile 2 boss calls out lackluster game announcements",
+      "url": "https://www.gamesradar.com/games/action-rpg/blizzard-im-looking-at-you-path-of-exile-2-boss-calls-out-aaa-studios-lackluster-game-announcements-implores-devs-to-stop-trying-to-have-a-one-more-thing-moment/",
+      "source": "GamesRadar+",
+      "publishedAt": "2026-11-24T17:47:18+00:00",
+      "image": "https://cdn.mos.cms.futurecdn.net/v9sMmG7w9nkb9jvfKRHoCi-1920-80.jpg"
     },
     {
       "title": "GTA 6 recomp leaders bail out as Take-Two cracks down on illicit efforts to get the game running on PC",

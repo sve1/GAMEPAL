@@ -1025,7 +1025,7 @@ function Journey() {
   }), "Add game")), playing.length > 0 && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "section-heading"
   }, /*#__PURE__*/React.createElement("h2", null, "Playing"), /*#__PURE__*/React.createElement("button", {
-    "aria-label": "Ver biblioteca",
+    "aria-label": "View library",
     onClick: function onClick() {
       return nav('library');
     }
@@ -1308,7 +1308,7 @@ function Journey() {
   }, selected.cover && /*#__PURE__*/React.createElement("img", {
     src: selected.cover,
     alt: ""
-  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("small", null, entry ? STATES[entry.status] : 'UM NOVO MUNDO'), /*#__PURE__*/React.createElement("h1", null, selected.name), /*#__PURE__*/React.createElement("p", null, selected.genres, " \xB7 ", selected.released))), /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("small", null, entry ? STATES[entry.status] : 'DISCOVER'), /*#__PURE__*/React.createElement("h1", null, selected.name), /*#__PURE__*/React.createElement("p", null, selected.genres, " \xB7 ", selected.released))), /*#__PURE__*/React.createElement("div", {
     className: "detail-body"
   }, entry && /*#__PURE__*/React.createElement("button", {
     className: "remove-game",
