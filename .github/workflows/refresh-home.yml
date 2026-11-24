@@ -1,5 +1,9 @@
 name: Refresh Journey home feeds
 on:
+  push:
+    paths:
+      - scripts/update-home.py
+      - .github/workflows/refresh-home.yml
   schedule:
     - cron: '17 */6 * * *'
   workflow_dispatch:
