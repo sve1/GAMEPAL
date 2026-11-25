@@ -1202,6 +1202,7 @@ function JourneyAssistant(_ref12) {
   }), /*#__PURE__*/React.createElement("button", {
     type: "submit",
     className: "primary",
+    "aria-label": "Send message",
     disabled: busy || !input.trim()
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "play"

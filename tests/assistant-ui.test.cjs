@@ -12,7 +12,7 @@ function text(n){return typeof n==='string'?n:(n?.children||[]).map(text).join('
 function button(label){const n=all(tree).find(n=>n.type==='button'&&text(n)===label);assert.ok(n,'Missing '+label);return n}
 function change(type,value){const n=all(tree).find(n=>n.type==='input'&&n.props.type===type);n.props.onChange({target:{value,checked:value}});render()}
 (async()=>{
- render();assert.equal(calls,0);change('password','test-only-not-real-key');change('checkbox',true);all(tree).find(n=>n.type==='form').props.onSubmit({preventDefault(){}});render();assert.ok(text(tree).includes('Where will you go next?'));assert.equal(calls,0);
+ render();assert.equal(calls,0);change('password','test-only-not-real-key');change('checkbox',true);all(tree).find(n=>n.type==='form').props.onSubmit({preventDefault(){}});render();assert.ok(text(tree).includes('Where will you go next?'));assert.equal(calls,0);assert.ok(all(tree).some(n=>n.type==='button'&&n.props['aria-label']==='Send message'));
  async function ask(input){all(tree).find(n=>n.type==='textarea').props.onChange({target:{value:input}});render();await all(tree).find(n=>n.type==='form').props.onSubmit({preventDefault(){}});render()}
  await ask('Add Warframe');assert.equal(calls,1);assert.equal(applied,0);assert.equal(Object.keys(lib).length,0);
  const add=button('Add');add.props.onClick();add.props.onClick();render();assert.equal(applied,1);assert.equal(lib['ftg-1'].status,'backlog');
