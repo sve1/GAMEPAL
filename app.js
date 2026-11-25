@@ -1,6 +1,7 @@
 "use strict";
 
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw new Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw new Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
@@ -19,12 +20,32 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-function SliderField(_ref) {
-  var name = _ref.name,
-    label = _ref.label,
-    initialValue = _ref.initialValue,
-    _ref$kind = _ref.kind,
-    kind = _ref$kind === void 0 ? 'hours' : _ref$kind;
+// All dismiss controls share one geometry, independent of fonts and flex baselines.
+function CloseButton(_ref) {
+  var label = _ref.label,
+    onClick = _ref.onClick,
+    _ref$className = _ref.className,
+    className = _ref$className === void 0 ? '' : _ref$className;
+  return /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    className: 'dismiss-control ' + className,
+    "aria-label": label,
+    onClick: onClick
+  }, /*#__PURE__*/React.createElement("svg", {
+    className: "dismiss-symbol",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    "aria-hidden": "true"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "M6 6L18 18M18 6L6 18"
+  })));
+}
+function SliderField(_ref2) {
+  var name = _ref2.name,
+    label = _ref2.label,
+    initialValue = _ref2.initialValue,
+    _ref2$kind = _ref2.kind,
+    kind = _ref2$kind === void 0 ? 'hours' : _ref2$kind;
   var rating = kind === 'rating';
   var valid = initialValue !== null && initialValue !== undefined && initialValue !== '' && Number.isFinite(Number(initialValue));
   var initial = valid ? Number(initialValue) : null;
@@ -112,13 +133,13 @@ function SliderField(_ref) {
     "aria-label": 'Clear ' + label
   }, "Clear")), /*#__PURE__*/React.createElement("span", null, limit, rating ? '' : ' h')));
 }
-function DateField(_ref2) {
-  var name = _ref2.name,
-    label = _ref2.label,
-    _ref2$initialValue = _ref2.initialValue,
-    initialValue = _ref2$initialValue === void 0 ? '' : _ref2$initialValue,
-    _ref2$required = _ref2.required,
-    required = _ref2$required === void 0 ? false : _ref2$required;
+function DateField(_ref3) {
+  var name = _ref3.name,
+    label = _ref3.label,
+    _ref3$initialValue = _ref3.initialValue,
+    initialValue = _ref3$initialValue === void 0 ? '' : _ref3$initialValue,
+    _ref3$required = _ref3.required,
+    required = _ref3$required === void 0 ? false : _ref3$required;
   var _useState5 = useState(initialValue || ''),
     _useState6 = _slicedToArray(_useState5, 2),
     value = _useState6[0],
@@ -171,10 +192,10 @@ function DateField(_ref2) {
   }, "Clear date"));
 }
 var overviewCache = new Map();
-function GameOverview(_ref3) {
+function GameOverview(_ref4) {
   var _trailers$clip, _trailers$clip2, _trailers$clip3, _trailers$clip4;
-  var game = _ref3.game,
-    rawgKey = _ref3.rawgKey;
+  var game = _ref4.game,
+    rawgKey = _ref4.rawgKey;
   var _useState7 = useState(game),
     _useState8 = _slicedToArray(_useState7, 2),
     info = _useState8[0],
@@ -257,9 +278,9 @@ function GameOverview(_ref3) {
     var _t$data, _t$data2;
     return safeMediaUrl(((_t$data = t.data) === null || _t$data === void 0 ? void 0 : _t$data.max) || ((_t$data2 = t.data) === null || _t$data2 === void 0 ? void 0 : _t$data2['480']));
   });
-  var facts = [['Release date', info.releaseDate ? dateLabel(info.releaseDate + 'T12:00:00') : info.released], ['Developer', info.developers], ['Publisher', info.publishers], ['Genres', info.genres], ['Age rating', info.esrb], ['Metacritic', info.metacritic ? String(info.metacritic) + '/100' : null], ['RAWG rating', info.rating && info.rating !== 'N/A' ? info.rating + '/5' : null]].filter(function (_ref4) {
-    var _ref5 = _slicedToArray(_ref4, 2),
-      v = _ref5[1];
+  var facts = [['Release date', info.releaseDate ? dateLabel(info.releaseDate + 'T12:00:00') : info.released], ['Developer', info.developers], ['Publisher', info.publishers], ['Genres', info.genres], ['Age rating', info.esrb], ['Metacritic', info.metacritic ? String(info.metacritic) + '/100' : null], ['RAWG rating', info.rating && info.rating !== 'N/A' ? info.rating + '/5' : null]].filter(function (_ref5) {
+    var _ref6 = _slicedToArray(_ref5, 2),
+      v = _ref6[1];
     return v;
   });
   return /*#__PURE__*/React.createElement("div", {
@@ -284,11 +305,11 @@ function GameOverview(_ref3) {
     return Number(v) > 0;
   }) ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "completion-grid"
-  }, [['main', 'Main story'], ['extras', 'Story + extras'], ['complete', '100% completion']].map(function (_ref6) {
+  }, [['main', 'Main story'], ['extras', 'Story + extras'], ['complete', '100% completion']].map(function (_ref7) {
     var _game$timeToBeat;
-    var _ref7 = _slicedToArray(_ref6, 2),
-      k = _ref7[0],
-      label = _ref7[1];
+    var _ref8 = _slicedToArray(_ref7, 2),
+      k = _ref8[0],
+      label = _ref8[1];
     return Number((_game$timeToBeat = game.timeToBeat) === null || _game$timeToBeat === void 0 ? void 0 : _game$timeToBeat[k]) > 0 && /*#__PURE__*/React.createElement("div", {
       key: k
     }, /*#__PURE__*/React.createElement("small", null, label), /*#__PURE__*/React.createElement("strong", null, game.timeToBeat[k], /*#__PURE__*/React.createElement("span", null, " h")));
@@ -317,10 +338,10 @@ function GameOverview(_ref3) {
     }), p.name, p.released_at && /*#__PURE__*/React.createElement("small", null, p.released_at.slice(0, 4)));
   }))), facts.length > 0 && /*#__PURE__*/React.createElement("dl", {
     className: "game-facts"
-  }, facts.map(function (_ref8) {
-    var _ref9 = _slicedToArray(_ref8, 2),
-      label = _ref9[0],
-      value = _ref9[1];
+  }, facts.map(function (_ref9) {
+    var _ref10 = _slicedToArray(_ref9, 2),
+      label = _ref10[0],
+      value = _ref10[1];
     return /*#__PURE__*/React.createElement("div", {
       key: label
     }, /*#__PURE__*/React.createElement("dt", null, label), /*#__PURE__*/React.createElement("dd", null, value));
@@ -371,14 +392,12 @@ function GameOverview(_ref3) {
     }));
   })), shot !== null && screenshots[shot] && /*#__PURE__*/React.createElement("div", {
     className: "expanded-shot"
-  }, /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement(CloseButton, {
+    label: "Close image",
     onClick: function onClick() {
       return setShot(null);
-    },
-    "aria-label": "Close image"
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "close"
-  })), /*#__PURE__*/React.createElement("img", {
+    }
+  }), /*#__PURE__*/React.createElement("img", {
     src: safeMediaUrl(screenshots[shot].image),
     alt: 'Enlarged screenshot of ' + game.name
   }))), !loading && !problem && !manual && !freeGame && rawgKey && !trailers.length && /*#__PURE__*/React.createElement("p", {
@@ -415,10 +434,10 @@ function GameOverview(_ref3) {
     rel: "noopener noreferrer"
   }, freeGame ? "FreeToGame" : "RAWG")));
 }
-function HomeDiscovery(_ref10) {
-  var library = _ref10.library,
-    rawgKey = _ref10.rawgKey,
-    renderGame = _ref10.renderGame;
+function HomeDiscovery(_ref11) {
+  var library = _ref11.library,
+    rawgKey = _ref11.rawgKey,
+    renderGame = _ref11.renderGame;
   var _useState21 = useState([]),
     _useState22 = _slicedToArray(_useState21, 2),
     pool = _useState22[0],
@@ -642,6 +661,576 @@ function HomeDiscovery(_ref10) {
     timeStyle: 'short'
   }), Date.now() - Date.parse(news.updatedAt) > 36 * 3600000 ? ' · Saved feed; updates may be delayed.' : ''))));
 }
+function JourneyAssistant(_ref12) {
+  var library = _ref12.library,
+    rawgKey = _ref12.rawgKey,
+    onApply = _ref12.onApply,
+    onUndo = _ref12.onUndo,
+    canUndo = _ref12.canUndo,
+    open = _ref12.open,
+    onOpen = _ref12.onOpen,
+    onClose = _ref12.onClose;
+  var _useState39 = useState(false),
+    _useState40 = _slicedToArray(_useState39, 2),
+    connected = _useState40[0],
+    setConnected = _useState40[1],
+    _useState41 = useState(''),
+    _useState42 = _slicedToArray(_useState41, 2),
+    draftKey = _useState42[0],
+    setDraftKey = _useState42[1],
+    _useState43 = useState(false),
+    _useState44 = _slicedToArray(_useState43, 2),
+    consent = _useState44[0],
+    setConsent = _useState44[1],
+    _useState45 = useState(false),
+    _useState46 = _slicedToArray(_useState45, 2),
+    share = _useState46[0],
+    setShare = _useState46[1];
+  var _useState47 = useState([]),
+    _useState48 = _slicedToArray(_useState47, 2),
+    messages = _useState48[0],
+    setMessages = _useState48[1],
+    _useState49 = useState(''),
+    _useState50 = _slicedToArray(_useState49, 2),
+    input = _useState50[0],
+    setInput = _useState50[1],
+    _useState51 = useState(false),
+    _useState52 = _slicedToArray(_useState51, 2),
+    busy = _useState52[0],
+    setBusy = _useState52[1],
+    _useState53 = useState(''),
+    _useState54 = _slicedToArray(_useState53, 2),
+    problem = _useState54[0],
+    setProblem = _useState54[1];
+  var keyRef = useRef(''),
+    requestRef = useRef(null),
+    generationRef = useRef(0),
+    dialogRef = useRef(null),
+    logRef = useRef(null),
+    launcherRef = useRef(null),
+    appliedRef = useRef(new Set());
+  useEffect(function () {
+    var _dialogRef$current;
+    if (!open) return;
+    var before = document.activeElement,
+      overflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    (_dialogRef$current = dialogRef.current) === null || _dialogRef$current === void 0 || (_dialogRef$current = _dialogRef$current.querySelector('button')) === null || _dialogRef$current === void 0 || _dialogRef$current.focus();
+    var key = function key(e) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        onClose();
+      }
+      if (e.key === 'Tab') {
+        var _dialogRef$current2;
+        var nodes = Array.from(((_dialogRef$current2 = dialogRef.current) === null || _dialogRef$current2 === void 0 ? void 0 : _dialogRef$current2.querySelectorAll('button:not(:disabled),input,textarea,a[href]')) || []).filter(function (n) {
+          return n.getClientRects().length;
+        });
+        var first = nodes[0],
+          last = nodes[nodes.length - 1];
+        if (!first) return;
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    document.addEventListener('keydown', key, true);
+    return function () {
+      var _launcherRef$current;
+      document.body.style.overflow = overflow;
+      document.removeEventListener('keydown', key, true);
+      if (before !== null && before !== void 0 && before.isConnected) before.focus();else (_launcherRef$current = launcherRef.current) === null || _launcherRef$current === void 0 || _launcherRef$current.focus();
+    };
+  }, [open]);
+  useEffect(function () {
+    if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
+  }, [messages, busy, open]);
+  useEffect(function () {
+    return function () {
+      var _requestRef$current;
+      generationRef.current++;
+      (_requestRef$current = requestRef.current) === null || _requestRef$current === void 0 || _requestRef$current.abort();
+      keyRef.current = '';
+    };
+  }, []);
+  function cancel() {
+    var _requestRef$current2;
+    generationRef.current++;
+    (_requestRef$current2 = requestRef.current) === null || _requestRef$current2 === void 0 || _requestRef$current2.abort();
+    requestRef.current = null;
+    setBusy(false);
+  }
+  function disconnect() {
+    cancel();
+    keyRef.current = '';
+    setConnected(false);
+    setMessages([]);
+    setDraftKey('');
+    setConsent(false);
+    setShare(false);
+    setProblem('');
+    appliedRef.current.clear();
+  }
+  function connect(e) {
+    e.preventDefault();
+    if (!draftKey.trim() || !consent) return;
+    keyRef.current = draftKey.trim();
+    setDraftKey('');
+    setConnected(true);
+    appliedRef.current.clear();
+    setProblem('');
+  }
+  function prepare(_x, _x2) {
+    return _prepare.apply(this, arguments);
+  }
+  function _prepare() {
+    _prepare = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(action, signal) {
+      var candidates, catalogError, found;
+      return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+        while (1) switch (_context2.prev = _context2.next) {
+          case 0:
+            if (!['add_game', 'find_game'].includes(action.type)) {
+              _context2.next = 21;
+              break;
+            }
+            candidates = [], catalogError = '';
+            _context2.prev = 2;
+            if (!rawgKey) {
+              _context2.next = 9;
+              break;
+            }
+            _context2.next = 6;
+            return searchGames({
+              query: action.title,
+              pageSize: 6
+            }, rawgKey);
+          case 6:
+            _context2.t0 = _context2.sent;
+            _context2.next = 12;
+            break;
+          case 9:
+            _context2.next = 11;
+            return searchFreeGames(action.title);
+          case 11:
+            _context2.t0 = _context2.sent;
+          case 12:
+            candidates = _context2.t0.slice(0, 6);
+            _context2.next = 18;
+            break;
+          case 15:
+            _context2.prev = 15;
+            _context2.t1 = _context2["catch"](2);
+            catalogError = 'Catalog search unavailable. You can retry in Explore or add a manual entry.';
+          case 18:
+            if (!signal.aborted) {
+              _context2.next = 20;
+              break;
+            }
+            throw Error('Request cancelled.');
+          case 20:
+            return _context2.abrupt("return", _objectSpread(_objectSpread({}, action), {}, {
+              candidates: candidates,
+              catalogError: catalogError
+            }));
+          case 21:
+            found = JourneyAI.matches(library, action.title);
+            return _context2.abrupt("return", _objectSpread(_objectSpread({}, action), {}, {
+              targets: found.map(function (_ref13) {
+                var id = _ref13.id,
+                  entry = _ref13.entry;
+                return {
+                  id: id,
+                  title: entry.game.name,
+                  expectedUpdatedAt: entry.updatedAt,
+                  platform: entry.platform || '',
+                  oldStatus: entry.status,
+                  oldRating: entry.rating,
+                  oldNote: entry.note || ''
+                };
+              })
+            }));
+          case 23:
+          case "end":
+            return _context2.stop();
+        }
+      }, _callee2, null, [[2, 15]]);
+    }));
+    return _prepare.apply(this, arguments);
+  }
+  function send(_x3) {
+    return _send.apply(this, arguments);
+  }
+  function _send() {
+    _send = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(e) {
+      var text, history, epoch, controller, plan, proposals, _iterator, _step, action;
+      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+        while (1) switch (_context3.prev = _context3.next) {
+          case 0:
+            e === null || e === void 0 || e.preventDefault();
+            if (!(busy || !input.trim() || !connected)) {
+              _context3.next = 3;
+              break;
+            }
+            return _context3.abrupt("return");
+          case 3:
+            text = input.trim(), history = messages.filter(function (m) {
+              return !m.failed;
+            }).map(function (m) {
+              return {
+                role: m.role,
+                text: m.text
+              };
+            });
+            epoch = ++generationRef.current, controller = new AbortController();
+            requestRef.current = controller;
+            setInput('');
+            setProblem('');
+            setBusy(true);
+            setMessages(function (ms) {
+              return [].concat(_toConsumableArray(ms), [{
+                role: 'user',
+                text: text
+              }]);
+            });
+            _context3.prev = 10;
+            _context3.next = 13;
+            return JourneyAI.request({
+              key: keyRef.current,
+              input: text,
+              history: history,
+              library: library,
+              share: share,
+              signal: controller.signal
+            });
+          case 13:
+            plan = _context3.sent;
+            proposals = [];
+            _iterator = _createForOfIteratorHelper(plan.actions);
+            _context3.prev = 16;
+            _iterator.s();
+          case 18:
+            if ((_step = _iterator.n()).done) {
+              _context3.next = 27;
+              break;
+            }
+            action = _step.value;
+            _context3.t0 = proposals;
+            _context3.next = 23;
+            return prepare(action, controller.signal);
+          case 23:
+            _context3.t1 = _context3.sent;
+            _context3.t0.push.call(_context3.t0, _context3.t1);
+          case 25:
+            _context3.next = 18;
+            break;
+          case 27:
+            _context3.next = 32;
+            break;
+          case 29:
+            _context3.prev = 29;
+            _context3.t2 = _context3["catch"](16);
+            _iterator.e(_context3.t2);
+          case 32:
+            _context3.prev = 32;
+            _iterator.f();
+            return _context3.finish(32);
+          case 35:
+            if (!(epoch !== generationRef.current)) {
+              _context3.next = 37;
+              break;
+            }
+            return _context3.abrupt("return");
+          case 37:
+            setMessages(function (ms) {
+              return [].concat(_toConsumableArray(ms), [{
+                role: 'model',
+                text: plan.reply,
+                proposals: proposals,
+                id: Date.now() + '-' + epoch
+              }]);
+            });
+            _context3.next = 43;
+            break;
+          case 40:
+            _context3.prev = 40;
+            _context3.t3 = _context3["catch"](10);
+            if (epoch === generationRef.current) {
+              setProblem(_context3.t3.message);
+              setInput(text);
+              setMessages(function (ms) {
+                return ms.slice(0, -1);
+              });
+            }
+          case 43:
+            _context3.prev = 43;
+            if (epoch === generationRef.current) {
+              setBusy(false);
+              requestRef.current = null;
+            }
+            return _context3.finish(43);
+          case 46:
+          case "end":
+            return _context3.stop();
+        }
+      }, _callee3, null, [[10, 40, 43, 46], [16, 29, 32, 35]]);
+    }));
+    return _send.apply(this, arguments);
+  }
+  function apply(messageId, index, command) {
+    var token = messageId + ':' + index;
+    if (busy || appliedRef.current.has(token)) return;
+    try {
+      onApply(command);
+      appliedRef.current.add(token);
+      setMessages(function (ms) {
+        return ms.map(function (m) {
+          return m.id === messageId ? _objectSpread(_objectSpread({}, m), {}, {
+            proposals: m.proposals.map(function (p, i) {
+              return i === index ? _objectSpread(_objectSpread({}, p), {}, {
+                applied: true
+              }) : p;
+            })
+          }) : m;
+        });
+      });
+      setProblem('');
+    } catch (e) {
+      setProblem(e.message);
+    }
+  }
+  function proposal(p, m, index) {
+    return /*#__PURE__*/React.createElement("div", {
+      className: "assistant-proposal",
+      key: index
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "assistant-proposal-title"
+    }, p.title, /*#__PURE__*/React.createElement("span", null, p.applied ? 'Applied' : p.type === 'add_note' ? 'Append comment' : p.type === 'update_game' ? 'Review change' : 'Choose a game')), p.applied ? /*#__PURE__*/React.createElement("p", {
+      role: "status"
+    }, "Applied to your library.") : /*#__PURE__*/React.createElement(React.Fragment, null, ['add_game', 'find_game'].includes(p.type) ? /*#__PURE__*/React.createElement(React.Fragment, null, p.catalogError && /*#__PURE__*/React.createElement("p", null, p.catalogError), !rawgKey && /*#__PURE__*/React.createElement("p", {
+      className: "assistant-meta"
+    }, "Searching FreeToGame \xB7 PC / browser free-to-play. Set a RAWG key in Profile for the full catalog."), p.candidates.map(function (g) {
+      return /*#__PURE__*/React.createElement("div", {
+        className: "assistant-candidate",
+        key: g.id
+      }, g.cover && /*#__PURE__*/React.createElement("img", {
+        src: g.cover,
+        alt: "",
+        loading: "lazy"
+      }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", null, g.name), /*#__PURE__*/React.createElement("small", null, g.platforms || g.genres)), /*#__PURE__*/React.createElement("button", {
+        type: "button",
+        disabled: busy || !!library[g.id] || JourneyAI.matches(library, g.name).length > 0,
+        onClick: function onClick() {
+          return apply(m.id, index, {
+            type: 'add_game',
+            game: g,
+            status: p.status
+          });
+        }
+      }, library[g.id] || JourneyAI.matches(library, g.name).length ? 'In library' : 'Add'));
+    }), !p.candidates.length && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("p", null, "No matching catalog result. A manual entry has no catalog artwork or details."), /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      disabled: busy,
+      onClick: function onClick() {
+        return apply(m.id, index, {
+          type: 'add_game',
+          game: {
+            id: 'manual-' + Date.now(),
+            name: p.title,
+            cover: '',
+            genres: '',
+            platforms: '',
+            released: ''
+          },
+          status: p.status
+        });
+      }
+    }, "Add \u201C", p.title, "\u201D manually"))) : /*#__PURE__*/React.createElement(React.Fragment, null, p.type === 'add_note' && /*#__PURE__*/React.createElement("blockquote", null, p.note), !p.targets.length && /*#__PURE__*/React.createElement("p", null, "No exact title found in your library. Use its full title or add the game first."), p.targets.length > 1 && /*#__PURE__*/React.createElement("p", null, "More than one match: choose which version to update."), p.targets.map(function (t) {
+      var _t$oldRating;
+      return /*#__PURE__*/React.createElement("div", {
+        className: "assistant-change",
+        key: t.id
+      }, /*#__PURE__*/React.createElement("strong", null, t.title, t.platform ? ' · ' + t.platform : ''), p.status !== undefined && /*#__PURE__*/React.createElement("p", null, "Status: ", STATES[t.oldStatus] || t.oldStatus, " \u2192 ", STATES[p.status]), p.rating !== undefined && /*#__PURE__*/React.createElement("p", null, "Rating: ", (_t$oldRating = t.oldRating) !== null && _t$oldRating !== void 0 ? _t$oldRating : 'Not set', " \u2192 ", p.rating, " / 10"), p.type === 'add_note' && /*#__PURE__*/React.createElement("p", null, "Appends to My thoughts. Your existing notes are kept."), /*#__PURE__*/React.createElement("button", {
+        type: "button",
+        className: "primary",
+        disabled: busy,
+        onClick: function onClick() {
+          return apply(m.id, index, _objectSpread(_objectSpread(_objectSpread({
+            type: p.type,
+            id: t.id,
+            title: t.title,
+            expectedUpdatedAt: t.expectedUpdatedAt
+          }, p.status !== undefined ? {
+            status: p.status
+          } : {}), p.rating !== undefined ? {
+            rating: p.rating
+          } : {}), p.type === 'add_note' ? {
+            note: p.note
+          } : {}));
+        }
+      }, "Apply to this game"));
+    }))));
+  }
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    ref: launcherRef,
+    className: "assistant-launcher",
+    "aria-label": "Open Journey AI",
+    "aria-expanded": open,
+    "aria-controls": "journey-assistant",
+    onClick: onOpen
+  }, /*#__PURE__*/React.createElement(CompanionMark, null), /*#__PURE__*/React.createElement("span", null, "AI")), open && /*#__PURE__*/React.createElement("div", {
+    className: "assistant-backdrop",
+    onClick: function onClick(e) {
+      return e.target === e.currentTarget && onClose();
+    }
+  }, /*#__PURE__*/React.createElement("section", {
+    ref: dialogRef,
+    className: "assistant-panel",
+    id: "journey-assistant",
+    role: "dialog",
+    "aria-modal": "true",
+    "aria-labelledby": "assistant-title"
+  }, /*#__PURE__*/React.createElement("header", {
+    className: "assistant-header"
+  }, /*#__PURE__*/React.createElement(CompanionMark, null), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h2", {
+    id: "assistant-title"
+  }, "Journey AI"), /*#__PURE__*/React.createElement("p", null, connected ? 'Your gaming companion' : 'Connect your companion')), /*#__PURE__*/React.createElement(CloseButton, {
+    label: "Close assistant",
+    onClick: onClose
+  })), !connected ? /*#__PURE__*/React.createElement("form", {
+    className: "assistant-connect",
+    onSubmit: connect
+  }, /*#__PURE__*/React.createElement("p", null, "Discover your next game, update your journey and save your thoughts."), /*#__PURE__*/React.createElement("label", null, "Personal Gemini API key", /*#__PURE__*/React.createElement("input", {
+    type: "password",
+    autoComplete: "off",
+    spellCheck: "false",
+    value: draftKey,
+    onChange: function onChange(e) {
+      return setDraftKey(e.target.value);
+    },
+    required: true,
+    maxLength: "256",
+    placeholder: "Paste your own API key"
+  })), /*#__PURE__*/React.createElement("p", null, "Your key stays in memory for this tab and is forgotten when you reload or disconnect. It is sent only to Google, directly from your browser."), /*#__PURE__*/React.createElement("p", null, "Use a free-tier project without billing for free use. Google sets quotas and eligibility; Journey cannot enforce your Google billing settings."), /*#__PURE__*/React.createElement("a", {
+    href: "https://aistudio.google.com/apikey",
+    target: "_blank",
+    rel: "noopener noreferrer"
+  }, "Get a key in Google AI Studio"), /*#__PURE__*/React.createElement("label", {
+    className: "assistant-check"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "checkbox",
+    checked: consent,
+    onChange: function onChange(e) {
+      return setConsent(e.target.checked);
+    }
+  }), "I agree to send my chat messages to Google. Free-tier content may be used to improve Google's products."), /*#__PURE__*/React.createElement("button", {
+    className: "primary",
+    disabled: !consent || !draftKey.trim()
+  }, "Connect Gemini")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "assistant-toolbar"
+  }, /*#__PURE__*/React.createElement("span", null, "Gemini \xB7 personal"), /*#__PURE__*/React.createElement("div", null, canUndo && /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    disabled: busy,
+    onClick: onUndo
+  }, "Undo last app change"), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: disconnect
+  }, "Disconnect"))), /*#__PURE__*/React.createElement("div", {
+    className: "assistant-messages",
+    ref: logRef,
+    role: "log",
+    "aria-label": "Conversation",
+    "aria-live": "polite",
+    "aria-relevant": "additions text"
+  }, !messages.length && /*#__PURE__*/React.createElement("div", {
+    className: "assistant-welcome"
+  }, /*#__PURE__*/React.createElement(CompanionMark, null), /*#__PURE__*/React.createElement("h3", null, "Where will you go next?"), /*#__PURE__*/React.createElement("p", null, "Ask for recommendations, add a game, rate it, or save a comment. Changes appear here for you to review."), ['Recommend a game for tonight', 'Add a game to my backlog', 'Help me save a comment'].map(function (t) {
+    return /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      key: t,
+      onClick: function onClick() {
+        return setInput(t);
+      }
+    }, t);
+  })), messages.map(function (m, i) {
+    var _m$proposals;
+    return /*#__PURE__*/React.createElement("article", {
+      className: 'assistant-message ' + m.role,
+      key: m.id || i
+    }, /*#__PURE__*/React.createElement("small", null, m.role === 'user' ? 'You' : 'Journey AI'), /*#__PURE__*/React.createElement("p", null, m.text), (_m$proposals = m.proposals) === null || _m$proposals === void 0 ? void 0 : _m$proposals.map(function (p, j) {
+      return proposal(p, m, j);
+    }));
+  }), busy && /*#__PURE__*/React.createElement("p", {
+    className: "assistant-thinking",
+    role: "status"
+  }, "Planning your next move\u2026 ", /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: cancel
+  }, "Cancel"))), problem && /*#__PURE__*/React.createElement("p", {
+    className: "assistant-error",
+    role: "alert"
+  }, problem), /*#__PURE__*/React.createElement("form", {
+    className: "assistant-composer",
+    onSubmit: send
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "assistant-check"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "checkbox",
+    checked: share,
+    disabled: busy,
+    onChange: function onChange(e) {
+      return setShare(e.target.checked);
+    }
+  }), "Include library titles, status, platform and ratings (up to 100 games). Notes and images are never included automatically."), /*#__PURE__*/React.createElement("label", {
+    className: "sr-only",
+    htmlFor: "assistant-message"
+  }, "Message Journey AI"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("textarea", {
+    id: "assistant-message",
+    value: input,
+    onChange: function onChange(e) {
+      return setInput(e.target.value);
+    },
+    maxLength: "2000",
+    rows: "2",
+    placeholder: "Ask your companion\u2026",
+    disabled: busy
+  }), /*#__PURE__*/React.createElement("button", {
+    type: "submit",
+    className: "primary",
+    disabled: busy || !input.trim()
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "play"
+  }), /*#__PURE__*/React.createElement("span", null, "Send"))), /*#__PURE__*/React.createElement("p", null, "Review before applying \xB7 No automatic edits \xB7 Chat is not saved"))))));
+}
+function CompanionMark() {
+  return /*#__PURE__*/React.createElement("svg", {
+    className: "companion-mark",
+    viewBox: "0 0 32 32",
+    fill: "none",
+    "aria-hidden": "true"
+  }, /*#__PURE__*/React.createElement("circle", {
+    cx: "16",
+    cy: "16",
+    r: "13",
+    stroke: "currentColor",
+    strokeWidth: "1",
+    strokeDasharray: "1 3"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M16 7l2.7 6.3L25 16l-6.3 2.7L16 25l-2.7-6.3L7 16l6.3-2.7z",
+    stroke: "currentColor",
+    strokeWidth: "1.5"
+  }), /*#__PURE__*/React.createElement("circle", {
+    cx: "16",
+    cy: "16",
+    r: "2",
+    fill: "currentColor"
+  }));
+}
 var STATES = {
   backlog: 'Backlog',
   playing: 'Playing',
@@ -659,8 +1248,8 @@ var dateLabel = function dateLabel(v) {
     year: 'numeric'
   });
 };
-function Icon(_ref11) {
-  var name = _ref11.name;
+function Icon(_ref14) {
+  var name = _ref14.name;
   var paths = {
     home: 'M3 10l9-7 9 7v11h-6v-7H9v7H3z',
     library: 'M4 3v18M9 3v18M14 3v18M18 4l4 16',
@@ -689,96 +1278,110 @@ function Icon(_ref11) {
 }
 function Journey() {
   var _modal$session3, _modal$session4, _modal$session5;
-  var _useState39 = useState(function () {
+  var _useState55 = useState(function () {
       return load(STORAGE_KEY, {});
     }),
-    _useState40 = _slicedToArray(_useState39, 2),
-    library = _useState40[0],
-    setLibrary = _useState40[1],
-    _useState41 = useState(function () {
+    _useState56 = _slicedToArray(_useState55, 2),
+    library = _useState56[0],
+    setLibrary = _useState56[1],
+    _useState57 = useState(function () {
       return load(SETTINGS_KEY, {});
     }),
-    _useState42 = _slicedToArray(_useState41, 2),
-    settings = _useState42[0],
-    setSettings = _useState42[1],
-    _useState43 = useState(function () {
+    _useState58 = _slicedToArray(_useState57, 2),
+    settings = _useState58[0],
+    setSettings = _useState58[1],
+    _useState59 = useState(function () {
       return load(USER_KEY, {
         name: 'Player'
       });
     }),
-    _useState44 = _slicedToArray(_useState43, 2),
-    user = _useState44[0],
-    setUser = _useState44[1];
-  var _useState45 = useState('home'),
-    _useState46 = _slicedToArray(_useState45, 2),
-    view = _useState46[0],
-    setView = _useState46[1],
-    _useState47 = useState(null),
-    _useState48 = _slicedToArray(_useState47, 2),
-    selected = _useState48[0],
-    setSelected = _useState48[1],
-    _useState49 = useState(''),
-    _useState50 = _slicedToArray(_useState49, 2),
-    query = _useState50[0],
-    setQuery = _useState50[1],
-    _useState51 = useState('all'),
-    _useState52 = _slicedToArray(_useState51, 2),
-    filter = _useState52[0],
-    setFilter = _useState52[1],
-    _useState53 = useState(''),
-    _useState54 = _slicedToArray(_useState53, 2),
-    platform = _useState54[0],
-    setPlatform = _useState54[1],
-    _useState55 = useState('recent'),
-    _useState56 = _slicedToArray(_useState55, 2),
-    sort = _useState56[0],
-    setSort = _useState56[1],
-    _useState57 = useState(false),
-    _useState58 = _slicedToArray(_useState57, 2),
-    list = _useState58[0],
-    setList = _useState58[1],
-    _useState59 = useState([]),
     _useState60 = _slicedToArray(_useState59, 2),
-    results = _useState60[0],
-    setResults = _useState60[1],
-    _useState61 = useState(false),
+    user = _useState60[0],
+    setUser = _useState60[1];
+  var _useState61 = useState('home'),
     _useState62 = _slicedToArray(_useState61, 2),
-    busy = _useState62[0],
-    setBusy = _useState62[1],
-    _useState63 = useState(''),
+    view = _useState62[0],
+    setView = _useState62[1],
+    _useState63 = useState(null),
     _useState64 = _slicedToArray(_useState63, 2),
-    error = _useState64[0],
-    setError = _useState64[1],
+    selected = _useState64[0],
+    setSelected = _useState64[1],
     _useState65 = useState(''),
     _useState66 = _slicedToArray(_useState65, 2),
-    toast = _useState66[0],
-    setToast = _useState66[1],
-    _useState67 = useState(null),
+    query = _useState66[0],
+    setQuery = _useState66[1],
+    _useState67 = useState('all'),
     _useState68 = _slicedToArray(_useState67, 2),
-    undo = _useState68[0],
-    setUndo = _useState68[1],
+    filter = _useState68[0],
+    setFilter = _useState68[1],
     _useState69 = useState(''),
     _useState70 = _slicedToArray(_useState69, 2),
-    collection = _useState70[0],
-    setCollection = _useState70[1],
-    _useState71 = useState(function () {
+    platform = _useState70[0],
+    setPlatform = _useState70[1],
+    _useState71 = useState('recent'),
+    _useState72 = _slicedToArray(_useState71, 2),
+    sort = _useState72[0],
+    setSort = _useState72[1],
+    _useState73 = useState(false),
+    _useState74 = _slicedToArray(_useState73, 2),
+    list = _useState74[0],
+    setList = _useState74[1],
+    _useState75 = useState([]),
+    _useState76 = _slicedToArray(_useState75, 2),
+    results = _useState76[0],
+    setResults = _useState76[1],
+    _useState77 = useState(false),
+    _useState78 = _slicedToArray(_useState77, 2),
+    busy = _useState78[0],
+    setBusy = _useState78[1],
+    _useState79 = useState(''),
+    _useState80 = _slicedToArray(_useState79, 2),
+    error = _useState80[0],
+    setError = _useState80[1],
+    _useState81 = useState(''),
+    _useState82 = _slicedToArray(_useState81, 2),
+    toast = _useState82[0],
+    setToast = _useState82[1],
+    _useState83 = useState(null),
+    _useState84 = _slicedToArray(_useState83, 2),
+    undo = _useState84[0],
+    setUndo = _useState84[1],
+    _useState85 = useState(''),
+    _useState86 = _slicedToArray(_useState85, 2),
+    collection = _useState86[0],
+    setCollection = _useState86[1],
+    _useState87 = useState(function () {
       return load('journey_collections_v1', []);
     }),
-    _useState72 = _slicedToArray(_useState71, 2),
-    collections = _useState72[0],
-    setCollections = _useState72[1];
-  var _useState73 = useState(null),
-    _useState74 = _slicedToArray(_useState73, 2),
-    modal = _useState74[0],
-    setModal = _useState74[1],
-    _useState75 = useState('about'),
-    _useState76 = _slicedToArray(_useState75, 2),
-    tab = _useState76[0],
-    setTab = _useState76[1];
-  var _useState77 = useState(settings.rawgKey ? 'rawg' : 'freetogame'),
-    _useState78 = _slicedToArray(_useState77, 2),
-    catalogSource = _useState78[0],
-    setCatalogSource = _useState78[1];
+    _useState88 = _slicedToArray(_useState87, 2),
+    collections = _useState88[0],
+    setCollections = _useState88[1];
+  var _useState89 = useState(null),
+    _useState90 = _slicedToArray(_useState89, 2),
+    modal = _useState90[0],
+    setModal = _useState90[1],
+    _useState91 = useState('about'),
+    _useState92 = _slicedToArray(_useState91, 2),
+    tab = _useState92[0],
+    setTab = _useState92[1];
+  var _useState93 = useState(false),
+    _useState94 = _slicedToArray(_useState93, 2),
+    assistantOpen = _useState94[0],
+    setAssistantOpen = _useState94[1];
+  var libraryRef = useRef(library);
+  libraryRef.current = library;
+  function applyAssistant(command) {
+    var old = libraryRef.current;
+    var next = JourneyAI.mutate(old, command);
+    if (!persist(next)) throw Error('Unable to save. Export a backup and free up device storage.');
+    libraryRef.current = next;
+    setUndo(old);
+    setToast('Assistant change saved.');
+  }
+  var _useState95 = useState(settings.rawgKey ? 'rawg' : 'freetogame'),
+    _useState96 = _slicedToArray(_useState95, 2),
+    catalogSource = _useState96[0],
+    setCatalogSource = _useState96[1];
   var fileRef = useRef(),
     restoreRef = useRef(),
     previousFocus = useRef();
@@ -827,6 +1430,13 @@ function Journey() {
     }))))) {
       setUndo(old);
       setToast('Journey updated.');
+    }
+  }
+  function undoChange() {
+    if (undo && persist(undo)) {
+      libraryRef.current = undo;
+      setUndo(null);
+      setToast('Change undone.');
     }
   }
   function removeGame(id) {
@@ -919,66 +1529,66 @@ function Journey() {
     setCollection('');
     window.scrollTo(0, 0);
   }
-  function search(_x) {
+  function search(_x4) {
     return _search.apply(this, arguments);
   }
   function _search() {
-    _search = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(e) {
-      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-        while (1) switch (_context3.prev = _context3.next) {
+    _search = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(e) {
+      return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+        while (1) switch (_context5.prev = _context5.next) {
           case 0:
             e === null || e === void 0 || e.preventDefault();
             if (query.trim()) {
-              _context3.next = 3;
+              _context5.next = 3;
               break;
             }
-            return _context3.abrupt("return");
+            return _context5.abrupt("return");
           case 3:
             setError('');
             setBusy(true);
-            _context3.prev = 5;
+            _context5.prev = 5;
             if (!(catalogSource === 'freetogame')) {
-              _context3.next = 13;
+              _context5.next = 13;
               break;
             }
-            _context3.t0 = setResults;
-            _context3.next = 10;
+            _context5.t0 = setResults;
+            _context5.next = 10;
             return searchFreeGames(query);
           case 10:
-            _context3.t1 = _context3.sent;
-            (0, _context3.t0)(_context3.t1);
-            return _context3.abrupt("return");
+            _context5.t1 = _context5.sent;
+            (0, _context5.t0)(_context5.t1);
+            return _context5.abrupt("return");
           case 13:
             if (settings.rawgKey) {
-              _context3.next = 15;
+              _context5.next = 15;
               break;
             }
             throw Error('Set your RAWG key in Profile to search the catalog, or add a game manually.');
           case 15:
-            _context3.t2 = setResults;
-            _context3.next = 18;
+            _context5.t2 = setResults;
+            _context5.next = 18;
             return searchGames({
               query: query.trim(),
               pageSize: 24
             }, settings.rawgKey);
           case 18:
-            _context3.t3 = _context3.sent;
-            (0, _context3.t2)(_context3.t3);
-            _context3.next = 25;
+            _context5.t3 = _context5.sent;
+            (0, _context5.t2)(_context5.t3);
+            _context5.next = 25;
             break;
           case 22:
-            _context3.prev = 22;
-            _context3.t4 = _context3["catch"](5);
-            setError(_context3.t4.message);
+            _context5.prev = 22;
+            _context5.t4 = _context5["catch"](5);
+            setError(_context5.t4.message);
           case 25:
-            _context3.prev = 25;
+            _context5.prev = 25;
             setBusy(false);
-            return _context3.finish(25);
+            return _context5.finish(25);
           case 28:
           case "end":
-            return _context3.stop();
+            return _context5.stop();
         }
-      }, _callee3, null, [[5, 22, 25, 28]]);
+      }, _callee5, null, [[5, 22, 25, 28]]);
     }));
     return _search.apply(this, arguments);
   }
@@ -1002,35 +1612,35 @@ function Journey() {
       return URL.revokeObjectURL(url);
     }, 1000);
   }
-  function restore(_x2) {
+  function restore(_x5) {
     return _restore.apply(this, arguments);
   }
   function _restore() {
-    _restore = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(file) {
+    _restore = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(file) {
       var data;
-      return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-        while (1) switch (_context4.prev = _context4.next) {
+      return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+        while (1) switch (_context6.prev = _context6.next) {
           case 0:
             if (file) {
-              _context4.next = 2;
+              _context6.next = 2;
               break;
             }
-            return _context4.abrupt("return");
+            return _context6.abrupt("return");
           case 2:
-            _context4.prev = 2;
-            _context4.t0 = JSON;
-            _context4.next = 6;
+            _context6.prev = 2;
+            _context6.t0 = JSON;
+            _context6.next = 6;
             return file.text();
           case 6:
-            _context4.t1 = _context4.sent;
-            data = _context4.t0.parse.call(_context4.t0, _context4.t1);
-            if (!(data.format !== 'journey' || data.version !== 1 || !data.library || _typeof(data.library) !== 'object' || Array.isArray(data.library) || Object.entries(data.library).some(function (_ref25) {
-              var _ref26 = _slicedToArray(_ref25, 2),
-                id = _ref26[0],
-                e = _ref26[1];
+            _context6.t1 = _context6.sent;
+            data = _context6.t0.parse.call(_context6.t0, _context6.t1);
+            if (!(data.format !== 'journey' || data.version !== 1 || !data.library || _typeof(data.library) !== 'object' || Array.isArray(data.library) || Object.entries(data.library).some(function (_ref28) {
+              var _ref29 = _slicedToArray(_ref28, 2),
+                id = _ref29[0],
+                e = _ref29[1];
               return !(e !== null && e !== void 0 && e.game) || String(e.game.id) !== id || typeof e.game.name !== 'string' || !STATES[e.status] || e.journeys && !Array.isArray(e.journeys);
             }))) {
-              _context4.next = 10;
+              _context6.next = 10;
               break;
             }
             throw Error('Invalid backup file.');
@@ -1039,19 +1649,19 @@ function Journey() {
               type: 'restore',
               data: data
             });
-            _context4.next = 16;
+            _context6.next = 16;
             break;
           case 13:
-            _context4.prev = 13;
-            _context4.t2 = _context4["catch"](2);
-            setToast(_context4.t2.message);
+            _context6.prev = 13;
+            _context6.t2 = _context6["catch"](2);
+            setToast(_context6.t2.message);
           case 16:
             restoreRef.current.value = '';
           case 17:
           case "end":
-            return _context4.stop();
+            return _context6.stop();
         }
-      }, _callee4, null, [[2, 13]]);
+      }, _callee6, null, [[2, 13]]);
     }));
     return _restore.apply(this, arguments);
   }
@@ -1119,10 +1729,10 @@ function Journey() {
   }, /*#__PURE__*/React.createElement("img", {
     src: "icons/icon-192.png?v=journey-5",
     alt: ""
-  }), "journey"), /*#__PURE__*/React.createElement("nav", null, [['home', 'Home'], ['library', 'Library'], ['explore', 'Explore'], ['profile', 'Profile']].map(function (_ref12) {
-    var _ref13 = _slicedToArray(_ref12, 2),
-      v = _ref13[0],
-      label = _ref13[1];
+  }), "journey"), /*#__PURE__*/React.createElement("nav", null, [['home', 'Home'], ['library', 'Library'], ['explore', 'Explore'], ['profile', 'Profile']].map(function (_ref15) {
+    var _ref16 = _slicedToArray(_ref15, 2),
+      v = _ref16[0],
+      label = _ref16[1];
     return /*#__PURE__*/React.createElement("button", {
       key: v,
       "aria-current": view === v ? 'page' : undefined,
@@ -1226,10 +1836,10 @@ function Journey() {
     name: "plus"
   }), "Add game")), /*#__PURE__*/React.createElement("div", {
     className: "tabs"
-  }, [['all', 'All']].concat(_toConsumableArray(Object.entries(STATES))).map(function (_ref14) {
-    var _ref15 = _slicedToArray(_ref14, 2),
-      v = _ref15[0],
-      l = _ref15[1];
+  }, [['all', 'All']].concat(_toConsumableArray(Object.entries(STATES))).map(function (_ref17) {
+    var _ref18 = _slicedToArray(_ref17, 2),
+      v = _ref18[0],
+      l = _ref18[1];
     return /*#__PURE__*/React.createElement("button", {
       className: filter === v ? 'active' : '',
       key: v,
@@ -1366,10 +1976,10 @@ function Journey() {
     return e.status === 'finished';
   }).length, 'completed'], [sessions.length, 'memories'], [(sessions.reduce(function (n, s) {
     return n + (+s.minutes || 0);
-  }, 0) / 60).toFixed(1) + 'h', 'logged']].map(function (_ref16) {
-    var _ref17 = _slicedToArray(_ref16, 2),
-      n = _ref17[0],
-      l = _ref17[1];
+  }, 0) / 60).toFixed(1) + 'h', 'logged']].map(function (_ref19) {
+    var _ref20 = _slicedToArray(_ref19, 2),
+      n = _ref20[0],
+      l = _ref20[1];
     return /*#__PURE__*/React.createElement("div", {
       className: "panel",
       key: l
@@ -1441,15 +2051,13 @@ function Journey() {
     role: "dialog",
     "aria-modal": "true",
     "aria-label": selected.name
-  }, /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement(CloseButton, {
     className: "close",
-    "aria-label": "Close game",
+    label: "Close game",
     onClick: function onClick() {
       return setSelected(null);
     }
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "close"
-  })), /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("div", {
     className: "detail-hero"
   }, selected.cover && /*#__PURE__*/React.createElement("img", {
     src: selected.cover,
@@ -1466,10 +2074,10 @@ function Journey() {
     }
   }, "Remove from library"), /*#__PURE__*/React.createElement("div", {
     className: "tabs"
-  }, [['about', 'Overview']].concat(_toConsumableArray(entry ? [['journey', 'My journey'], ['memories', 'Memories']] : [])).map(function (_ref18) {
-    var _ref19 = _slicedToArray(_ref18, 2),
-      v = _ref19[0],
-      l = _ref19[1];
+  }, [['about', 'Overview']].concat(_toConsumableArray(entry ? [['journey', 'My journey'], ['memories', 'Memories']] : [])).map(function (_ref21) {
+    var _ref22 = _slicedToArray(_ref21, 2),
+      v = _ref22[0],
+      l = _ref22[1];
     return /*#__PURE__*/React.createElement("button", {
       key: v,
       className: tab === v ? 'active' : '',
@@ -1494,10 +2102,10 @@ function Journey() {
         status: e.target.value
       });
     }
-  }, Object.entries(STATES).map(function (_ref20) {
-    var _ref21 = _slicedToArray(_ref20, 2),
-      v = _ref21[0],
-      l = _ref21[1];
+  }, Object.entries(STATES).map(function (_ref23) {
+    var _ref24 = _slicedToArray(_ref23, 2),
+      v = _ref24[0],
+      l = _ref24[1];
     return /*#__PURE__*/React.createElement("option", {
       key: v,
       value: v
@@ -1583,11 +2191,11 @@ function Journey() {
     label: "My rating",
     kind: "rating",
     initialValue: entry.rating
-  }), /*#__PURE__*/React.createElement("fieldset", null, /*#__PURE__*/React.createElement("legend", null, "Time to beat \xB7 your estimates"), [["main", "Main story"], ["extras", "Story + extras"], ["complete", "100% completion"]].map(function (_ref22) {
+  }), /*#__PURE__*/React.createElement("fieldset", null, /*#__PURE__*/React.createElement("legend", null, "Time to beat \xB7 your estimates"), [["main", "Main story"], ["extras", "Story + extras"], ["complete", "100% completion"]].map(function (_ref25) {
     var _entry$timeToBeat;
-    var _ref23 = _slicedToArray(_ref22, 2),
-      k = _ref23[0],
-      label = _ref23[1];
+    var _ref26 = _slicedToArray(_ref25, 2),
+      k = _ref26[0],
+      label = _ref26[1];
     return /*#__PURE__*/React.createElement(SliderField, {
       key: k,
       name: "ttb_" + k,
@@ -1674,15 +2282,13 @@ function Journey() {
     role: "dialog",
     "aria-modal": "true",
     "aria-label": "Save to Journey"
-  }, /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement(CloseButton, {
     className: "close",
-    "aria-label": "Close form",
+    label: "Close form",
     onClick: function onClick() {
       return setModal(null);
     }
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "close"
-  })), modal.type === 'remove' ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h2", null, "Remove this game?"), /*#__PURE__*/React.createElement("p", null, "This removes the game from every list and collection, together with its notes, playthroughs and memories. You can undo immediately after removal."), /*#__PURE__*/React.createElement("button", {
+  }), modal.type === 'remove' ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h2", null, "Remove this game?"), /*#__PURE__*/React.createElement("p", null, "This removes the game from every list and collection, together with its notes, playthroughs and memories. You can undo immediately after removal."), /*#__PURE__*/React.createElement("button", {
     className: "primary",
     onClick: function onClick() {
       return removeGame(modal.id);
@@ -1709,23 +2315,23 @@ function Journey() {
   }, "Import and merge")) : /*#__PURE__*/React.createElement("form", {
     className: "form",
     onSubmit: ( /*#__PURE__*/function () {
-      var _ref24 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(e) {
+      var _ref27 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(e) {
         var f, name, _name, next, en, js, j, _modal$session, _fileRef$current, _modal$session2, image, file, _en, _js, session;
-        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-          while (1) switch (_context2.prev = _context2.next) {
+        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+          while (1) switch (_context4.prev = _context4.next) {
             case 0:
               e.preventDefault();
               f = new FormData(e.currentTarget);
               if (!(modal.type === 'manual')) {
-                _context2.next = 8;
+                _context4.next = 8;
                 break;
               }
               name = f.get('name').trim();
               if (name) {
-                _context2.next = 6;
+                _context4.next = 6;
                 break;
               }
-              return _context2.abrupt("return");
+              return _context4.abrupt("return");
             case 6:
               add({
                 id: 'manual-' + Date.now(),
@@ -1738,15 +2344,15 @@ function Journey() {
               setModal(null);
             case 8:
               if (!(modal.type === 'collection')) {
-                _context2.next = 14;
+                _context4.next = 14;
                 break;
               }
               _name = f.get('name').trim();
               if (_name) {
-                _context2.next = 12;
+                _context4.next = 12;
                 break;
               }
-              return _context2.abrupt("return");
+              return _context4.abrupt("return");
             case 12:
               next = _toConsumableArray(new Set([].concat(_toConsumableArray(collections), [_name])));
               try {
@@ -1774,23 +2380,23 @@ function Journey() {
                 setModal(null);
               }
               if (!(modal.type === 'session')) {
-                _context2.next = 28;
+                _context4.next = 28;
                 break;
               }
               image = ((_modal$session = modal.session) === null || _modal$session === void 0 ? void 0 : _modal$session.image) || '';
               file = (_fileRef$current = fileRef.current) === null || _fileRef$current === void 0 ? void 0 : _fileRef$current.files[0];
               if (!file) {
-                _context2.next = 25;
+                _context4.next = 25;
                 break;
               }
               if (!(!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 1500000)) {
-                _context2.next = 22;
+                _context4.next = 22;
                 break;
               }
               setToast('Choose a JPG, PNG or WebP image up to 1.5 MB.');
-              return _context2.abrupt("return");
+              return _context4.abrupt("return");
             case 22:
-              _context2.next = 24;
+              _context4.next = 24;
               return new Promise(function (resolve, reject) {
                 var r = new FileReader();
                 r.onload = function () {
@@ -1800,7 +2406,7 @@ function Journey() {
                 r.readAsDateURL(file);
               });
             case 24:
-              image = _context2.sent;
+              image = _context4.sent;
             case 25:
               _en = library[modal.id], _js = _en.journeys || [{
                 id: 'original',
@@ -1829,12 +2435,12 @@ function Journey() {
               }
             case 28:
             case "end":
-              return _context2.stop();
+              return _context4.stop();
           }
-        }, _callee2);
+        }, _callee4);
       }));
-      return function (_x3) {
-        return _ref24.apply(this, arguments);
+      return function (_x6) {
+        return _ref27.apply(this, arguments);
       };
     }())
   }, /*#__PURE__*/React.createElement("h2", null, {
@@ -1878,19 +2484,25 @@ function Journey() {
     className: "toast",
     role: "status"
   }, toast, undo && /*#__PURE__*/React.createElement("button", {
-    onClick: function onClick() {
-      if (persist(undo)) {
-        setUndo(null);
-        setToast('Change undone.');
-      }
-    }
-  }, "Undo"), /*#__PURE__*/React.createElement("button", {
-    "aria-label": "Dismiss message",
+    onClick: undoChange
+  }, "Undo"), /*#__PURE__*/React.createElement(CloseButton, {
+    label: "Dismiss message",
     onClick: function onClick() {
       return setToast('');
     }
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "close"
-  }))));
+  })), /*#__PURE__*/React.createElement(JourneyAssistant, {
+    library: library,
+    rawgKey: settings.rawgKey,
+    onApply: applyAssistant,
+    onUndo: undoChange,
+    canUndo: !!undo,
+    open: assistantOpen,
+    onOpen: function onOpen() {
+      return setAssistantOpen(true);
+    },
+    onClose: function onClose() {
+      return setAssistantOpen(false);
+    }
+  }));
 }
 ReactDOM.createRoot(document.getElementById('root')).render( /*#__PURE__*/React.createElement(Journey, null));

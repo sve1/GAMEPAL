@@ -54,6 +54,14 @@ function Journey() {
     [collections, setCollections] = useState(() => load('journey_collections_v1', []));
   const [modal, setModal] = useState(null),
     [tab, setTab] = useState('about');
+  const [assistantOpen,setAssistantOpen]=useState(false);
+  const libraryRef=useRef(library);libraryRef.current=library;
+  function applyAssistant(command){
+    const old=libraryRef.current;
+    const next=JourneyAI.mutate(old,command);
+    if(!persist(next))throw Error('Unable to save. Export a backup and free up device storage.');
+    libraryRef.current=next;setUndo(old);setToast('Assistant change saved.');
+  }
   const [catalogSource,setCatalogSource]=useState(settings.rawgKey?'rawg':'freetogame');
   const fileRef = useRef(),
     restoreRef = useRef(),
@@ -94,6 +102,9 @@ function Journey() {
       setUndo(old);
       setToast('Journey updated.');
     }
+  }
+  function undoChange(){
+    if(undo&&persist(undo)){libraryRef.current=undo;setUndo(null);setToast('Change undone.');}
   }
   function removeGame(id) {
     const previous = library;
@@ -280,7 +291,7 @@ function Journey() {
             }
           }}><h2>Settings</h2><label>Display name<input name="name" defaultValue={user?.name} maxLength="80" /></label><label>RAWG API key<input name="rawg" type="password" autoComplete="off" defaultValue={settings.rawgKey} /></label><p>Your RAWG key stays in this browser and is used only for catalog requests.</p><button className="primary">Save settings</button></form><div className="panel"><h2>Your memories, backed up.</h2><p>Export a backup before switching devices or clearing browser data. Includes games, playthroughs, images and collections. API keys are excluded.</p><button className="primary" onClick={backup}>Export backup</button><button onClick={() => restoreRef.current.click()}>Import backup</button><input ref={restoreRef} type="file" accept="application/json" hidden onChange={e => restore(e.target.files[0])} /><hr /><h2>Your year in games</h2><p>{entries.filter(e => e.status === 'finished' && new Date(e.updatedAt).getFullYear() === new Date().getFullYear()).length} games marked or updated as completed this year.</p><p>Library genres: {[...new Set(entries.flatMap(e => (e.game.genres || '').split(', ').filter(Boolean)))].slice(0, 6).join(' · ') || 'Add games to discover your favorite genres.'}</p><small>Journey · your stories in games</small></div></div></>}
  </main>
- {selected && !modal && <div className="backdrop" onClick={e => e.target === e.currentTarget && setSelected(null)}><section className="dialog detail" role="dialog" aria-modal="true" aria-label={selected.name}><button className="close" aria-label="Close game" onClick={() => setSelected(null)}><Icon name="close"/></button><div className="detail-hero">{selected.cover && <img src={selected.cover} alt="" />}<div><small>{entry ? STATES[entry.status] : 'DISCOVER'}</small><h1>{selected.name}</h1><p>{selected.genres} · {selected.released}</p></div></div><div className="detail-body">{entry && <button className="remove-game" onClick={()=>setModal({type:"remove",id:selected.id})}>Remove from library</button>}<div className="tabs">{[['about', 'Overview'], ...(entry ? [['journey', 'My journey'], ['memories', 'Memories']] : [])].map(([v, l]) => <button key={v} className={tab === v ? 'active' : ''} onClick={() => setTab(v)}>{l}</button>)}</div>{!entry && <button className="primary game-action add-library" onClick={() => add(selected)}><Icon name="plus" />Add to library</button>}{<>{tab === 'journey' && <><div className="toolbar"><select aria-label="Play status" value={entry.status} onChange={e => change(selected.id, {
+ {selected && !modal && <div className="backdrop" onClick={e => e.target === e.currentTarget && setSelected(null)}><section className="dialog detail" role="dialog" aria-modal="true" aria-label={selected.name}><CloseButton className="close" label="Close game" onClick={() => setSelected(null)}/><div className="detail-hero">{selected.cover && <img src={selected.cover} alt="" />}<div><small>{entry ? STATES[entry.status] : 'DISCOVER'}</small><h1>{selected.name}</h1><p>{selected.genres} · {selected.released}</p></div></div><div className="detail-body">{entry && <button className="remove-game" onClick={()=>setModal({type:"remove",id:selected.id})}>Remove from library</button>}<div className="tabs">{[['about', 'Overview'], ...(entry ? [['journey', 'My journey'], ['memories', 'Memories']] : [])].map(([v, l]) => <button key={v} className={tab === v ? 'active' : ''} onClick={() => setTab(v)}>{l}</button>)}</div>{!entry && <button className="primary game-action add-library" onClick={() => add(selected)}><Icon name="plus" />Add to library</button>}{<>{tab === 'journey' && <><div className="toolbar"><select aria-label="Play status" value={entry.status} onChange={e => change(selected.id, {
                   status: e.target.value
                 })}>{Object.entries(STATES).map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select><button className="primary" onClick={() => setModal({
                   type: 'session',
@@ -312,7 +323,7 @@ function Journey() {
                 journey: journeys.find(j => (j.sessions || []).some(x => x.id === s.id))?.id || 'original',
                 session: s
               })}>Edit entry</button></article>) : <p className="empty">Log your first session to save a memory.</p>)}</>}</div></section></div>}
- {modal && <div className="backdrop top"><section className="dialog compact" role="dialog" aria-modal="true" aria-label="Save to Journey"><button className="close" aria-label="Close form" onClick={() => setModal(null)}><Icon name="close"/></button>{modal.type === 'remove' ? <><h2>Remove this game?</h2><p>This removes the game from every list and collection, together with its notes, playthroughs and memories. You can undo immediately after removal.</p><button className="primary" onClick={()=>removeGame(modal.id)}>Remove game</button><button onClick={()=>setModal(null)}>Keep game</button></> : modal.type === 'restore' ? <><h2>Import your journeys?</h2><p>Games will be merged into your library. For matching IDs, the backup takes priority. Export your current data first.</p><button onClick={backup}>Export current data</button><button className="primary" onClick={() => {
+ {modal && <div className="backdrop top"><section className="dialog compact" role="dialog" aria-modal="true" aria-label="Save to Journey"><CloseButton className="close" label="Close form" onClick={() => setModal(null)}/>{modal.type === 'remove' ? <><h2>Remove this game?</h2><p>This removes the game from every list and collection, together with its notes, playthroughs and memories. You can undo immediately after removal.</p><button className="primary" onClick={()=>removeGame(modal.id)}>Remove game</button><button onClick={()=>setModal(null)}>Keep game</button></> : modal.type === 'restore' ? <><h2>Import your journeys?</h2><p>Games will be merged into your library. For matching IDs, the backup takes priority. Export your current data first.</p><button onClick={backup}>Export current data</button><button className="primary" onClick={() => {
             if (persist({
               ...library,
               ...modal.data.library
@@ -418,12 +429,8 @@ function Journey() {
               replay: 'New playthrough',
               session: 'Log a session'
             }[modal.type]}</h2>{modal.type === 'session' ? <><DateField name="date" label="Date" initialValue={modal.session?.date||nowDate()} required/><label>Time played · minutes<input name="minutes" type="number" min="0" max="1440" defaultValue={modal.session?.minutes || ''} /></label><label>What happened?<textarea name="text" maxLength="8000" defaultValue={modal.session?.text || ''} placeholder="A discovery, a challenge, or how you felt…" /></label><label>Screenshot · optional<input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp" /></label><p>Up to 1.5 MB per image. Export backups to preserve your memories.</p></> : <><label>Name<input name="name" required maxLength="160" autoFocus placeholder={modal.type === 'collection' ? 'Favoritos da vida' : modal.type === 'replay' ? 'Segunda campanha · PC' : 'Game title'} /></label>{modal.type === 'manual' && <label>Genre · optional<input name="genre" maxLength="100" placeholder="RPG, adventure…" /></label>}</>}<button className="primary">{modal.type === 'session' ? 'Save memory' : 'Save'}</button></form>}</section></div>}
- {toast && <div className="toast" role="status">{toast}{undo && <button onClick={() => {
-        if (persist(undo)) {
-          setUndo(null);
-          setToast('Change undone.');
-        }
-      }}>Undo</button>}<button aria-label="Dismiss message" onClick={() => setToast('')}><Icon name="close"/></button></div>}
+ {toast && <div className="toast" role="status">{toast}{undo && <button onClick={undoChange}>Undo</button>}<CloseButton label="Dismiss message" onClick={() => setToast('')}/></div>}
+ <JourneyAssistant library={library} rawgKey={settings.rawgKey} onApply={applyAssistant} onUndo={undoChange} canUndo={!!undo} open={assistantOpen} onOpen={()=>setAssistantOpen(true)} onClose={()=>setAssistantOpen(false)}/>
  </div>;
 }
 ReactDOM.createRoot(document.getElementById('root')).render(<Journey />);

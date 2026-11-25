@@ -1,3 +1,7 @@
+// All dismiss controls share one geometry, independent of fonts and flex baselines.
+function CloseButton({label,onClick,className=''}) {
+ return <button type="button" className={'dismiss-control '+className} aria-label={label} onClick={onClick}><svg className="dismiss-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6L18 18M18 6L6 18"/></svg></button>;
+}
 function SliderField({name,label,initialValue,kind='hours'}) {
  const rating=kind==='rating';
  const valid=initialValue!==null&&initialValue!==undefined&&initialValue!==''&&Number.isFinite(Number(initialValue));
