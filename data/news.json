@@ -1,18 +1,81 @@
 {
-  "updatedAt": "2026-11-25T21:44:24.511276+00:00",
+  "updatedAt": "2026-11-26T08:25:13.115588+00:00",
   "sources": [
-    "GamesRadar+",
     "GamingOnLinux",
+    "GamesRadar+",
     "PC Gamer"
   ],
   "unavailableSources": [],
   "articles": [
     {
-      "title": "Capcom's quirky dinosaur-fighting hero shooter is shutting down in 2027",
-      "url": "https://www.pcgamer.com/games/third-person-shooter/capcoms-quirky-dinosaur-fighting-hero-shooter-is-shutting-down-in-2027/",
+      "title": "Game manager Lutris v0.5.23 is out with lots improvements for GOG, Humble Store, Epic Games and more",
+      "url": "https://www.gamingonlinux.com/2026/11/game-manager-lutris-v0-5-23-is-out-with-lots-improvements-for-gog-humble-store-epic-games-and-more/",
+      "source": "GamingOnLinux",
+      "publishedAt": "2026-11-26T08:13:09+00:00",
+      "image": null
+    },
+    {
+      "title": "SteamOS 3.9.7 Beta and SteamOS 0.5.11 Beta for Steam Frame released",
+      "url": "https://www.gamingonlinux.com/2026/11/steamos-3-9-7-beta-and-steamos-0-5-11-beta-for-steam-frame-released/",
+      "source": "GamingOnLinux",
+      "publishedAt": "2026-11-26T07:46:56+00:00",
+      "image": null
+    },
+    {
+      "title": "SteamVR Beta v2.19.5 brings more Steam Link Streaming improvements",
+      "url": "https://www.gamingonlinux.com/2026/11/steamvr-beta-v2-19-5-brings-more-steam-link-streaming-improvements/",
+      "source": "GamingOnLinux",
+      "publishedAt": "2026-11-26T07:39:39+00:00",
+      "image": null
+    },
+    {
+      "title": "All Missing Persons locations in GTA 6",
+      "url": "https://www.pcgamer.com/games/grand-theft-auto/gta-6-missing-persons-locations/",
       "source": "PC Gamer",
-      "publishedAt": "2026-11-25T21:37:51+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/9Ys8e7WjThYWVFVFJ47v6R-1920-80.jpg"
+      "publishedAt": "2026-11-26T05:24:13+00:00",
+      "image": "https://cdn.mos.cms.futurecdn.net/g9bnGJtDpK5Zh73wQtSzBe-1920-80.jpg"
+    },
+    {
+      "title": "The latest adult game in the Muv-Luv series has some woeful AI translation and players aren't happy about it",
+      "url": "https://www.pcgamer.com/games/visual-novel/the-latest-adult-game-in-the-muv-luv-series-has-some-woeful-ai-translation-and-players-arent-happy-about-it/",
+      "source": "PC Gamer",
+      "publishedAt": "2026-11-26T05:03:03+00:00",
+      "image": "https://cdn.mos.cms.futurecdn.net/MgthWdo8QDm7fVqcC6Abhm-1920-80.jpg"
+    },
+    {
+      "title": "BioWare turned down KOTOR 2 because LucasArts wanted the RPG done in 18 months",
+      "url": "https://www.gamesradar.com/games/rpg/bioware-turned-down-star-wars-knights-of-the-old-republic-2-because-lucasarts-wanted-the-rpg-done-in-18-months/",
+      "source": "GamesRadar+",
+      "publishedAt": "2026-11-26T00:55:09+00:00",
+      "image": "https://cdn.mos.cms.futurecdn.net/ndBCfkWoUgewqPRFjxRxhT-1920-80.jpg"
+    },
+    {
+      "title": "PlayStation creator says it was his \"secret intention\" to trick Microsoft into making Xbox",
+      "url": "https://www.gamesradar.com/games/playstation-creator-says-it-was-his-secret-intention-to-trick-microsoft-into-making-xbox/",
+      "source": "GamesRadar+",
+      "publishedAt": "2026-11-25T22:56:30+00:00",
+      "image": "https://cdn.mos.cms.futurecdn.net/wuhYQJHZmGP9x4QQbD92yG-1920-80.jpg"
+    },
+    {
+      "title": "GTA 6 has weird purple streetlights because actual Florida screwed up its streetlights",
+      "url": "https://www.pcgamer.com/games/grand-theft-auto/gta-6-has-weird-purple-streetlights-because-actual-florida-screwed-up-its-streetlights/",
+      "source": "PC Gamer",
+      "publishedAt": "2026-11-25T22:36:12+00:00",
+      "image": "https://cdn.mos.cms.futurecdn.net/qP2t3NgyYc4YTtxyNnMSoK-1920-80.jpg"
+    },
+    {
+      "title": "Warhammer Survivors update buffs XP and weapons, nerfs those damn Beasts of Nurgle",
+      "url": "https://www.pcgamer.com/games/roguelike/warhammer-survivors-update-buffs-xp-and-weapons-nerfs-those-damn-beasts-of-nurgle/",
+      "source": "PC Gamer",
+      "publishedAt": "2026-11-25T22:32:23+00:00",
+      "image": "https://cdn.mos.cms.futurecdn.net/CVd4Rg5uZxpFA8cxauZJcf-1920-80.jpg"
+    },
+    {
+      "title": "US Treasury official using AI for a Civ clone tries to shut down worries he's \"too busy vibecoding\"",
+      "url": "https://www.gamesradar.com/games/strategy/us-treasury-official-using-claude-to-create-a-civilization-clone-tries-to-shut-down-worries-hes-too-busy-vibecoding-during-cybersecurity-breach-the-computers-are-doing-it-on-their-own/",
+      "source": "GamesRadar+",
+      "publishedAt": "2026-11-25T21:41:14+00:00",
+      "image": "https://cdn.mos.cms.futurecdn.net/awyXJdEdKwPZUHQHHsnz77-1920-80.jpg"
     },
     {
       "title": "Ex-BioWare lead says only Bethesda can \"get away with porting Skyrim to every single platform\"",
@@ -22,73 +85,10 @@
       "image": "https://cdn.mos.cms.futurecdn.net/qZpLFg2wmDMk5DLRrAX6C8-1920-80.jpg"
     },
     {
-      "title": "Trump admin didn't investigate Jensen Huang before pushing Nvidia to bring him back: 'What does that mean, had Huang been investigated? For what?'",
-      "url": "https://www.pcgamer.com/software/ai/trump-admin-didnt-investigate-jensen-huang-before-pushing-nvidia-to-bring-him-back-what-does-that-mean-had-huang-been-investigated-for-what/",
-      "source": "PC Gamer",
-      "publishedAt": "2026-11-25T21:31:41+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/Gv633MiZGGDKePyr3xCf5i-1920-80.jpg"
-    },
-    {
-      "title": "GTA 6 vault: How to open them during big bank jobs",
-      "url": "https://www.pcgamer.com/games/grand-theft-auto/gta-6-vault-how-to-open/",
-      "source": "PC Gamer",
-      "publishedAt": "2026-11-25T21:31:26+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/he79YK28p3viRdnY2Hduej-1920-80.jpg"
-    },
-    {
-      "title": "Hell yeah, there's a zoo in GTA 6",
-      "url": "https://www.pcgamer.com/games/grand-theft-auto/hell-yeah-theres-a-zoo-in-gta-6/",
-      "source": "PC Gamer",
-      "publishedAt": "2026-11-25T21:24:51+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/GXjosh4CmpW6XMgYm23DkP-1920-80.jpg"
-    },
-    {
-      "title": "GTA 6 rewards empathy because being a \"demigod stomping through the world\" is only fun for so long",
-      "url": "https://www.gamesradar.com/games/grand-theft-auto/gta-6s-honor-system-rewards-empathy-because-being-a-demigod-stomping-through-the-world-is-only-fun-for-so-long-rockstar-lead-says/",
-      "source": "GamesRadar+",
-      "publishedAt": "2026-11-25T20:01:44+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/WXcVqu7yt4KSLhe4AgGHGA-1920-80.jpg"
-    },
-    {
-      "title": "The era of Switch 2 piracy is here as new hack allows jailbroken consoles to play dumped games",
-      "url": "https://www.gamesradar.com/games/the-era-of-switch-2-piracy-is-here-as-new-hack-allows-jailbroken-consoles-to-play-dumped-games-in-a-nightmare-scenario-for-nintendo/",
-      "source": "GamesRadar+",
-      "publishedAt": "2026-11-25T18:17:15+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/HeKahFgtEdEDNPF8tadfx7-1920-80.jpg"
-    },
-    {
-      "title": "Warren Spector: \"I don't think you can look at Zelda: Breath of the Wild and not see Deus Ex\"",
-      "url": "https://www.gamesradar.com/games/the-legend-of-zelda/quote-of-the-day-by-legendary-dev-warren-spector-i-dont-think-you-can-look-at-zelda-breath-of-the-wild-and-not-see-a-little-bit-of-deus-ex/",
-      "source": "GamesRadar+",
-      "publishedAt": "2026-11-25T18:00:00+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/wHHgxnWwvCfDKHYmDJFct7-1920-80.jpg"
-    },
-    {
       "title": "The next-generation Linux gaming display MangoHud v0.8.5-rc1 first test build is out",
       "url": "https://www.gamingonlinux.com/2026/11/the-next-generation-linux-gaming-display-mangohud-v0-8-5-rc1-first-test-build-is-out/",
       "source": "GamingOnLinux",
       "publishedAt": "2026-11-25T16:33:17+00:00",
-      "image": null
-    },
-    {
-      "title": "GOG Black Friday sale is live, plus multiple Lara Croft games enter the GOG Preservation Program",
-      "url": "https://www.gamingonlinux.com/2026/11/gog-black-friday-sale-is-live-plus-multiple-lara-croft-games-enter-the-gog-preservation-program/",
-      "source": "GamingOnLinux",
-      "publishedAt": "2026-11-25T14:49:18+00:00",
-      "image": null
-    },
-    {
-      "title": "Terraria 1.4.6 is out with 'Crossplay Phase One'",
-      "url": "https://www.gamingonlinux.com/2026/11/terraria-1-4-6-is-out-with-crossplay-phase-one/",
-      "source": "GamingOnLinux",
-      "publishedAt": "2026-11-25T09:44:35+00:00",
-      "image": null
-    },
-    {
-      "title": "Pop!_OS 26.04 LTS is out now with new theme bundles, remote desktop, drawing tablet support and more",
-      "url": "https://www.gamingonlinux.com/2026/11/pop-os-26-04-lts-is-out-now-with-new-theme-bundles-remote-desktop-drawing-tablet-support-and-more/",
-      "source": "GamingOnLinux",
-      "publishedAt": "2026-11-25T09:37:26+00:00",
       "image": null
     }
   ]
