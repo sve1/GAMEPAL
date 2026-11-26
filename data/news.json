@@ -1,94 +1,94 @@
 {
-  "updatedAt": "2026-11-26T08:25:13.115588+00:00",
+  "updatedAt": "2026-11-26T21:37:19.234824+00:00",
   "sources": [
-    "GamingOnLinux",
     "GamesRadar+",
+    "GamingOnLinux",
     "PC Gamer"
   ],
   "unavailableSources": [],
   "articles": [
     {
-      "title": "Game manager Lutris v0.5.23 is out with lots improvements for GOG, Humble Store, Epic Games and more",
-      "url": "https://www.gamingonlinux.com/2026/11/game-manager-lutris-v0-5-23-is-out-with-lots-improvements-for-gog-humble-store-epic-games-and-more/",
+      "title": "Amazon AU Black Friday is GO! The PC Gamer team has a massive collection of unbelievable deals ready for you to hit, with more added all day long!",
+      "url": "https://www.pcgamer.com/hardware/amazon-au-black-friday-is-go-the-pc-gamer-team-has-a-massive-collection-of-unbelievable-deals-ready-for-you-to-hit-with-more-added-all-day-long/",
+      "source": "PC Gamer",
+      "publishedAt": "2026-11-26T21:13:09+00:00",
+      "image": "https://cdn.mos.cms.futurecdn.net/tQpyeAZ6sehGGSskT6TuD8-1920-80.jpg"
+    },
+    {
+      "title": "Best Black Friday PC gaming deals in Australia (2026)",
+      "url": "https://www.pcgamer.com/hardware/black-friday-is-underway-and-this-is-the-place-to-be-to-score-pc-gaming-deals-that-only-happen-once-a-year/",
+      "source": "PC Gamer",
+      "publishedAt": "2026-11-26T21:06:49+00:00",
+      "image": "https://cdn.mos.cms.futurecdn.net/EesLoPzun52tX6u22GcmHS-1920-80.jpg"
+    },
+    {
+      "title": "Path of Exile co-creator says \"a shift back\" to games like Baldur’s Gate 3 would be better for the industry",
+      "url": "https://www.gamesradar.com/games/baldur-s-gate/path-of-exile-co-creator-says-a-shift-back-to-games-like-baldurs-gate-3-over-live-service-releases-would-be-better-for-the-industry/",
+      "source": "GamesRadar+",
+      "publishedAt": "2026-11-26T21:00:00+00:00",
+      "image": "https://cdn.mos.cms.futurecdn.net/yjLZ2Fh9g8uPu9KAknYgpf-1920-80.jpg"
+    },
+    {
+      "title": "Steam isn't doing 'an official Black Friday fest,' but it does have a page with hundreds of discounts and 'Black Friday' splashed across the top so you might want to check it out anyway",
+      "url": "https://www.pcgamer.com/games/steam-isnt-doing-an-official-black-friday-fest-but-it-does-have-a-page-with-hundreds-of-discounts-and-black-friday-splashed-across-the-top-so-you-might-want-to-check-it-out-anyway/",
+      "source": "PC Gamer",
+      "publishedAt": "2026-11-26T20:20:02+00:00",
+      "image": "https://cdn.mos.cms.futurecdn.net/WXCauYx5iuX7NSjYhqLCE4-1920-80.jpg"
+    },
+    {
+      "title": "Rockstar boss was \"praying\" that GTA 6's early plot twist wouldn't leak \"given everything that we've gone through\"",
+      "url": "https://www.gamesradar.com/games/grand-theft-auto/rockstar-boss-was-praying-that-gta-6s-early-plot-twist-wouldnt-leak-given-everything-that-weve-gone-through/",
+      "source": "GamesRadar+",
+      "publishedAt": "2026-11-26T20:00:00+00:00",
+      "image": "https://cdn.mos.cms.futurecdn.net/7GKLvfHyNh9cXxWFVLB7Zg-1920-80.jpg"
+    },
+    {
+      "title": "Fable boss says The Witcher 3 and Assassin's Creed \"reset player expectations\" of RPGs",
+      "url": "https://www.gamesradar.com/games/rpg/fable-boss-says-the-witcher-3-and-assassins-creed-reset-player-expectations-of-rpgs-so-only-taking-inspiration-from-lionheads-og-trilogy-would-leave-us-lacking/",
+      "source": "GamesRadar+",
+      "publishedAt": "2026-11-26T19:00:00+00:00",
+      "image": "https://cdn.mos.cms.futurecdn.net/J8yHhJbZcpEnktYjCi79s4-1920-80.jpg"
+    },
+    {
+      "title": "Dev team who delayed their game a year to avoid Silksong says they won't do it again for whatever Team Cherry announces tomorrow: 'This time we're staying put'",
+      "url": "https://www.pcgamer.com/games/action/dev-team-who-delayed-their-game-a-year-to-avoid-silksong-says-they-wont-do-it-again-for-whatever-team-cherry-announces-tomorrow-this-time-were-staying-put/",
+      "source": "PC Gamer",
+      "publishedAt": "2026-11-26T18:31:22+00:00",
+      "image": "https://cdn.mos.cms.futurecdn.net/SK9qm2fZ6UsQLxkoi24YSG-1920-80.jpg"
+    },
+    {
+      "title": "Quote of the Day by Stranger Than Heaven director: \"Age and career length are not deciding factors\"",
+      "url": "https://www.gamesradar.com/games/jrpg/quote-of-the-day-by-stranger-than-heaven-director-age-and-career-length-are-not-deciding-factors/",
+      "source": "GamesRadar+",
+      "publishedAt": "2026-11-26T18:00:00+00:00",
+      "image": "https://cdn.mos.cms.futurecdn.net/pcqMvvYciSch2hVgXcEoSN-1920-80.jpg"
+    },
+    {
+      "title": "Get some action in the Boomer Shooter Fanatical Bundle",
+      "url": "https://www.gamingonlinux.com/2026/11/get-some-action-in-the-boomer-shooter-fanatical-bundle/",
       "source": "GamingOnLinux",
-      "publishedAt": "2026-11-26T08:13:09+00:00",
+      "publishedAt": "2026-11-26T14:12:25+00:00",
       "image": null
     },
     {
-      "title": "SteamOS 3.9.7 Beta and SteamOS 0.5.11 Beta for Steam Frame released",
-      "url": "https://www.gamingonlinux.com/2026/11/steamos-3-9-7-beta-and-steamos-0-5-11-beta-for-steam-frame-released/",
+      "title": "Compatibility tool manager ProtonPlus adds game support to Lutris, Faugus, Heroic Games, and Bottles",
+      "url": "https://www.gamingonlinux.com/2026/11/compatibility-tool-manager-protonplus-adds-game-support-to-lutris-faugus-heroic-games-and-bottles/",
       "source": "GamingOnLinux",
-      "publishedAt": "2026-11-26T07:46:56+00:00",
+      "publishedAt": "2026-11-26T11:48:53+00:00",
       "image": null
     },
     {
-      "title": "SteamVR Beta v2.19.5 brings more Steam Link Streaming improvements",
-      "url": "https://www.gamingonlinux.com/2026/11/steamvr-beta-v2-19-5-brings-more-steam-link-streaming-improvements/",
+      "title": "Incremental casual city-builder Clicky Islands - review",
+      "url": "https://www.gamingonlinux.com/2026/11/incremental-casual-city-builder-clicky-islands-review/",
       "source": "GamingOnLinux",
-      "publishedAt": "2026-11-26T07:39:39+00:00",
+      "publishedAt": "2026-11-26T11:14:34+00:00",
       "image": null
     },
     {
-      "title": "All Missing Persons locations in GTA 6",
-      "url": "https://www.pcgamer.com/games/grand-theft-auto/gta-6-missing-persons-locations/",
-      "source": "PC Gamer",
-      "publishedAt": "2026-11-26T05:24:13+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/g9bnGJtDpK5Zh73wQtSzBe-1920-80.jpg"
-    },
-    {
-      "title": "The latest adult game in the Muv-Luv series has some woeful AI translation and players aren't happy about it",
-      "url": "https://www.pcgamer.com/games/visual-novel/the-latest-adult-game-in-the-muv-luv-series-has-some-woeful-ai-translation-and-players-arent-happy-about-it/",
-      "source": "PC Gamer",
-      "publishedAt": "2026-11-26T05:03:03+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/MgthWdo8QDm7fVqcC6Abhm-1920-80.jpg"
-    },
-    {
-      "title": "BioWare turned down KOTOR 2 because LucasArts wanted the RPG done in 18 months",
-      "url": "https://www.gamesradar.com/games/rpg/bioware-turned-down-star-wars-knights-of-the-old-republic-2-because-lucasarts-wanted-the-rpg-done-in-18-months/",
-      "source": "GamesRadar+",
-      "publishedAt": "2026-11-26T00:55:09+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/ndBCfkWoUgewqPRFjxRxhT-1920-80.jpg"
-    },
-    {
-      "title": "PlayStation creator says it was his \"secret intention\" to trick Microsoft into making Xbox",
-      "url": "https://www.gamesradar.com/games/playstation-creator-says-it-was-his-secret-intention-to-trick-microsoft-into-making-xbox/",
-      "source": "GamesRadar+",
-      "publishedAt": "2026-11-25T22:56:30+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/wuhYQJHZmGP9x4QQbD92yG-1920-80.jpg"
-    },
-    {
-      "title": "GTA 6 has weird purple streetlights because actual Florida screwed up its streetlights",
-      "url": "https://www.pcgamer.com/games/grand-theft-auto/gta-6-has-weird-purple-streetlights-because-actual-florida-screwed-up-its-streetlights/",
-      "source": "PC Gamer",
-      "publishedAt": "2026-11-25T22:36:12+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/qP2t3NgyYc4YTtxyNnMSoK-1920-80.jpg"
-    },
-    {
-      "title": "Warhammer Survivors update buffs XP and weapons, nerfs those damn Beasts of Nurgle",
-      "url": "https://www.pcgamer.com/games/roguelike/warhammer-survivors-update-buffs-xp-and-weapons-nerfs-those-damn-beasts-of-nurgle/",
-      "source": "PC Gamer",
-      "publishedAt": "2026-11-25T22:32:23+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/CVd4Rg5uZxpFA8cxauZJcf-1920-80.jpg"
-    },
-    {
-      "title": "US Treasury official using AI for a Civ clone tries to shut down worries he's \"too busy vibecoding\"",
-      "url": "https://www.gamesradar.com/games/strategy/us-treasury-official-using-claude-to-create-a-civilization-clone-tries-to-shut-down-worries-hes-too-busy-vibecoding-during-cybersecurity-breach-the-computers-are-doing-it-on-their-own/",
-      "source": "GamesRadar+",
-      "publishedAt": "2026-11-25T21:41:14+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/awyXJdEdKwPZUHQHHsnz77-1920-80.jpg"
-    },
-    {
-      "title": "Ex-BioWare lead says only Bethesda can \"get away with porting Skyrim to every single platform\"",
-      "url": "https://www.gamesradar.com/games/dragon-age/ex-bioware-lead-says-dragon-age-origins-couldve-been-remastered-probably-twice-by-now-but-only-bethesda-can-get-away-with-porting-skyrim-to-every-single-platform/",
-      "source": "GamesRadar+",
-      "publishedAt": "2026-11-25T21:33:46+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/qZpLFg2wmDMk5DLRrAX6C8-1920-80.jpg"
-    },
-    {
-      "title": "The next-generation Linux gaming display MangoHud v0.8.5-rc1 first test build is out",
-      "url": "https://www.gamingonlinux.com/2026/11/the-next-generation-linux-gaming-display-mangohud-v0-8-5-rc1-first-test-build-is-out/",
+      "title": "VR mech game IRON REBELLION gets a big PvE campaign update on December 14",
+      "url": "https://www.gamingonlinux.com/2026/11/vr-mech-game-iron-rebellion-gets-a-big-pve-campaign-update-on-december-14/",
       "source": "GamingOnLinux",
-      "publishedAt": "2026-11-25T16:33:17+00:00",
+      "publishedAt": "2026-11-26T09:07:04+00:00",
       "image": null
     }
   ]
