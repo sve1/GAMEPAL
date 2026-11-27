@@ -1,94 +1,67 @@
 {
-  "updatedAt": "2026-11-27T08:39:32.983470+00:00",
+  "updatedAt": "2026-11-27T21:21:08.146594+00:00",
   "sources": [
-    "GamingOnLinux",
-    "PC Gamer",
-    "GamesRadar+"
+    "GamesRadar+",
+    "GamingOnLinux"
   ],
-  "unavailableSources": [],
+  "unavailableSources": [
+    "PC Gamer"
+  ],
   "articles": [
     {
-      "title": "DXVK 3.2 brings improvements for frame pacing, NVIDIA Reflex, VRAM eviction logic and more",
-      "url": "https://www.gamingonlinux.com/2026/11/dxvk-3-2-brings-improvements-for-frame-pacing-nvidia-reflex-vram-eviction-logic-and-more/",
+      "title": "Steam's highest-rated new survival game looks like Rain World's equally evil cousin",
+      "url": "https://www.gamesradar.com/games/survival/steams-highest-rated-new-survival-game-looks-like-rain-worlds-equally-evil-cousin-98-percent-positive-reviews-on-a-hardcore-cave-diving-simulator/",
+      "source": "GamesRadar+",
+      "publishedAt": "2026-11-27T20:05:57+00:00",
+      "image": "https://cdn.mos.cms.futurecdn.net/7ojGEJYiuvLhWW2Y2AosqX-1920-80.jpg"
+    },
+    {
+      "title": "This Black Friday VPN deal gets you extra tools at no extra price",
+      "url": "https://www.gamesradar.com/hardware/tech/surfsharks-black-friday-deal-makes-its-advanced-tier-as-cheap-as-its-standard-tier/",
+      "source": "GamesRadar+",
+      "publishedAt": "2026-11-27T19:54:56+00:00",
+      "image": "https://cdn.mos.cms.futurecdn.net/9kkhCNx2BMGiaDVnQ4VA49-1920-80.jpg"
+    },
+    {
+      "title": "Reports of AI psychosis at Ubisoft are actually good news to Epic CEO Tim Sweeney",
+      "url": "https://www.gamesradar.com/games/reports-of-ai-psychosis-at-ubisoft-are-good-news-to-epic-ceo-tim-sweeney-who-says-the-future-of-french-game-development-is-at-stake-as-if-clair-obscur-expedition-33-never-happened/",
+      "source": "GamesRadar+",
+      "publishedAt": "2026-11-27T18:40:08+00:00",
+      "image": "https://cdn.mos.cms.futurecdn.net/925L6o9Ro3uNx7HgBCZWyn-1920-80.jpg"
+    },
+    {
+      "title": "25 things you probably missed in GTA 6",
+      "url": "https://www.gamesradar.com/games/grand-theft-auto/gta-6-things-you-missed/",
+      "source": "GamesRadar+",
+      "publishedAt": "2026-11-27T18:12:39+00:00",
+      "image": "https://cdn.mos.cms.futurecdn.net/nxLvhBZtowFAorye2uwEk7-1920-80.jpg"
+    },
+    {
+      "title": "Proton Experimental updated with fixes for Strange Brigade, FBC: Firebreak, Terminator: Dark Fate - Defiance and more",
+      "url": "https://www.gamingonlinux.com/2026/11/proton-experimental-updated-with-fixes-for-strange-brigade-fbc-firebreak-terminator-dark-fate-defiance-and-more/",
       "source": "GamingOnLinux",
-      "publishedAt": "2026-11-27T08:26:32+00:00",
+      "publishedAt": "2026-11-27T17:23:20+00:00",
       "image": null
     },
     {
-      "title": "Valve update the Discounts & Events page for Black Friday sales",
-      "url": "https://www.gamingonlinux.com/2026/11/valve-update-the-discounts-events-page-for-black-friday-sales/",
+      "title": "Hollow Knight: Silksong - Sea of Sorrow arrives December 11",
+      "url": "https://www.gamingonlinux.com/2026/11/hollow-knight-silksong-sea-of-sorrow-arrives-december-11/",
       "source": "GamingOnLinux",
-      "publishedAt": "2026-11-27T08:03:53+00:00",
+      "publishedAt": "2026-11-27T15:28:01+00:00",
       "image": null
     },
     {
-      "title": "Witcher 3 Remastered patch has lighting fixes, sign nerfs, and gets rid of a nasty werewolf bug",
-      "url": "https://www.pcgamer.com/games/the-witcher/witcher-3-remastered-patch-has-lighting-fixes-sign-nerfs-and-gets-rid-of-a-nasty-werewolf-bug/",
-      "source": "PC Gamer",
-      "publishedAt": "2026-11-27T04:27:55+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/zACfHkjTkMyzJgkgp74vDA-1920-80.png"
-    },
-    {
-      "title": "Microsoft announces it's deprecating the Telnet client in Windows, giving me a sudden flashback to when I used to use Telnet",
-      "url": "https://www.pcgamer.com/software/windows/microsoft-announces-its-deprecating-the-telnet-client-in-windows-giving-me-a-sudden-flashback-to-when-i-used-to-use-telnet/",
-      "source": "PC Gamer",
-      "publishedAt": "2026-11-27T01:39:07+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/JGWhX4ciZicn3CD8dUR8g-1920-80.jpg"
-    },
-    {
-      "title": "Vermintide 2 mod tools get a public release, and the game's 90% off on Steam too",
-      "url": "https://www.pcgamer.com/games/fps/vermintide-2-mod-tools-get-a-public-release-and-the-games-90-percent-off-on-steam-too/",
-      "source": "PC Gamer",
-      "publishedAt": "2026-11-27T01:28:24+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/SubVYEY5D6vgzjDNu7QSST-1920-80.jpg"
-    },
-    {
-      "title": "Walmart's Black Friday sales are live, and they include five gaming upgrades I'm far too tempted by",
-      "url": "https://www.gamesradar.com/hardware/tech/walmarts-black-friday-sales-are-live-and-they-include-five-gaming-upgrades-im-far-too-tempted-by/",
-      "source": "GamesRadar+",
-      "publishedAt": "2026-11-27T00:04:21+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/Uz9oucArbgUpcipPx5oxL3-1920-80.jpg"
-    },
-    {
-      "title": "'Blizzard I'm looking at you': Path of Exile 2 boss criticizes 'truly terrible' game announcements that hold the juiciest details until the end",
-      "url": "https://www.pcgamer.com/games/rpg/blizzard-im-looking-at-you-path-of-exile-2-boss-criticizes-truly-terrible-game-announcements-that-hold-the-juiciest-details-until-the-end/",
-      "source": "PC Gamer",
-      "publishedAt": "2026-11-26T23:00:00+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/HMRK6xpxefVxP2MDgUaKmG-1920-80.jpg"
-    },
-    {
-      "title": "Path of Exile co-creator says \"a shift back\" to games like Baldur’s Gate 3 would be better for the industry",
-      "url": "https://www.gamesradar.com/games/baldur-s-gate/path-of-exile-co-creator-says-a-shift-back-to-games-like-baldurs-gate-3-over-live-service-releases-would-be-better-for-the-industry/",
-      "source": "GamesRadar+",
-      "publishedAt": "2026-11-26T21:00:00+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/yjLZ2Fh9g8uPu9KAknYgpf-1920-80.jpg"
-    },
-    {
-      "title": "Rockstar boss was \"praying\" that GTA 6's early plot twist wouldn't leak \"given everything that we've gone through\"",
-      "url": "https://www.gamesradar.com/games/grand-theft-auto/rockstar-boss-was-praying-that-gta-6s-early-plot-twist-wouldnt-leak-given-everything-that-weve-gone-through/",
-      "source": "GamesRadar+",
-      "publishedAt": "2026-11-26T20:00:00+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/7GKLvfHyNh9cXxWFVLB7Zg-1920-80.jpg"
-    },
-    {
-      "title": "Fable boss says The Witcher 3 and Assassin's Creed \"reset player expectations\" of RPGs",
-      "url": "https://www.gamesradar.com/games/rpg/fable-boss-says-the-witcher-3-and-assassins-creed-reset-player-expectations-of-rpgs-so-only-taking-inspiration-from-lionheads-og-trilogy-would-leave-us-lacking/",
-      "source": "GamesRadar+",
-      "publishedAt": "2026-11-26T19:00:00+00:00",
-      "image": "https://cdn.mos.cms.futurecdn.net/J8yHhJbZcpEnktYjCi79s4-1920-80.jpg"
-    },
-    {
-      "title": "Get some action in the Boomer Shooter Fanatical Bundle",
-      "url": "https://www.gamingonlinux.com/2026/11/get-some-action-in-the-boomer-shooter-fanatical-bundle/",
+      "title": "Linux Mint 27 Beta brings full Wayland support to Cinnamon",
+      "url": "https://www.gamingonlinux.com/2026/11/linux-mint-27-beta-brings-full-wayland-support-to-cinnamon/",
       "source": "GamingOnLinux",
-      "publishedAt": "2026-11-26T14:12:25+00:00",
+      "publishedAt": "2026-11-27T15:21:40+00:00",
       "image": null
     },
     {
-      "title": "Compatibility tool manager ProtonPlus adds game support to Lutris, Faugus, Heroic Games, and Bottles",
-      "url": "https://www.gamingonlinux.com/2026/11/compatibility-tool-manager-protonplus-adds-game-support-to-lutris-faugus-heroic-games-and-bottles/",
+      "title": "Immersive sim dino-horror FPS 'Athanasia' enters Early Access",
+      "url": "https://www.gamingonlinux.com/2026/11/immersive-sim-dino-horror-fps-athanasia-enters-early-access/",
       "source": "GamingOnLinux",
-      "publishedAt": "2026-11-26T11:48:53+00:00",
+      "publishedAt": "2026-11-27T14:56:17+00:00",
       "image": null
     }
   ]
